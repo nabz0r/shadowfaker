@@ -59,3 +59,29 @@ The sub-minute goal is a separate data milestone: align lawful replay/POV materi
 ```
 
 The snapshot name caches each match-ID page. Reuse a name to resume a crash; choose a **new** name for a genuinely fresh listing. `--offline` verifies the local freeze and reports the current pending count without contacting Riot. The protocol and frozen model are in ignored `data/prospective/`; the actual checkpoint copy is not published.
+
+## Next level delivered locally: ecosystem, retrieval and 64×64
+
+```mermaid
+flowchart LR
+  R[470 ranked IDs\n465 usable] --> S[12,975 ten-player states]
+  S --> T[12,510 Faker transitions]
+  T --> U[64×64 model\nexact 1.09% vs 1.92% baseline]
+  S --> V[13 interaction inputs\nvalidation 8.71% vs frozen 10.59%]
+  S --> W[128-D state vectors + 192-D completed-game vectors]
+  S --> X[930 EN/FR factual summaries + sourced cases]
+  U --> Y[Future independent games\n0 / 100]
+  V --> Y
+```
+
+The all-queue PUUID listing reached **519 IDs**, but the 49 additional matches are other modes. Their timelines are cached for local study and excluded from the ranked predictor. The event atlas, ten-player warehouse, pressure proxies, local geometric field, multilingual index, synthetic formation simulator and fan-made dashboard are implemented. `scripts/run_next_level.py` reproduces the five-game pilot and full extension from the cached ranked pipeline. See [STATE_ECOSYSTEM.md](STATE_ECOSYSTEM.md), [DESIGN.md](DESIGN.md) and [RESULTS.md](RESULTS.md).
+
+| Next research gate | Required evidence | Current status |
+|---|---|---|
+| Comparable game growth | New verified queue-420 games for the same PUUID or separately evaluated accounts/domains | Same PUUID has **0 fresh ranked**; 49 other modes must remain separate. |
+| Observed opponent response | Enemy trajectories, objective trades and exposure at matched states | Proximity and arrivals indexed; no causal resource-spend claim. |
+| Better predictive interactions | Validation gain over frozen model, followed by a new future lockbox | First 13-channel candidate is **8.71%** 16×16 validation versus frozen **10.59%**; not promoted or test-scored. |
+| Sub-minute temporal model | Lawfully sourced replay/POV positions and timestamps with perspective provenance | Riot timelines still sample positions about every 60 seconds. Events alone cannot infer every-second positions. |
+| Strategy challenge | A calibrated environment or comparable played-game outcomes, with opponent adaptation and uncertainty | Five formation curves are synthetic, not win probabilities. |
+
+Future high-elo pretraining, professional match annotation, video transcription and multilingual public analysis require source rights, domain labels, match alignment and separate validation. The 2013 Nidalee–Kha'Zix debut case is a **professional spring game**, not a Worlds sample; it is a documented historical study, not an extra ranked training observation. An offline state vector or full-match summary may aid retrieval but cannot be silently injected into `state_t` when it contains later information.

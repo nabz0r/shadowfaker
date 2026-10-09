@@ -10,6 +10,20 @@ Pipeline de recherche local visant à modéliser **les décisions macro de Faker
 
 ## Ce qui est mesuré aujourd'hui
 
+### Atlas 64×64 et écosystème des dix joueurs
+
+![Destinations réelles et prédites sur la grille historique 64×64](docs/figures/grid64_observed_vs_predicted.png)
+
+La nouvelle variante 64×64 ne devine la case exacte que **1,09 %** du temps sur les 1 197 décisions du test historique déjà vu, contre **1,92 %** pour la meilleure règle simple. Elle se trouve à quatre cases de l'arrivée dans **22,89 %** des cas, contre **16,88 %** en copiant la position actuelle. Une zone calibrée sur validation contient **91,9 %** des destinations du test, mais occupe en moyenne **43,7 % de la carte**, soit 1 791 cases sur 4 096. Ce dernier chiffre n'est pas une précision de 90 %.
+
+![Atlas 64×64 des événements observés](docs/figures/event_atlas64.png)
+
+Le dépôt indexe localement **12 975 états**, **12 510 transitions** et **353 409 événements** de 465 parties ranked : Faker reste la cible, tandis que les neuf autres joueurs forment l'état autour de lui. Le tableau de bord montre les dix joueurs en projection 3D, leur transition observée, les adversaires proches et les moments notables. Les **13 variables de réaction ennemie et de couverture alliée** alimentent aussi une variante d'entraînement distincte. Cette variante obtient **8,71 %** en 16×16 sur validation contre **10,59 %** pour le modèle gelé ; elle n'est donc ni promue ni évaluée sur test. Proximité et trajectoire ne prouvent pas une influence causale. La matrice de transitions, les vecteurs et les résumés par match restent locaux. Voir [STATE_ECOSYSTEM.md](STATE_ECOSYSTEM.md) et [DESIGN.md](DESIGN.md).
+
+![Pression adverse autour de Faker par phase](docs/figures/enemy_pressure.png)
+
+L'exploration du même PUUID a trouvé **519 IDs toutes queues**, dont les **470 IDs ranked solo déjà connus** et **49 autres modes**. Ces 49 parties ont été archivées localement, mais n'ont pas été ajoutées aux données ranked ni présentées comme nouvelles parties comparables. Le test prospectif reste à **0/100** nouvelles ranked éligibles. Le but sous la minute demeure un chantier de données distinct.
+
 **465 parties exploitables, 12 510 observations.** La région exacte suivante (grille 16×16) est prédite dans **11,28 %** des observations du test déjà examiné, contre **11,61 %** pour la meilleure baseline rôle/phase. La condition initiale « battre nettement les baselines » n'est donc **pas remplie**. Après regroupement des probabilités en zones plus larges, le modèle atteint **17,54 % en 8×8** contre **15,37 %**, et **23,64 % en 4×4** contre **19,80 %**. Ces deux diagnostics ont été choisis après consultation du test : ils demandent une confirmation sur des parties futures.
 
 ### Le paysage des prochains mouvements
@@ -60,6 +74,8 @@ Après installation, lancer le serveur local et ouvrir [http://127.0.0.1:8008/](
 .venv/bin/python -m shadowfaker.demo --max-frames 30
 ```
 
+Une **frise commune** reste visible pendant le défilement de la page. Son curseur (ou les flèches du clavier et la molette sur ce curseur) synchronise l'atlas 64×64, la surface 3D, le tempo, la pression adverse, la minute du rejeu et le repère du scénario synthétique. Le code couleur reste affiché. Les cartes Faker/Shadow agrègent **46 parties du test** par phase : **460 destinations entre 0 et 10 min, 437 entre 10 et 20 min, 300 après 20 min**. Les couches de joueurs et événements agrègent **465 ranked** ; le rejeu correspond à **une partie** et s'arrête à sa dernière frame. Les anciens visuels 16×16 et les scores historiques sont signalés comme fixes, car leur évolution par minute n'a pas été conservée. Le curseur ne crée pas de positions intermédiaires à la seconde.
+
 Le serveur écoute sur `127.0.0.1` et ne sert que les visuels publics et les fichiers de rejeu locaux autorisés. Les traces par partie restent exclues de Git. [Code de l'interface](dashboard/), [générateur des visuels](scripts/render_results.py), [analyse des résultats](RESULTS.md).
 
 ### D'où viennent les 470, 465 et 12 510 ?
@@ -77,10 +93,10 @@ python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt -e .
 cp .env.example .env
 # Remplacer la valeur de RIOT_API_KEY dans .env par la clé actuelle du portail Riot.
-.venv/bin/python scripts/run_pipeline.py --limit 1000
+.venv/bin/python scripts/run_next_level.py --limit 1000 --epochs 25
 ```
 
-Si `pip` n'est pas disponible dans le venv, utiliser `uv pip install --python .venv/bin/python -r requirements.txt -e .`. La commande unique exécute d'abord **toutes les phases sur cinq parties**, puis la collecte cible, le parsing, l'entraînement, l'évaluation et le GIF. Elle reprend les JSON et les NPZ déjà écrits. On peut relancer exactement la même commande après une interruption ou après avoir remplacé une clé expirée dans `.env`.
+Si `pip` n'est pas disponible dans le venv, utiliser `uv pip install --python .venv/bin/python -r requirements.txt -e .`. La commande unique exécute d'abord **toutes les phases sur cinq parties**, puis la collecte cible, le parsing, l'entraînement, l'évaluation et le GIF. Elle construit ensuite l'atlas 64×64, la matrice des dix joueurs, les variables d'interaction entraînables, l'index vectoriel, les résumés bilingues et les visuels. Elle reprend les JSON, les NPZ et les checkpoints déjà écrits. On peut la relancer après une interruption ou après avoir remplacé une clé expirée dans `.env`. Le test 64×64 historique est documenté comme déjà examiné ; la nouvelle variante d'interaction n'est évaluée que sur validation.
 
 Pour un essai réel limité à cinq parties :
 

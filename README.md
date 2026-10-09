@@ -2,7 +2,7 @@
 
 # Shadow Faker
 
-[**Open the visual dashboard locally**](#visual-dashboard) · [**See the 3D probability landscape**](#the-landscape-of-next-moves) · [**Read the evidence**](RESULTS.md) · [**Français**](README.fr.md)
+[**Open the visual dashboard locally**](#visual-dashboard) · [**Explore the 64×64 atlas**](#a-higher-resolution-but-harder-question) · [**Read the evidence**](RESULTS.md) · [**Français**](README.fr.md)
 
 **A reproducible, local research pipeline for Faker-style macro decisions in League of Legends.** It currently predicts the next 16×16 map region, first item purchase, and skill upgrade from ranked solo-queue timelines sampled roughly **once per minute**. The research target is prediction at **less than a minute**, which requires higher-frequency replay or player-view evidence and a new benchmark. Only actions of the account resolved as `Hide on bush#KR1` are targets; the other nine players provide context. Riot account-v1 confirms the Riot ID and PUUID, but cannot establish a person's identity by itself.
 
@@ -10,11 +10,25 @@ The longer-term goal is a **Shadow Plus** policy that could improve on this beha
 
 **Measured status:** 465 usable ranked matches and 12,510 observations were collected from the available 470 match IDs. The selected model predicts the exact next 16×16 region in 11.28% of held-out test observations, versus 11.61% for a train-only role/phase prior. The requested clear exact-region baseline win has **not** been demonstrated. An exploratory pooling of predictions into 8×8 and 4×4 macro regions shows a positive signal that requires a fresh confirmatory test. Purchases and skill upgrades exceed their no-event baselines after validation calibration. Exact figures and limits are in [RESULTS.md](RESULTS.md).
 
+### A higher resolution, but harder question
+
+![Observed and predicted next locations in a 64×64 historical map](docs/figures/grid64_observed_vs_predicted.png)
+
+The new **64×64** candidate scores **1.09% exact cell** on 1,197 previously inspected test decisions; the strongest simple baseline scores **1.92%**. Within four cells, Shadow scores **22.89%** versus **16.88%** for copying the current location. A validation-calibrated prediction set covers **91.9%** of actual test destinations, but contains **1,791 of 4,096 cells on average: 43.7% of the entire map**. This is uncertainty disclosure, not 90% pinpoint accuracy or stronger play. No result in this historical set is prospective confirmation.
+
+![64×64 atlas of observed match events](docs/figures/event_atlas64.png)
+
+The event atlas distinguishes Faker kills and deaths, allies, opponents, Dragon, Baron, Herald, Void Grubs, buildings and wards. Events without positions remain counted but unplaced. A separate local state warehouse holds **12,975 frames, 12,510 transitions and 353,409 indexed events** across the 465 ranked games, with all ten players at each frame. The dashboard follows one game's ten-player ecosystem in an isometric **3D projection** and displays a Faker-centred transition matrix and an anisotropic adjacent-cell field. Its 13 enemy-reaction and ally-cover variables are also **inputs to a separate training candidate**, not merely decoration. That candidate scores **8.71% exact 16×16 on validation**, below the frozen model's **10.59%**, so it is not promoted or tested. Read [STATE_ECOSYSTEM.md](STATE_ECOSYSTEM.md), [DESIGN.md](DESIGN.md) and the measured [RESULTS.md](RESULTS.md).
+
+![Enemy proximity around Faker, with phase and score context](docs/figures/enemy_pressure.png)
+
+The account's **519 all-queue IDs** include the same 470 ranked-solo IDs plus **49 different-mode matches**. Those 49 timelines were cached locally but were not added to the ranked training set or relabeled as new ranked evidence. The first fresh ranked snapshot still contains **0/100** eligible new games for the frozen prospective test. Expanding to hundreds or thousands of comparable decisions requires verified new games or a separately sourced domain, never invented samples. [Roadmap and acquisition gates](ROADMAP.md).
+
 ### The landscape of next moves
 
 ![Three-dimensional comparison of observed and predicted map-cell frequencies](docs/figures/probability_surface_3d.png)
 
-The horizontal plane is the **16×16 map grid**; bar height is the **share of next-minute locations** in a cell, aggregated over 46 historical test matches. It is not game terrain, an individual replay, or a set of counterfactual futures. The model's dominant central spike is a measurable failure mode, not a discovered strategy. The [interactive local dashboard](#visual-dashboard) lets you rotate an isometric version, inspect cells, scrub team tempo, and replay one held-out match minute by minute.
+The horizontal plane is the **16×16 legacy map grid**; bar height is the **share of next-minute locations** in a cell, aggregated over 46 historical test matches. It is not game terrain, an individual replay, or a set of counterfactual futures. The model's dominant central spike is a measurable failure mode, not a discovered strategy. The [interactive local dashboard](#visual-dashboard) lets you rotate an isometric version, inspect cells, scrub team tempo, and replay one held-out match minute by minute.
 
 ### Faker on the map, Shadow on the map
 
@@ -68,7 +82,9 @@ Run the local dashboard after setup, then open [http://127.0.0.1:8008/](http://1
 .venv/bin/python -m shadowfaker.demo --max-frames 30
 ```
 
-The dashboard server binds to `127.0.0.1` and serves an allowlist of public visuals plus optional local replay files. The replay remains local and is excluded from Git. [Dashboard source](dashboard/), [reproducible aggregate renderer](scripts/render_results.py), and [research evidence](RESULTS.md) are in the repository.
+The dashboard server binds to `127.0.0.1` and serves an allowlist of public visuals plus optional local replay files. A sticky **shared timeline** lets you scrub minute 0–39 with a slider, keyboard or mouse wheel over the slider. It synchronizes the 64×64 atlas, 3D frequency surface, five-minute team tempo, opponent pressure, one-game replay and synthetic scenario cursor. The colour key travels with the timeline. Atlas and surface show **phase aggregates** (0–10, 10–20, 20+ minutes): the observed/modelled destination layers use 46 historical test games, while player/event layers use 465 ranked games. The replay shows **one selected game**, sampled about every minute; it stops at that game's final frame. Fixed historical score figures and the older 16×16 model remain labelled as fixed rather than pretending to change with the slider. The public phase counts are 460, 437 and 300 test destinations, summing to 1,197.
+
+The dashboard can open any **locally indexed ranked game** by match ID and search 930 locally generated English/French summaries plus separately sourced multilingual case studies. The replay remains local and is excluded from Git. [Dashboard source](dashboard/), [reproducible aggregate renderer](scripts/render_results.py), and [research evidence](RESULTS.md) are in the repository.
 
 ## Where 470, 465, and 12,510 come from
 
@@ -91,10 +107,14 @@ python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt -e .
 cp .env.example .env
 # Set RIOT_API_KEY in .env to the current Riot developer key.
-.venv/bin/python scripts/run_pipeline.py --limit 1000 --epochs 25
+# Full five-game pilot → ranked pipeline → 64×64, ten-player warehouse,
+# interaction training, validation, vectors, summaries, charts and replay:
+.venv/bin/python scripts/run_next_level.py --limit 1000 --epochs 25
 ```
 
-If `pip` is unavailable in the virtual environment, use `uv pip install --python .venv/bin/python -r requirements.txt -e .`. The command validates **every stage on five games first**, then collects all available games up to the target, parses, analyzes, trains, selects on validation, evaluates on held-out test games, and exports a GIF. JSON and match-level NPZ files are cached; rerun the same command after a crash or key renewal. For a five-game smoke run: `.venv/bin/python scripts/run_pipeline.py --limit 5 --epochs 3`.
+If `pip` is unavailable in the virtual environment, use `uv pip install --python .venv/bin/python -r requirements.txt -e .`. The base ranked pipeline validates **every stage on five games first**, then collects all available games up to the target, parses, analyzes, trains, selects on validation, evaluates on held-out test games, and exports a GIF. JSON and match-level NPZ files are cached; rerun the same command after a crash or key renewal. For a five-game base smoke run: `.venv/bin/python scripts/run_pipeline.py --limit 5 --epochs 3`.
+
+`run_next_level.py` also works as the one-command entry point on a fresh checkout: it invokes the base pipeline if the ranked dataset or checkpoint is missing, then validates its new stages on five games and builds the full local research extension. A rerun reuses matching checkpoints and cached source data. Its interaction candidate is scored on validation only; its 64×64 historical test report is explicitly marked as previously inspected. The local text index and per-game media are ignored by Git. Use `--pilot-only` to check five games without scaling.
 
 Use `--game-name "Name" --tag-line TAG` for another account, with a separate `data/raw/` directory if its PUUID differs. The collector uses the `asia` route for KR, filters queue 420 (ranked solo), skips remakes shorter than five minutes and missing timelines, and paginates without duplicates. A persistent 1.3-second interval between requests respects the 100 requests per two minutes development quota. It also handles `Retry-After`, backoff, timeouts, and clear 401/403 key errors. At two requests per match, 1,000 games require **at least about 43 minutes**, excluding pagination and retries. The actual account history may contain fewer.
 
@@ -147,6 +167,8 @@ Region metrics include top-1/top-5 accuracy and mean distance in grid cells agai
 - [ROADMAP.md](ROADMAP.md) and [BENCHMARK_PROTOCOL.md](BENCHMARK_PROTOCOL.md): next-level milestones and the frozen prospective test.
 - [GAME_THEORY_LAB.md](GAME_THEORY_LAB.md): a falsifiable research path for unusual formations and stronger played-game strategies.
 - [DIAMOND.md](DIAMOND.md): a multi-facet model of Faker's decision space, observability, and the route to sub-minute study.
+- [STATE_ECOSYSTEM.md](STATE_ECOSYSTEM.md): ten-player state matrix, enemy-response training channels, vector index, and geometric field.
+- [DESIGN.md](DESIGN.md): fan-made five-star visual system and how to read the two 3D projections.
 
 Professional LCK/Worlds games and ranked solo queue differ in roster, draft, communications, and incentives. Any future joint training must identify the domain and report separate held-out results. Reddit/X interpretations and translations are hypotheses until checked against match-specific evidence. No video, voice, or social-media text is silently treated as a numeric label.
 

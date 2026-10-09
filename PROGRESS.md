@@ -211,3 +211,51 @@
 - [x] Tableau de bord local FR/EN : cartes avec lecture de case, surface isométrique orientable, curseur de tempo, scores et échelle de preuve. Export d'un rejeu test de 26 minutes dans `artifacts/` (JSON et PNG locaux ignorés), avec heatmap de prédiction, positions alliées, destination observée, choix Shadow, or/XP et courbe rétrospective. Interface inspectée dans le navigateur : changement FR/EN, surface observée/prédite, angle et curseur de rejeu opérationnels. Le serveur ne sert que des chemins autorisés sur `127.0.0.1`.
 - [x] Vérification finale locale : `pytest -q` **5 passed** ; `node --check dashboard/app.js`, compilation Python, `git diff --check` et rendu des figures depuis les agrégats publics passent. Bannière française SVG inspectée visuellement ; surface 3D PNG inspectée. Routes publiques et visuels répondent HTTP 200 ; accès direct à `data/raw/`, `.env` et traversée de chemin répond HTTP 404. Checkpoint figé et original : même SHA-256 `869c468880650a556ad4f31d1297daba410e842fb06ff38bc6b80e9e81c780f7`. Aucun résultat prospectif ni score sous la minute n'a été inventé.
 - [x] Publication du code, des documents, du tableau de bord et des agrégats sur GitHub `main` via le connecteur authentifié : commit `31f5098ec2b8a76807824adec587c403b3d34f76`, arbre `39c9343f26e59545cf5bc4b53b5fff96bbf2dc9f`. `git ls-remote` et `git fetch` confirment le ref distant ; copie locale réconciliée et propre. Le refus d'authentification du `git push` HTTPS local n'a pas empêché la publication. Aucune donnée brute, clé, trace par partie ou poids du modèle n'est dans ce commit.
+## Extension 64×64 et événements — 2026-10-09
+
+- [x] Plan et risques écrits dans `PLAN.md` avant calcul. État initial : `main` propre, modèle historique 16×16 figé. Vérification Riot live : la première page ranked solo fraîche contient 100 IDs mais **aucun nouvel ID** par rapport au cache ; la première page toutes queues du même PUUID contient **19 IDs absents du corpus ranked**. Une exploration complète et une classification par queue sont nécessaires avant d'appeler cela « plus de games ».
+- [x] Inspection d'une timeline locale : les kills portent `position` et un timestamp ; Dragon et Void Grubs apparaissent comme `ELITE_MONSTER_KILL`, ces derniers avec `monsterType=HORDE`. Certaines wards et autres événements n'ont pas de position. L'atlas n'inventera pas de coordonnées pour eux.
+- [x] Exploration API étendue avec cache et quota persistant : **519 IDs** du même PUUID toutes queues, contre 470 en ranked solo. Les 49 autres matches sont 42 en queue 1750, 5 en 1740, 1 en 1700 (cartes 30) et 1 en 710 (carte 11, mode distinct). Match JSON et timeline des 49 conservés localement ; **49/49 timelines cachées**. Aucune nouvelle partie ranked solo queue 420, aucune partie supplémentaire comparable n'entre dans l'entraînement ou le test. Le modèle 64×64 se nourrit donc encore des 465 ranked validées ; la valeur documentaire des autres modes reste séparée.
+
+- [2026-10-09T21:33:26+00:00] Five-game atlas, warehouse, pressure, interaction and text pilot passed.
+
+- [2026-10-09T21:33:31+00:00] Next-level five-game pilot reused from checkpoint.
+
+- [2026-10-09T21:33:34+00:00] 64x64 labels: 465 matches, 12510 pairs, 0 errors.
+
+- [2026-10-09T21:33:37+00:00] Event atlas: 465 ranked matches, 0 errors.
+
+- [2026-10-09T21:33:37+00:00] Warehouse: 12975 states, 12510 transitions, 353409 events.
+
+- [2026-10-09T21:33:38+00:00] Enemy pressure: 12975 positional frames.
+
+- [2026-10-09T21:34:19+00:00] Text: 930 EN/FR summaries, 0 errors.
+
+- [2026-10-09T21:34:19+00:00] Vectors: 12510 states; kNN val exact64=0.0094.
+
+- [2026-10-09T21:34:20+00:00] 64x64 historical test: 0.0109 exact, best baseline 0.0192; prospective claim pending.
+
+- [2026-10-09T21:34:20+00:00] Interaction training states: 12510 pairs, 0 errors.
+
+- [2026-10-09T21:34:21+00:00] Interaction candidate validation exact16=0.0871; test intentionally unscored.
+
+- [2026-10-09T21:34:22+00:00] Dashboard aggregates, replay and public figures refreshed. Open http://127.0.0.1:8008/ with serve_dashboard.py.
+
+## Écosystème et livraison Five Star Research Edition — 2026-10-09
+
+- [x] Construction pilote cinq parties, puis corpus complet : `faker_states.sqlite` local contient **465 matches, 12 975 états, 12 510 transitions, 353 409 événements** ; matrice 4 096×4 096 sparse avec **11 450 cellules de transition occupées**. Aucune erreur de parsing. Les dix acteurs restent décrits autour de Faker ; aucun clic ou POV inventé.
+- [x] Atlas 64×64 et événements : cinq parties d'abord, puis 465 ranked. Les 49 parties supplémentaires toutes queues ont leur match/timeline en cache mais appartiennent à d'autres modes ; **0 ranked solo supplémentaires**. Les agrégats distinguent positions réelles/prédites, ennemis, alliés, kills, morts, Dragon, Baron, Herald, Grubs, bâtiments, wards et événements sans coordonnées.
+- [x] Entraînement 64×64 séparé et calibration sur validation. Test historique déjà consulté : **1,09 % case exacte** contre baseline forte **1,92 %** ; à quatre cases **22,89 %** contre copie de position **16,88 %**. Ensemble calibré pour 90 % : **91,90 % couverture** au prix de **43,72 % de la carte** (1 791 cases en moyenne). Aucune prétention de 90 % d'exactitude, ni confirmation prospective.
+- [x] Pression et interactions : trajectoires adverses et proximités observées par phase ; 13 canaux causaux supplémentaires effectivement injectés dans une variante du transformer. Pilote cinq puis **465 parties / 12 510 paires / 0 erreur**. Entraînement 25 époques, 540 196 paramètres, seed 42 ; CPU choisi après mini-benchmark **0,108 s** contre MPS **0,631 s**. Validation 16×16 **8,71 %**, baseline fréquence **8,08 %**, modèle gelé **10,59 %** sur la même validation. Variante non promue, test non consulté.
+- [x] Vecteurs : états 128-D de l'encodeur causal figé et matchs terminés 192-D rétrospectifs, tableaux mémoire-mappés pour les 12 510 paires et 465 parties. Le kNN k=25 obtient **0,94 % exact 64×64 en validation**, sous la baseline fréquence **1,25 %** ; résultat conservé comme diagnostic, pas victoire.
+- [x] Index textuel local : **930 résumés déterministes EN/FR** pour les 465 ranked, plus deux notes sourcées de la partie professionnelle Nidalee–Kha'Zix de 2013. Les originaux UTF-8 d'autres langues peuvent être importés avec langue, provenance et statut. Aucun transcript externe non vérifié n'a été injecté. Correction historique : ce duel est un début professionnel de printemps, **pas un match Worlds**.
+- [x] Interface fan-made rouge/noir/or, cinq étoiles sans affiliation T1/Riot : page d'accueil, atlas, métriques honnêtes, 3D des dix joueurs avec niveau en hauteur, champ local métrique, tableau des états t/t+1, timeline d'événements, recherche, partie choisie parmi 465 et scénarios synthétiques. Nouveau README EN/FR et documents `STATE_ECOSYSTEM.md`/`DESIGN.md` ; figures et schémas Mermaid liés.
+- [x] Entrée reproductible `scripts/run_next_level.py` : relance le pipeline ranked de base si nécessaire, force un pilote cinq parties avant mise à l'échelle, exploite caches/checkpoints, renouvelle les agrégats et garde la variante d'interaction sur validation. Exécution pilote puis complète réussie sans erreur.
+- [x] QA du tableau de bord via navigateur : **38** combinaisons atlas, **25** changements successifs du rejeu avec 25 états et images distincts, **45** combinaisons de scénarios, **8** tranches temporelles et **6** combinaisons surface/angle, soit **122 états interactifs vérifiés** avant recherche et ouverture d'une autre partie ; aucune erreur console. Recherche du cas Ambition : 2 langues trouvées. Autre partie ranked ouverte en **16 frames**. Les graphiques 64×64 ont été inspectés visuellement et leur contraste corrigé.
+- [x] Contrôles de sécurité et de code : 38 **paires couche/phase uniques** confirmées par lecture DOM ; 12 tests pytest passent, vérification syntaxe JS, compilation Python et `git diff --check` passent. Routes publiques JSON/PNG et recherche répondent 200. Match non indexé, `.env`, `data/raw/` et accès traversant répondent 404. Reconstruction idempotente de la base : **0 match réécrit, 465 réutilisés du cache**.
+
+## Frise commune, phase du modèle et code couleur — 2026-10-09
+
+- [x] Reconstruction des prédictions/observations 64×64 **par phase** depuis le checkpoint local : **460 + 437 + 300 = 1 197** paires test. Chaque histogramme observé et prédit totalise ses exemples ; la somme des trois phases égale l'archive 64×64 initiale **dans chacune des 4 096 cases**. Le JSON agrégé public est passé au schéma 2 ; aucun détail de partie ajouté.
+- [x] Frise persistante 0–39 min, utilisable au clavier et à la molette sur son curseur. Synchronisation dans les deux sens : atlas, surface 3D, tempo, pression, rejeu et repère du scénario synthétique. Légende globale et couche atlas colorée ; texte de provenance 46 parties test / 465 parties ranked / une seule partie rejouée. Les figures fixes et l'ancien modèle 16×16 sont signalés comme tels.
+- [x] QA réelle dans le navigateur : **40 positions consécutives** avec vérification DOM de la phase, du total 460/437/300, de la surface, de la pression et du tempo ; changement de phase depuis l'atlas et changement de minute depuis le rejeu vérifiés ; légendes FR/EN vérifiées. **0 erreur console**. Le graphique de pression adapte maintenant son axe au maximum observé, de sorte que la phase tardive reste dans le cadre. Suite pytest : **12 passed** ; syntaxe JS et `git diff --check` passent.

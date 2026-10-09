@@ -103,3 +103,30 @@ An additional pass over all 465 matches labels a minute when Faker's **next obse
 The bot approach proxy rises from 5.5% of eligible early minutes to 17.7% after minute 20; support rises from 6.1% to 16.1%; jungle from 7.7% to 14.1%. Top rises from 4.1% to 14.1%, so it cannot simply be dropped from the model. These are **descriptive frequencies**, not performance differences or proof of relative role importance. The exact aggregate numerators and denominators are in [docs/data/public_summary.json](docs/data/public_summary.json); private per-match data remains excluded from Git.
 
 Regenerate both charts using `.venv/bin/python scripts/render_results.py --from-summary`. The public summary supports figure regeneration without the Riot JSON. See [ROADMAP.md](ROADMAP.md) for the pre-registered next test and later policy work.
+# 64×64 extension: accuracy, coverage, and observed interaction
+
+![Observed versus predicted 64×64 destinations](docs/figures/grid64_observed_vs_predicted.png)
+
+The **separate 64×64 transformer** was prepared and trained on the same 465 usable ranked matches, with a five-game pilot and a match-level train/validation/test split (373/46/46). Its historical test has 1,197 next-minute decisions. It is a development result on a **previously inspected** test cohort, not fresh confirmation.
+
+| Measure | Shadow | Comparison | Reading |
+|---|---:|---:|---|
+| Exact 64×64 cell | **1.09%** | Most frequent train cell **1.92%** | Fails the exact-location baseline gate. |
+| Within four 64×64 cells | **22.89%** | Copy current location **16.88%** | Better near-location hit rate, exploratory. |
+| Top 5 candidate cells | **4.26%** | — | A five-cell shortlist still misses most moves. |
+| 90% target prediction set | **91.90% empirical coverage** | **43.72% mean map area** | Validation-calibrated; average 1,791/4,096 cells, not a pinpoint forecast. |
+| Raw 90% probability-mass set | **66.33% empirical coverage** | **15.05% mean map area** | Model probabilities are not calibrated for 90% coverage. |
+
+The coverage threshold was fitted on the **46 validation matches** and applied to the historical test. Coverage without set size is a misleading success criterion. These scores do not show that Shadow plays like or better than Faker.
+
+![Enemy proximity summary](docs/figures/enemy_pressure.png)
+
+The local state warehouse records **12,975 observed frames, 12,510 transitions and 353,409 categorized events**. Enemy proximity around Faker is measured as a phase-dependent observation, not attention or resources spent. A separate training candidate appends 13 causal-at-time-t interaction proxies. Its selection is based on validation; see [STATE_ECOSYSTEM.md](STATE_ECOSYSTEM.md). A memory-mapped 128-D state vector index covers all 12,510 examples; k=25 retrieval reaches **0.94% exact 64×64 validation accuracy**, below a **1.25%** frequent-cell baseline. Completed-game vectors contain future information and are excluded from prediction inputs.
+
+The interaction candidate (540,196 parameters, seed 42, 25 epochs, CPU chosen after a 0.108 s versus 0.631 s MPS mini-benchmark) obtained **8.71% exact 16×16 on 46 validation matches**, versus its most-frequent-region baseline **8.08%**. The frozen 16×16 model scores **10.59% on that validation split**. The interaction candidate was **not promoted or evaluated on test**. This establishes a trained feature path, not an improvement; further work needs better visibility, objectives, history and an independent future evaluation.
+
+The first same-PUUID all-queue audit found **519 match IDs**: 470 queue-420 ranked and 49 other-mode games. The latter are excluded from ranked model scores. The published event atlas and chart use only aggregate ranked counts; raw match detail and per-game traces remain local.
+
+### Time-linked visual audit
+
+The public 64×64 test histograms are now split by starting minute: **460** decisions at 0–10 min, **437** at 10–20 min, and **300** at 20+ min. They sum to the same 1,197 test decisions and reproduce the original observed and predicted all-phase histogram **cell by cell**. The sticky dashboard scrubber synchronizes these aggregates with observed opponent pressure, five-minute tempo, one selected game and a clearly synthetic scenario marker. These are different cohorts and resolutions, so a cursor at minute 13 means *the 10–20 minute aggregate* on the atlas and *the nearest available frame* in the open game. It is not a second-by-second reconstruction.

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#091526">
-  <title>Shadow Faker · Macro Lab</title>
+  <meta name="theme-color" content="#100c13">
+  <title>Shadow Faker · Five Star Research Edition</title>
   <link rel="stylesheet" href="/style.css">
   <script defer src="/app.js"></script>
 </head>
@@ -12,23 +12,33 @@
   <header class="topbar">
     <a class="brand" href="#top"><span class="brand-mark">SF</span><span>SHADOW <strong>FAKER</strong></span></a>
     <nav aria-label="Sections">
-      <a href="#map" data-i18n="nav_map">Minimap</a>
+      <a href="#atlas" data-i18n="nav_atlas">Atlas 64×64</a>
+      <a href="#map" data-i18n="nav_map">Legacy 16×16</a>
       <a href="#surface">3D</a>
       <a id="replay-nav" href="#replay" data-i18n="nav_replay" hidden>Évolution</a>
       <a href="#tempo" data-i18n="nav_tempo">Tempo</a>
       <a href="#strategy" data-i18n="nav_strategy">Stratégies</a>
+      <a href="#challenge" data-i18n="nav_challenge">Challenge</a>
+      <a href="#library" data-i18n="nav_library">Archives</a>
       <a href="#evidence" data-i18n="nav_evidence">Preuves</a>
     </nav>
     <button id="language" class="language" type="button" aria-label="Switch language">EN</button>
   </header>
 
+  <aside class="time-dock" aria-label="Chronologie synchronisée">
+    <div class="time-dock-main"><span data-i18n="time_title">CHRONOLOGIE · FAIRE DÉFILER</span><input id="time-scrubber" type="range" min="0" max="39" value="0" step="1" aria-label="Minute commune à toutes les vues interactives"><strong id="time-current">0 MIN</strong><span id="time-phase">0–10 MIN</span></div>
+    <div class="time-dock-legend" aria-label="Code couleur"><span><i class="key faker"></i><b data-i18n="key_faker">Faker à t</b></span><span><i class="key real"></i><b data-i18n="key_real">arrivée réelle</b></span><span><i class="key shadow"></i><b data-i18n="key_shadow">choix Shadow</b></span><span><i class="key ally"></i><b data-i18n="key_ally">alliés</b></span><span><i class="key enemy"></i><b data-i18n="key_enemy">adversaires</b></span><span><i class="key objective"></i><b data-i18n="key_objective">objectifs</b></span><small id="time-interpretation" aria-live="polite"></small></div>
+  </aside>
+
   <main id="top">
     <section class="hero wrap">
+      <div class="hero-stars" aria-label="Five star fan concept">★ ★ ★ ★ ★ <span>FIVE STAR RESEARCH EDITION</span></div>
       <div class="eyebrow"><span class="live-dot"></span><span data-i18n="hero_eyebrow">Laboratoire de décisions macro · KR ranked solo</span></div>
       <h1><span data-i18n="hero_title">Observer Faker.<br>Tester Shadow.</span></h1>
       <p class="hero-copy" data-i18n="hero_copy">Un modèle local prédit la prochaine décision du compte « Hide on bush#KR1 » à partir de l'état de la partie. Les autres joueurs, la vision approximée et les objectifs façonnent le contexte. L'objectif infra-minute reste une étape de recherche : les données actuelles sont espacées d'environ 60 secondes.</p>
-      <div class="hero-actions"><a class="button primary" href="#map" data-i18n="explore">Explorer les cartes</a><a class="button secondary" href="#evidence" data-i18n="evidence">Voir les preuves</a></div>
+      <div class="hero-actions"><a class="button primary" href="#atlas" data-i18n="explore">Explorer les cartes</a><a class="button secondary" href="#evidence" data-i18n="evidence">Voir les preuves</a></div>
       <div class="hero-line" aria-hidden="true"><span>STATE(t)</span><i></i><span>SHADOW</span><i></i><span>ACTION(t+1)</span></div>
+      <p class="hero-disclaimer">FAN-MADE RESEARCH PROJECT · NOT AFFILIATED WITH T1 OR RIOT GAMES</p>
     </section>
 
     <section class="stats wrap" aria-label="Project metrics">
@@ -38,9 +48,16 @@
       <div class="stat pending"><strong>0 / 100</strong><span data-i18n="stat_future">nouvelles parties pour confirmer</span></div>
     </section>
 
+    <section class="section wrap" id="atlas">
+      <div class="section-heading"><div><span class="kicker">01 / HIGH-RESOLUTION MAP</span><h2 data-i18n="atlas_title">Le jeu, case par case et événement par événement</h2></div><span class="pill">64 × 64 · 4 096 CASES</span></div>
+      <p class="lead" data-i18n="atlas_intro">Choisis une couche et une phase. La couleur indique où se concentrent les positions ou les événements observés dans les ranked : kills, morts, Dragon, Nashor, Herald, Grubs, bâtiments et wards. Les wards sans coordonnées sont comptées mais pas placées sur la carte.</p>
+      <div class="atlas-card"><div class="atlas-controls"><label for="atlas-layer" data-i18n="atlas_layer">Couche</label><select id="atlas-layer"><option value="positions_real" data-i18n="atlas_positions_real">Destinations observées</option><option value="positions_model" data-i18n="atlas_positions_model">Destinations prédites</option><option value="positions_enemy" data-i18n="atlas_positions_enemy">Positions adverses</option><option value="positions_allies" data-i18n="atlas_positions_allies">Positions alliées</option><option value="faker_kill" data-i18n="atlas_faker_kill">Kills du compte</option><option value="faker_death" data-i18n="atlas_faker_death">Morts du compte</option><option value="ally_kill" data-i18n="atlas_ally_kill">Kills alliés</option><option value="enemy_kill" data-i18n="atlas_enemy_kill">Kills adverses</option><option value="dragon">Dragon</option><option value="baron">Nashor</option><option value="herald">Herald</option><option value="grubs">Void Grubs</option><option value="building" data-i18n="atlas_building">Bâtiments</option><option value="ward_placed" data-i18n="atlas_ward">Wards posées</option></select><label for="atlas-phase" data-i18n="atlas_phase">Phase</label><select id="atlas-phase"><option value="early" data-i18n="atlas_early">0–10 min</option><option value="middle" data-i18n="atlas_middle">10–20 min</option><option value="late" data-i18n="atlas_late">20+ min</option></select><span class="layer-key"><i id="atlas-layer-swatch"></i><span id="atlas-layer-meaning"></span></span></div><div class="atlas-body"><canvas id="atlas-canvas" width="640" height="640" role="img" aria-label="Interactive 64 by 64 density map"></canvas><div class="atlas-side"><div class="atlas-kpi"><span data-i18n="atlas_total">Événements dans la phase</span><strong id="atlas-total">—</strong></div><div class="atlas-kpi"><span data-i18n="atlas_unplaced">Sans position connue</span><strong id="atlas-unplaced">—</strong></div><div id="atlas-readout" class="readout" aria-live="polite">Survole une case.</div><p data-i18n="atlas_note">Les positions de la carte sont échantillonnées ~60 s ; les événements portent un timestamp plus précis. Cette carte agrège des parties, elle ne reconstitue ni la vision du joueur ni une partie unique.</p></div></div></div>
+    </section>
+
     <section class="section wrap" id="map">
-      <div class="section-heading"><div><span class="kicker">01 / MAP</span><h2 data-i18n="map_title">Où Faker va. Où Shadow pense qu'il va.</h2></div><span class="pill">46 TEST MATCHES</span></div>
+      <div class="section-heading"><div><span class="kicker">02 / MAP · HISTORICAL 16×16</span><h2 data-i18n="map_title">Où Faker va. Où Shadow pense qu'il va.</h2></div><span class="pill">46 TEST MATCHES</span></div>
       <p class="lead" data-i18n="map_intro">Déplace la souris sur une case : les deux minimaps utilisent les mêmes 1 197 observations. La couleur montre la fréquence de chaque prochaine position, pas une trajectoire ou la vision du joueur.</p>
+      <p class="fixed-note" data-i18n="fixed_16">Archive fixe : ancien modèle 16×16, toutes phases réunies. Sa prédiction par phase n'a pas été conservée ; la frise anime les vues 64×64 ci-dessus.</p>
       <div class="map-card">
         <div class="map-grid">
           <figure><figcaption><span class="legend-dot teal"></span><span data-i18n="observed">FAKER · OBSERVÉ</span></figcaption><img id="actual-map" src="/figures/actual_minimap.png" alt="Observed next-region heatmap"></figure>
@@ -53,44 +70,74 @@
     </section>
 
     <section class="section wrap" id="surface">
-      <div class="section-heading"><div><span class="kicker">02 / POSSIBILITY SPACE</span><h2 data-i18n="surface_title">La minimap devient une surface de choix</h2></div><span class="pill">16 × 16 × P</span></div>
+      <div class="section-heading"><div><span class="kicker">03 / POSSIBILITY SPACE</span><h2 data-i18n="surface_title">La minimap devient une surface de choix</h2></div><span id="surface-resolution" class="pill">64 × 64 × P</span></div>
       <p class="lead" data-i18n="surface_intro">Les axes au sol sont les coordonnées de la carte ; la hauteur est la fréquence d'une prochaine position. Tourne la surface et compare la distribution réelle à Shadow. La troisième dimension est une probabilité, pas le relief réel de LoL ni une preuve de stratégie gagnante.</p>
-      <div class="surface-card"><svg id="surface-svg" viewBox="0 0 640 430" role="img" aria-label="Rotatable 3D next-position frequency surface"></svg><div class="surface-controls"><div class="segmented"><button id="surface-actual" type="button" class="active" data-i18n="surface_actual">Observé</button><button id="surface-shadow" type="button" data-i18n="surface_shadow">Shadow</button></div><label for="angle-slider"><span data-i18n="surface_rotate">Angle de vue</span> <strong id="angle-label">45°</strong></label><input id="angle-slider" type="range" min="15" max="75" value="45" step="1"></div></div>
+      <div class="surface-card"><p id="surface-time" class="phase-readout"></p><svg id="surface-svg" viewBox="0 0 640 430" role="img" aria-label="Rotatable 3D next-position frequency surface"></svg><div class="surface-controls"><div class="segmented"><button id="surface-actual" type="button" class="active" data-i18n="surface_actual">Observé</button><button id="surface-shadow" type="button" data-i18n="surface_shadow">Shadow</button></div><label for="angle-slider"><span data-i18n="surface_rotate">Angle de vue</span> <strong id="angle-label">45°</strong></label><input id="angle-slider" type="range" min="15" max="75" value="45" step="1"></div></div>
     </section>
 
     <section class="section wrap" id="replay" hidden>
-      <div class="section-heading"><div><span class="kicker">03 / EVOLVING GAME</span><h2 data-i18n="replay_title">Une décision change le prochain état</h2></div><span class="pill caution" data-i18n="replay_step">Échantillonné chaque ~60 s</span></div>
-      <p class="lead" data-i18n="replay_intro">Rejoue une partie de test locale, minute après minute. La carte montre la distribution du modèle à l'instant t, les alliés visibles dans l'état, la destination réelle à t+1 et le choix prédit. Entre deux frames, les actions et réactions restent inconnues.</p>
-      <div class="replay-card"><div class="replay-map"><img id="replay-image" src="" alt="Local minute-by-minute prediction heatmap"><div class="replay-legend"><span><i class="dot teammate"></i><span data-i18n="replay_team">alliés à t</span></span><span><i class="ring real"></i><span data-i18n="replay_real">Faker à t+1</span></span><span><i class="ring guess"></i><span data-i18n="replay_guess">choix Shadow</span></span></div></div><div class="replay-side"><div class="replay-time"><span data-i18n="replay_minute">Minute</span> <strong id="replay-minute">0</strong></div><div class="replay-metrics"><div><span data-i18n="replay_gold">Écart d'or équipe</span><strong id="replay-gold">–</strong></div><div><span data-i18n="replay_xp">Écart d'XP</span><strong id="replay-xp">–</strong></div><div><span data-i18n="replay_level">Niveau</span><strong id="replay-level">–</strong></div><div><span data-i18n="replay_uncertainty">Dispersion de prédiction</span><strong id="replay-entropy">–</strong></div></div><button id="replay-play" class="button primary" type="button" data-i18n="replay_play">▶ Rejouer</button></div><div class="replay-bottom"><input id="replay-slider" type="range" min="0" max="0" value="0" step="1" aria-label="Replay minute"><svg id="replay-trend" viewBox="0 0 800 130" role="img" aria-label="Team gold advantage through the sampled game"></svg><p data-i18n="replay_trend_note">Courbe rétrospective de l'écart d'or ; elle n'entre jamais dans l'état passé du modèle.</p></div></div>
+      <div class="section-heading"><div><span class="kicker">04 / EVOLVING GAME</span><h2 data-i18n="replay_title">Une décision change le prochain état</h2></div><span class="pill caution" data-i18n="replay_step">Échantillonné chaque ~60 s</span></div>
+      <p class="lead" data-i18n="replay_intro">Une seule question par image : depuis la position du compte à la minute affichée, dans quelle case sera-t-il environ une minute plus tard ? Le fond coloré est la probabilité prédite ; les anneaux montrent la réponse et le choix le plus probable du modèle.</p>
+      <div class="replay-browser"><div><label for="game-picker" data-i18n="game_picker">Ouvrir une des 465 parties indexées</label><div class="replay-picker-row"><input id="game-picker" type="search" list="game-options" placeholder="KR_…" aria-label="Ranked game ID"><datalist id="game-options"></datalist><button id="game-open" class="button primary" type="button" data-i18n="game_open">Ouvrir la partie</button></div></div><span id="game-status" aria-live="polite"></span><div id="notable-moments" class="notable-moments"></div></div>
+      <div class="replay-card"><div class="replay-map"><img id="replay-image" src="" alt="Carte d'une minute : point de départ, alliés, arrivée réelle et prévision"><div class="replay-legend"><span><i class="dot now"></i><span data-i18n="replay_now">Départ : compte à la minute affichée</span></span><span><i class="dot teammate"></i><span data-i18n="replay_team">Contexte : autres alliés au départ</span></span><span><i class="ring real"></i><span data-i18n="replay_real">Arrivée réelle une minute après</span></span><span><i class="ring guess"></i><span data-i18n="replay_guess">Case prévue par Shadow</span></span></div></div><div class="replay-side"><div class="replay-time"><span data-i18n="replay_minute">Minute de départ</span> <strong id="replay-minute">0</strong></div><div class="replay-metrics"><div><span data-i18n="replay_gold">Écart d'or équipe</span><strong id="replay-gold">–</strong></div><div><span data-i18n="replay_xp">Écart d'XP</span><strong id="replay-xp">–</strong></div><div><span data-i18n="replay_level">Niveau</span><strong id="replay-level">–</strong></div><div><span data-i18n="replay_uncertainty">Dispersion de prédiction</span><strong id="replay-entropy">–</strong></div></div><button id="replay-play" class="button primary" type="button" data-i18n="replay_play">▶ Rejouer</button></div><div class="replay-bottom"><input id="replay-slider" type="range" min="0" max="0" value="0" step="1" aria-label="Replay minute"><svg id="replay-trend" viewBox="0 0 800 130" role="img" aria-label="Team gold advantage through the sampled game"></svg><p data-i18n="replay_trend_note">Courbe rétrospective de l'écart d'or ; elle n'entre jamais dans l'état passé du modèle.</p></div></div>
+      <div class="ecosystem-card"><div><h3 data-i18n="ecosystem_title">Écosystème des dix joueurs · projection 3D</h3><p data-i18n="ecosystem_intro">Le sol est la carte. La hauteur est le niveau observé. Les traits relient Faker aux joueurs proches ; les points montrent l'état à t, les contours leur position suivante. Le losange blanc est le choix du modèle. Proximité et réaction visible ne prouvent pas une influence causale.</p></div><svg id="ecosystem-svg" viewBox="0 0 820 510" role="img" aria-label="Isometric ten-player game state around Faker"></svg><div id="ecosystem-readout" class="readout"></div></div>
+      <div class="state-lab"><div class="state-lab-heading"><h3 data-i18n="geometry_title">Champ local des possibilités · autour de Faker</h3><p data-i18n="geometry_intro">Couleur des cases voisines à t selon un tenseur métrique positif, orienté par le mouvement passé de Faker et la position actuelle des alliés proches. L'arrivée réelle et les événements après t sont affichés pour lire la transition, jamais pour calculer ce champ.</p></div><div class="state-lab-grid"><div><canvas id="replay-field" width="512" height="512" role="img" aria-label="Riemannian metric inspired local adjacency field"></canvas><p class="fine" data-i18n="geometry_legend">Turquoise : Faker à t · rose : arrivée à t+1 · bleu : alliés · rouge : adversaires et leurs déplacements. Le champ coloré est une hypothèse géométrique, pas la probabilité prédite par Shadow.</p></div><div><div id="state-action" class="readout"></div><div class="state-table-wrap"><table id="state-table"><thead><tr><th data-i18n="state_actor">Acteur</th><th>t</th><th>t+1</th><th>Δ</th></tr></thead><tbody></tbody></table></div><div id="state-events" class="state-events"></div></div></div></div>
     </section>
 
     <section class="section wrap" id="accuracy">
-      <div class="section-heading"><div><span class="kicker">04 / SCORE</span><h2 data-i18n="accuracy_title">Ce qu'on sait vraiment prédire</h2></div><span class="pill caution" data-i18n="exploratory">8×8 / 4×4 exploratoires</span></div>
+      <div class="section-heading"><div><span class="kicker">05 / SCORE</span><h2 data-i18n="accuracy_title">Ce qu'on sait vraiment prédire</h2></div><span class="pill caution" data-i18n="exploratory">8×8 / 4×4 exploratoires</span></div>
+      <div class="metric-ladder" aria-label="Historical 64 by 64 evaluation">
+        <div><span data-i18n="metric_exact">64×64 · CASE EXACTE</span><strong>1,09 %</strong><small data-i18n="metric_exact_note">Shadow sur 1 197 décisions test</small></div>
+        <div><span data-i18n="metric_baseline">BASELINE · CASE FRÉQUENTE</span><strong>1,92 %</strong><small data-i18n="metric_baseline_note">Meilleure règle simple sur les mêmes décisions</small></div>
+        <div><span data-i18n="metric_radius">À 4 CASES PRÈS</span><strong>22,89 %</strong><small data-i18n="metric_radius_note">Shadow · copie de la position précédente : 16,88 %</small></div>
+        <div><span data-i18n="metric_coverage">ZONE QUI COUVRE 91,9 %</span><strong>43,7 %</strong><small data-i18n="metric_coverage_note">Part moyenne de la carte proposée · seuil ajusté en validation</small></div>
+      </div>
+      <p class="fine metric-context" data-i18n="metric_context">Ces chiffres viennent d'un test historique déjà inspecté. « 91,9 % » n'est pas une prédiction exacte : la zone couvre en moyenne 1 791 cases sur 4 096. Aucune amélioration prospective ni capacité de jeu supérieure n'est démontrée.</p>
+      <div class="figure-card"><img src="/figures/grid64_observed_vs_predicted.png" alt="Observed versus predicted destinations on the historical 64 by 64 map" loading="lazy"></div>
       <div class="figure-card"><img src="/figures/benchmark_scales.png" alt="Accuracy of Shadow Faker and strongest baselines across map scales" loading="lazy"></div>
       <div class="explain-grid"><p data-i18n="exact_explain"><strong>16×16 :</strong> Shadow 11,28 %, baseline 11,61 %. Le critère initial n'est pas atteint.</p><p data-i18n="coarse_explain"><strong>8×8 et 4×4 :</strong> un signal de rotations plus larges apparaît, mais il a été examiné après lecture du test. Il faut des parties futures.</p></div>
     </section>
 
     <section class="section wrap" id="tempo">
-      <div class="section-heading"><div><span class="kicker">05 / TEMPO</span><h2 data-i18n="tempo_title">Une équipe qui chauffe et se refroidit</h2></div><span class="pill">5 MIN BINS</span></div>
-      <div class="figure-card"><img src="/figures/team_tempo.png" alt="Observed approaches toward jungle, bot carry and support in five-minute bins" loading="lazy"></div>
+      <div class="section-heading"><div><span class="kicker">06 / TEMPO</span><h2 data-i18n="tempo_title">Une équipe qui chauffe et se refroidit</h2></div><span class="pill">5 MIN BINS</span></div>
+      <div class="figure-card"><img src="/figures/team_tempo.png" alt="Vue d'ensemble statique des rapprochements vers jungle, bot carry et support" loading="lazy"><p class="chart-caption" data-i18n="tempo_overview">Vue d'ensemble fixe des 40 premières minutes. Le graphique coloré ci-dessous réagit au curseur.</p></div>
       <div class="interactive-card">
         <div><h3 data-i18n="tempo_interactive">Explorer une tranche de temps</h3><p data-i18n="tempo_interactive_help">Pourcentage de minutes où Faker se rapproche d'un allié déjà positionné.</p></div>
         <label for="minute-slider"><span data-i18n="minute">Minute</span> <strong id="minute-label">0–5</strong></label>
         <input id="minute-slider" type="range" min="0" max="7" value="0" step="1">
+        <svg id="tempo-focus" viewBox="0 0 800 260" role="img" aria-label="Interactive selected five-minute movement rates"></svg>
         <div id="tempo-bars" class="tempo-bars"></div>
       </div>
       <div class="explain-grid"><div class="figure-card compact"><img src="/figures/role_approach_by_phase.png" alt="Role approaches by early, middle and late phases" loading="lazy"></div><div class="insight side"><p data-i18n="tempo_explain">Ce sont des rapprochements géométriques, pas des preuves d'aide ou de communication. Le top évolue aussi : aucun rôle n'a un poids constant de 20 %.</p></div></div>
     </section>
 
+    <section class="section wrap" id="pressure">
+      <div class="section-heading"><div><span class="kicker">07 / OPPONENT RESPONSE</span><h2 data-i18n="pressure_title">La pression autour de Faker</h2></div><span class="pill">465 MATCHES · OBSERVED</span></div>
+      <p class="lead" data-i18n="pressure_intro">On suit les cinq adversaires : leurs positions par phase, combien sont à moins de 2 500 unités de Faker, et combien entrent dans ce rayon entre deux frames. Leurs déplacements sont visibles dans le rejeu. Ce n'est pas une mesure de sorts dépensés ni d'attention mentale.</p>
+      <div class="pressure-card"><p id="pressure-phase-readout" class="phase-readout"></p><svg id="pressure-chart" viewBox="0 0 800 330" role="img" aria-label="Enemy proximity and arrivals around Faker by phase"></svg><div id="pressure-slices" class="pressure-slices"></div><p class="fine" data-i18n="pressure_limit">Les états 0/1 et 0/2 sont rares, situés à des moments différents des autres états. Comparer directement leurs moyennes ne démontre ni que Faker attire la pression ni qu'il la réduit.</p></div>
+    </section>
+
     <section class="section wrap" id="strategy">
-      <div class="section-heading"><div><span class="kicker">06 / STRATEGY LAB</span><h2 data-i18n="strategy_title">Et si cinq joueurs allaient bot ?</h2></div><span class="pill caution" data-i18n="hypothesis">Hypothèse, pas résultat</span></div>
+      <div class="section-heading"><div><span class="kicker">08 / STRATEGY LAB</span><h2 data-i18n="strategy_title">Et si cinq joueurs allaient bot ?</h2></div><span class="pill caution" data-i18n="hypothesis">Hypothèse, pas résultat</span></div>
       <div class="figure-card"><img src="/figures/team_clustering.png" alt="Frequency of 3, 4 or 5 allied champions near bot carry" loading="lazy"></div>
       <p class="lead" data-i18n="strategy_explain">Dans ces 465 parties, une seule frame précoce montre les cinq alliés dans un rayon de 2 500 unités du bot carry. Cette proximité ne prouve pas une stratégie cinq bot. La question exige de mesurer ce qui est gagné, perdu ailleurs et comment l'adversaire réagit.</p>
       <a class="text-link" href="https://github.com/nabz0r/shadowfaker/blob/main/GAME_THEORY_LAB.md" target="_blank" rel="noopener" data-i18n="lab_link">Lire le laboratoire d'hypothèses ↗</a>
     </section>
 
+    <section class="section wrap" id="challenge">
+      <div class="section-heading"><div><span class="kicker">09 / CHALLENGE SIMULATOR</span><h2 data-i18n="challenge_title">Et si les cinq changeaient les règles ?</h2></div><span class="pill caution" data-i18n="challenge_badge">Simulation synthétique</span></div>
+      <p class="lead" data-i18n="challenge_intro">Compare cinq hypothèses : tous top, tous mid, tous jungle, tous bot, ou cinq copies imaginaires d'un style macro adaptatif. Le modèle répartit une ressource abstraite et une réponse adverse ; il ne simule ni les combats ni les chances de gagner.</p>
+      <div class="challenge-card"><div id="challenge-scenarios" class="scenario-tabs"></div><div class="challenge-controls"><label for="challenge-response"><span data-i18n="challenge_response">Réponse adverse après</span> <strong id="challenge-response-label">10 min</strong></label><input id="challenge-response" type="range" min="1" max="3" value="2" step="1"><label for="challenge-sharing"><span data-i18n="challenge_sharing">Partage des ressources</span> <strong id="challenge-sharing-label">70 %</strong></label><input id="challenge-sharing" type="range" min="0" max="2" value="1" step="1"></div><svg id="challenge-chart" viewBox="0 0 800 300" role="img" aria-label="Synthetic macro pressure over time"></svg><div id="challenge-readout" class="readout"></div><p class="fine" data-i18n="challenge_limit">Scores en unités arbitraires, hypothèses explicites et non calibrées sur les parties. « Cinq Faker » désigne une allocation fictive : nous n'avons pas cinq agents capables de jouer. Ce visuel sert à trouver des questions à tester en jeu.</p></div>
+    </section>
+
+    <section class="section wrap" id="library">
+      <div class="section-heading"><div><span class="kicker">10 / CASE LIBRARY</span><h2 data-i18n="library_title">Explorer les traces et les récits</h2></div><span class="pill">LOCAL · MULTILINGUAL</span></div>
+      <p class="lead" data-i18n="library_intro">La recherche locale relie 930 résumés factuels français/anglais des 465 ranked à des études de cas sourcées, dans leur langue d'origine. Les textes professionnels sont un autre domaine et ne deviennent jamais des labels ranked par simple ressemblance.</p>
+      <div class="library-card"><div class="library-controls"><input id="library-query" type="search" placeholder="Nidalee, jungle, Nashor, Kha'Zix…" aria-label="Search game summaries and case studies"><button id="library-search" class="button primary" type="button" data-i18n="library_search">Rechercher</button></div><p class="fine" data-i18n="library_note">Recherche en texte local avec langue et provenance. Un résultat décrit une partie ou une source ; il ne prouve pas une décision ni sa cause.</p><div id="library-results" aria-live="polite"></div></div>
+    </section>
+
     <section class="section wrap" id="evidence">
-      <div class="section-heading"><div><span class="kicker">07 / EVIDENCE</span><h2 data-i18n="evidence_title">Où nous en sommes</h2></div><span class="pill pending-pill">PROSPECTIVE: PENDING</span></div>
+      <div class="section-heading"><div><span class="kicker">11 / EVIDENCE</span><h2 data-i18n="evidence_title">Où nous en sommes</h2></div><span class="pill pending-pill">PROSPECTIVE: PENDING</span></div>
       <div class="steps"><div class="step done"><span>01</span><h3 data-i18n="step1">Décrire le compte</h3><p data-i18n="step1copy">465 matches ; timeline et actions à une minute.</p></div><div class="step done"><span>02</span><h3 data-i18n="step2">Tester le clone</h3><p data-i18n="step2copy">16×16 sous la meilleure baseline ; signaux 8×8 à confirmer.</p></div><div class="step current"><span>03</span><h3 data-i18n="step3">Attendre du neuf</h3><p data-i18n="step3copy">0/100 nouvelles parties éligibles au premier rafraîchissement.</p></div><div class="step future"><span>04</span><h3 data-i18n="step4">Jouer et comparer</h3><p data-i18n="step4copy">Une stratégie meilleure exige des parties comparables.</p></div></div>
       <div class="demo" id="demo" hidden><div><h3 data-i18n="demo_title">Démo locale · une partie de test</h3><p data-i18n="demo_copy">Prédiction et position observée sur une timeline. Fichier local, jamais publié dans Git.</p></div><img src="/demo.gif" alt="Local predicted versus actual replay" loading="lazy"></div>
       <p class="fine" data-i18n="footer_note">Compte Riot vérifié par PUUID ; l'API n'établit pas à elle seule l'identité de la personne. Données brutes et GIF de partie conservés localement. Cet outil raconte les preuves disponibles, pas une victoire sur Faker.</p>
