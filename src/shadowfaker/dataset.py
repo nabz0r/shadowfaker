@@ -9,12 +9,15 @@ from torch.utils.data import Dataset
 class MatchDataset(Dataset):
     """Index only sample offsets; retain at most two decompressed matches in memory."""
 
-    def __init__(self, processed: Path, meta: dict, split: str, max_cached: int = 2):
+    def __init__(self, processed: Path, meta: dict, split: str, max_cached: int = 2, view: str = "proxy"):
+        if view not in ("proxy", "oracle"):
+            raise ValueError("view must be proxy or oracle")
         self.processed = processed
         self.meta = meta
         self.index = [(mid, i) for mid in meta["splits"][split] for i in range(meta["counts"][mid])]
         self.cache: OrderedDict[str, dict] = OrderedDict()
         self.max_cached = max_cached
+        self.view = view
         self.item_vocab = {int(k): int(v) for k, v in meta["item_vocab"].items()}
 
     def __len__(self):
@@ -33,7 +36,9 @@ class MatchDataset(Dataset):
         mid, i = self.index[index]
         a = self._match(mid)
         item = int(a["item"][i])
-        return (torch.from_numpy(a["x"][i].copy()), torch.tensor(int(a["champion"][i]), dtype=torch.long),
+        x_key = "x_oracle" if self.view == "oracle" else "x"
+        return (torch.from_numpy(a[x_key][i].copy()), torch.tensor(int(a["champion"][i]), dtype=torch.long),
                 torch.tensor(int(a["region"][i]), dtype=torch.long),
                 torch.tensor(0 if item == 0 else self.item_vocab.get(item, 1), dtype=torch.long),
-                torch.tensor(int(a["skill"][i]), dtype=torch.long))
+                torch.tensor(int(a["skill"][i]), dtype=torch.long),
+                torch.tensor(float(a["win"][i]), dtype=torch.float32))

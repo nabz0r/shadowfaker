@@ -1,56 +1,62 @@
 # Shadow Faker
 
-Pipeline de recherche local pour prédire les décisions macro à une minute d'un compte Riot ID présumé être « hide on bush#KR1 ». Le code récupère des parties ranked solo KR (queue 420), transforme les timelines en observations causales, entraîne un petit transformer multi-têtes et compare ses prédictions à trois baselines. **L'identité réelle du joueur ne peut pas être établie par l'API seule.**
+**A reproducible, local research pipeline for Faker-style macro decisions in League of Legends.** It predicts the next 16×16 map region, first item purchase, and skill upgrade from ranked solo-queue timelines. Only actions of the account resolved as `Hide on bush#KR1` are targets; the other nine players provide context. Riot account-v1 confirms the Riot ID and PUUID, but cannot establish a person's identity by itself.
 
-## Démarrage
+The longer-term goal is a **Shadow Plus** policy that could improve on this behavioral prior. Prediction accuracy on old matches does not establish stronger play. [SHADOW_PLUS.md](SHADOW_PLUS.md) defines the evidence needed for that claim. [Version française](README.fr.md).
 
-macOS Apple Silicon, Python 3.11+ et une clé Riot valide sont requis. La clé de développement expire sous 24 h. L'installation vérifiée ici utilise Python 3.12 :
+**Measured status:** 465 usable ranked matches and 12,510 observations were collected from the available 470 match IDs. The selected model predicts the exact next region in 11.28% of held-out test observations, versus 11.61% for a train-only role/phase prior. The requested clear region-baseline win has **not** been demonstrated. Purchases and skill upgrades exceed their no-event baselines after validation calibration. Exact figures and limits are in [RESULTS.md](RESULTS.md).
+
+## One-command run
+
+Requires macOS Apple Silicon, Python 3.11+, and a current Riot development key. The validated local environment uses Python 3.12:
 
 ```bash
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt -e .
 cp .env.example .env
-# Remplacer la valeur de RIOT_API_KEY dans .env par la clé actuelle du portail Riot.
-.venv/bin/python scripts/run_pipeline.py --limit 1000
+# Set RIOT_API_KEY in .env to the current Riot developer key.
+.venv/bin/python scripts/run_pipeline.py --limit 1000 --epochs 25
 ```
 
-Si `pip` n'est pas disponible dans le venv, utiliser `uv pip install --python .venv/bin/python -r requirements.txt -e .`. La commande unique exécute d'abord **toutes les phases sur cinq parties**, puis la collecte cible, le parsing, l'entraînement, l'évaluation et le GIF. Elle reprend les JSON et les NPZ déjà écrits. On peut relancer exactement la même commande après une interruption ou après avoir remplacé une clé expirée dans `.env`.
+If `pip` is unavailable in the virtual environment, use `uv pip install --python .venv/bin/python -r requirements.txt -e .`. The command validates **every stage on five games first**, then collects all available games up to the target, parses, analyzes, trains, selects on validation, evaluates on held-out test games, and exports a GIF. JSON and match-level NPZ files are cached; rerun the same command after a crash or key renewal. For a five-game smoke run: `.venv/bin/python scripts/run_pipeline.py --limit 5 --epochs 3`.
 
-Pour un essai réel limité à cinq parties :
+Use `--game-name "Name" --tag-line TAG` for another account, with a separate `data/raw/` directory if its PUUID differs. The collector uses the `asia` route for KR, filters queue 420 (ranked solo), skips remakes shorter than five minutes and missing timelines, and paginates without duplicates. A persistent 1.3-second interval between requests respects the 100 requests per two minutes development quota. It also handles `Retry-After`, backoff, timeouts, and clear 401/403 key errors. At two requests per match, 1,000 games require **at least about 43 minutes**, excluding pagination and retries. The actual account history may contain fewer.
 
-```bash
-.venv/bin/python scripts/run_pipeline.py --limit 5 --epochs 3
-```
+## Model and data
 
-Pour préciser un autre compte : `--game-name "Nom" --tag-line TAG`. Il faut un dossier `data/raw/` distinct si le PUUID change.
+The versioned parser takes a causal window of eight one-minute frames. Inputs include Faker's champion and role, minute, gold and unspent gold, level/XP, lane plus jungle CS, recent deaths and purchases, team gold/XP advantage and its change, objective availability, ward and kill events, positions of ten players, and Faker's distances to allied roles and Dragon/Baron pits. Allied roles have stable slots ordered jungle, bot carry, support, mid, top. The transformer can learn different roles' importance at different phases. The next region, item, and skill are **Faker's actions only**. A fourth, auxiliary output estimates final match outcome; the future win label is never part of an input state.
 
-## Fonctionnement
+Each match stores two views: `x_oracle` has full timeline positions; default `x` is a **minimap proximity proxy** that hides enemies farther than 1,600 map units from an ally and carries their last-seen position and age. This is not true fog of war: enemy team gold/XP aggregates remain omniscient in both views. Train an oracle ablation with `.venv/bin/python -m shadowfaker.train --view oracle` after preserving the proxy checkpoint if needed. Missing target positions are skipped; an isolated parsing failure is logged and excluded.
 
-| Phase | Entrée | Sortie |
-|---|---|---|
-| Fetch | account-v1 puis match-v5 sur le routage `asia` | `data/raw/` et manifeste local |
-| Parse | match + timeline, une frame par minute | `data/processed/matches/*.npz`, `meta.json` |
-| Train | fenêtres causales de 8 frames | `models/best.pt`, `models/training.json`, `runs/` TensorBoard |
-| Évaluation | matches de test jamais vus | `artifacts/evaluation.json`, matrice de confusion PNG/NPY |
-| Démo | premier match du test | `artifacts/predicted_vs_actual.gif` |
+The 16×16 region loss mixes balanced and ordinary cross-entropy by default; no-purchase and no-skill labels are downweighted during training. A role- and phase-specific region prior is fitted on **training matches only**, then its smoothing and interpolation are selected on validation. No-purchase/no-skill output biases are also selected on validation to correct event-rate calibration. Splits are by **match**, never by frame. Item vocabulary and class weights are fitted on training matches only. The dataset holds at most two decompressed matches in RAM. Seed 42, dependency versions, schema, splits, and counts are recorded. CPU and MPS are benchmarked on a short epoch, then the faster backend is selected.
 
-Les entrées comprennent champion, minute, or individuel et des deux équipes, niveau, XP, CS, positions normalisées des dix joueurs, disponibilité approximative des objectifs et événements récents. Les sorties sont la prochaine région sur une grille 16×16, le premier achat de la minute suivante et la prochaine compétence améliorée. La classe 0 signifie qu'aucun achat ou point de compétence n'a été observé dans cet intervalle ; la classe 1 d'achat signifie un objet absent du vocabulaire d'entraînement. Les régions rares reçoivent un poids de perte plus élevé. La séparation train/validation/test est faite par **match**, avec seed fixe 42 ; le vocabulaire d'items et les poids de classe sont calculés sur le train uniquement.
+## Artifacts and evaluation
 
-Le client respecte un intervalle local de 1,3 s entre requêtes, persistant entre processus. C'est plus conservateur que 100 requêtes/2 min ; il traite `Retry-After`, les timeouts et les erreurs transitoires. À environ deux requêtes par partie, 1 000 parties demandent **au moins ~43 minutes** de collecte, plus les pages d'IDs, retries et le temps d'entraînement. Le nombre réel de ranked solo disponibles peut être inférieur à 1 000. Une erreur de clé 401/403 arrête la collecte avec un message explicite.
+| Stage | Local output |
+|---|---|
+| Fetch | `data/raw/` JSON and manifest |
+| Parse | `data/processed/matches/*.npz`, `meta.json` |
+| Team analysis | `artifacts/faker_rotations.json` and `.png` |
+| Train | `models/best.pt`, `models/training.json`, TensorBoard `runs/` |
+| Validation | `artifacts/evaluation_val.json`, confusion image/array |
+| Final test | `artifacts/evaluation.json`, `region_confusion.png` and `.npy` |
+| Demo | `artifacts/predicted_vs_actual.gif` from a held-out match |
 
-## Lire les résultats
+Region metrics include top-1/top-5 accuracy and mean distance in grid cells against the most frequent training region, copying the current region, staying at map center, and the train-only role/phase prior alone when calibration is available. The gain over the strongest baseline includes a paired 95% bootstrap interval sampled by match. Item and skill reports include event rates and accuracy conditional on a real purchase/upgrade. Final-outcome Brier score is compared with a constant training-win-rate baseline. Results are broken down by champion, patch, phase, Faker role, and team gold state. The confusion matrix covers all 256 regions. On a fresh full run, the runner compares the initial, wider three-layer, and explicit movement variants on **validation**, saves the selected configuration, then evaluates the test split. A rerun reuses that choice and the checkpoint.
 
-`evaluation.json` donne top-1/top-5 région, accuracy achat et compétence, taux d'actions, accuracy conditionnelle quand un événement survient, résultats par champion et trois baselines régionales : région la plus fréquente du train, copie de la région courante et centre de la carte (« reste mid »). La matrice de confusion est indexée par les 256 régions. Le script essaie une seconde configuration (modèle plus large et learning rate plus élevé) si le premier modèle ne bat pas toutes les baselines ; il conserve le meilleur des deux sur la métrique test. **Cette itération sur le test est exploratoire et rend son score optimiste.** Un protocole de recherche sérieux choisirait l'architecture sur validation et réserverait le test à une seule consultation.
+`faker_rotations.json` describes proximity to allied jungle/bot/support/top and objective pits by phase and match result. It also measures the **observed** two-minute change in team gold/XP advantage after nearby and farther observations, averaging by match first. These are associations, not causal estimates of help or intent.
 
-## Limites et données
+## Research, public material, and limitations
 
-- Les timelines donnent une vue omnisciente des positions adverses. Faker n'a pas cette vision sous le brouillard de guerre ; cela rend l'évaluation plus facile que la décision réelle.
-- Le modèle fait une prédiction à un pas. Il ne mesure pas l'accumulation d'erreurs d'un agent qui jouerait une partie entière et ne modélise pas le micro-jeu.
-- La disponibilité des objectifs est approximée par les horodatages d'événements ; elle peut varier selon les patches. Les champs absents des timelines sont remplacés par zéro ou ignorés selon leur rôle ; les labels sans position sont sautés.
-- Les achats et compétences sont rares. L'accuracy brute peut être dominée par « aucun événement » ; consulter aussi les métriques conditionnelles.
-- Le Riot ID résolu et la présence du PUUID dans les matches prouvent seulement que les parties appartiennent à ce compte, pas qu'il appartient personnellement à Faker.
-- `data/raw/`, `data/processed/`, `models/`, `runs/`, `artifacts/` et `.env` sont exclus de Git. **Ne redistribuez pas les JSON Riot bruts.** Usage personnel/recherche uniquement, sous les conditions applicables de Riot.
+- [RESEARCH_NOTES.md](RESEARCH_NOTES.md): how the three supplied PDFs informed event/XP features and leak prevention.
+- [OTHER_GAMES_RESEARCH.md](OTHER_GAMES_RESEARCH.md): methods from StarCraft, Dota, Minecraft, Atari, and other MOBA studies, with applicability boundaries.
+- [PUBLIC_GAME_ANALYSIS.md](PUBLIC_GAME_ANALYSIS.md): Korean/English official VODs, T1 communications, interviews, and fan discussions, with provenance and an annotation contract.
+- [REPLAY_FEASIBILITY.md](REPLAY_FEASIBILITY.md): replay/video path when matching local material exists.
+- [PLAN.md](PLAN.md) and [PROGRESS.md](PROGRESS.md): architecture, risks, actual tests, counts, and results.
+- [RESULTS.md](RESULTS.md): exact held-out scores, baselines, and the remaining region-prediction gap.
 
-Le projet lui-même est sous la licence AGPL-3.0 du dépôt. Consulter [PLAN.md](PLAN.md) pour l'architecture et [PROGRESS.md](PROGRESS.md) pour les validations et blocages effectifs.
+Professional LCK/Worlds games and ranked solo queue differ in roster, draft, communications, and incentives. Any future joint training must identify the domain and report separate held-out results. Reddit/X interpretations and translations are hypotheses until checked against match-specific evidence. No video, voice, or social-media text is silently treated as a numeric label.
 
-Sources API : [référence Riot](https://developer.riotgames.com/apis) et [clés, codes HTTP, rate limits](https://developer.riotgames.com/docs/portal).
+Timelines sample roughly every 60 seconds. They miss instant reactions, exact fog of war, ward positions, cooldown details, pings, voice, and Faker's own screen. One-step cloning does not test accumulated errors in full games, micro play, or strength against opponents. The outcome head predicts state–result association, not an action's causal value. Objective respawns are approximated and may vary by patch.
+
+Raw Riot JSON, processed samples, models, runs, artifacts, and `.env` are excluded from Git. **Do not redistribute Riot raw match data.** Use is local/personal research subject to Riot's applicable terms. Source documentation: [Riot API reference](https://developer.riotgames.com/apis), [developer portal limits](https://developer.riotgames.com/docs/portal), and [Replay documentation](https://developer.riotgames.com/docs/lol). Repository code follows its AGPL-3.0 license.

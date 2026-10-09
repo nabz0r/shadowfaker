@@ -11,12 +11,16 @@ from shadowfaker.util import atomic_json
 from shadowfaker.train import train
 from shadowfaker.evaluate import evaluate
 from shadowfaker.demo import demo
+from shadowfaker.analyze import analyze
+from shadowfaker.calibrate import calibrate
 
 
 def synthetic_game(game_number: int, frames: int = 14):
     puuid = "fixture-player"
     participants = [{"puuid": puuid if i == 1 else f"player-{i}", "participantId": i,
-                     "teamId": 100 if i <= 5 else 200, "championId": 238 if i == 1 else i}
+                     "teamId": 100 if i <= 5 else 200, "championId": 238 if i == 1 else i,
+                     "teamPosition": ("TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY")[(i - 1) % 5],
+                     "win": game_number % 2 == 0}
                     for i in range(1, 11)]
     match = {"info": {"queueId": 420, "gameDuration": frames * 60, "participants": participants}}
     timeline_frames = []
@@ -24,10 +28,11 @@ def synthetic_game(game_number: int, frames: int = 14):
         pf = {}
         for i in range(1, 11):
             # Different games have different paths; test has a learnable but nontrivial path.
-            x = 1300 + i * 80 + t * (330 + game_number * 3)
-            y = 1200 + i * 70 + t * (260 + game_number * 5)
+            x = (1300 + i * 80 + t * (330 + game_number * 3)) if i <= 5 else (11000 + i * 60 + t * 100)
+            y = (1200 + i * 70 + t * (260 + game_number * 5)) if i <= 5 else (11000 + i * 50 + t * 100)
             p = {"participantId": i, "totalGold": 500 + 220 * t + i * 10,
-                 "level": 1 + t // 2, "xp": t * 470, "minionsKilled": t * 6}
+                 "level": 1 + t // 2, "xp": t * 470, "minionsKilled": t * 6,
+                 "jungleMinionsKilled": t * 2 if i == 1 else 0}
             if not (t == 5 and i == 1):
                 p["position"] = {"x": x, "y": y}
             pf[str(i)] = p
@@ -53,7 +58,12 @@ def test_causal_features_and_missing_position():
     changed["info"]["frames"][-1]["participantFrames"]["1"]["totalGold"] = 999999
     b = extract_match(match, changed, "fixture-player")
     np.testing.assert_array_equal(a["x"], b["x"])
-    assert a["x"].shape[1:] == (8, 87)
+    assert a["x"].shape[1:] == (8, 134)
+    assert a["x_oracle"].shape == a["x"].shape
+    assert a["x"][0, -1, 62] == 0  # distant enemy hidden in minimap proxy
+    assert a["x_oracle"][0, -1, 62] > 0
+    assert a["x"][0, -1, 4] == pytest.approx(0.0)
+    assert a["x"][1, -1, 4] == pytest.approx(8 / 400)
 
 
 def test_deduplicated_pagination():
@@ -100,13 +110,21 @@ def test_split_by_match_and_resume(tmp_path):
     assert set(meta["splits"]["train"]).isdisjoint(meta["splits"]["test"])
     assert len(meta["counts"]) == 5
     assert meta["observations"] == 60
+    assert len(meta["patches"]) == 5
+    assert set(meta["faker_wins"].values()) == {True, False}
     # Parsing again leaves checkpointed match arrays unchanged.
     before = (processed / "matches" / "KR_0.npz").stat().st_mtime_ns
     parse(raw, processed)
     assert (processed / "matches" / "KR_0.npz").stat().st_mtime_ns == before
     trained = train(processed, tmp_path / "models", tmp_path / "runs", epochs=2, batch_size=16)
     assert trained["parameters"] < 5_000_000
+    calibration = calibrate(processed, tmp_path / "models" / "best.pt")
+    assert 0 <= calibration["accuracy"] <= 1
     metrics = evaluate(processed, tmp_path / "models", tmp_path / "artifacts")
     assert metrics["samples"] == 12
+    assert "by_patch" in metrics
+    assert "by_phase" in metrics and "value_brier" in metrics
+    rotations = analyze(processed, tmp_path / "artifacts")
+    assert rotations["matches"] == 5
     output = demo(processed, tmp_path / "models", tmp_path / "artifacts", max_frames=3)
     assert output.stat().st_size > 1000

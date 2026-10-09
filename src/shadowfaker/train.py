@@ -2,6 +2,7 @@ import argparse
 import hashlib
 import json
 import logging
+import os
 from pathlib import Path
 import time
 
@@ -24,46 +25,51 @@ def signature(meta: dict) -> str:
     return hashlib.sha256(json.dumps({"splits": meta["splits"], "item_vocab": meta["item_vocab"], "schema": meta["schema_version"]}, sort_keys=True).encode()).hexdigest()
 
 
-def loss_parts(outputs, targets, region_weights):
-    region, item, skill = outputs
-    _, _, y_region, y_item, y_skill = targets
-    region_loss = nn.functional.cross_entropy(region, y_region, weight=region_weights)
+def loss_parts(outputs, targets, region_weights, region_balance: float = .3):
+    region, item, skill, value = outputs
+    _, _, y_region, y_item, y_skill, y_win = targets
+    # Keep a class-balanced signal without letting rare regions dominate top-1 accuracy.
+    region_loss = (region_balance * nn.functional.cross_entropy(region, y_region, weight=region_weights)
+                   + (1 - region_balance) * nn.functional.cross_entropy(region, y_region))
     item_weight = torch.ones(item.shape[-1], device=item.device)
     item_weight[0] = .25
     skill_weight = torch.tensor([.25, 1, 1, 1, 1], device=skill.device)
     item_loss = nn.functional.cross_entropy(item, y_item, weight=item_weight)
     skill_loss = nn.functional.cross_entropy(skill, y_skill, weight=skill_weight)
-    return region_loss, item_loss, skill_loss
+    value_loss = nn.functional.binary_cross_entropy_with_logits(value, y_win)
+    return region_loss, item_loss, skill_loss, value_loss
 
 
-def train_epoch(model, loader, optimizer, device, weights, train=True):
+def train_epoch(model, loader, optimizer, device, weights, train=True, region_balance: float = .3):
     model.train(train)
-    totals = np.zeros(5, dtype=float)
+    totals = np.zeros(6, dtype=float)
     for batch in loader:
         batch = [tensor.to(device) for tensor in batch]
         with torch.set_grad_enabled(train):
             outputs = model(batch[0], batch[1])
-            r, i, s = loss_parts(outputs, batch, weights)
-            loss = r + .3 * i + .2 * s
+            r, i, s, v = loss_parts(outputs, batch, weights, region_balance)
+            loss = r + .3 * i + .2 * s + .1 * v
             if train:
                 optimizer.zero_grad(set_to_none=True)
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                 optimizer.step()
         count = len(batch[0])
-        totals += np.array([float(loss.detach()), float(r.detach()), float(i.detach()), float(s.detach()),
+        totals += np.array([float(loss.detach()), float(r.detach()), float(i.detach()), float(s.detach()), float(v.detach()),
                             float((outputs[0].argmax(-1) == batch[2]).float().mean().detach())]) * count
     return (totals / max(1, len(loader.dataset))).tolist()
 
 
-def benchmark(meta: dict, processed: Path, batch_size: int = 64) -> dict:
-    ds = MatchDataset(processed, meta, "train")
+def benchmark(meta: dict, processed: Path, batch_size: int = 64, view: str = "proxy",
+              width: int = 128, layers: int = 2, spatial_head: bool = False) -> dict:
+    ds = MatchDataset(processed, meta, "train", view=view)
     sample = Subset(ds, list(range(min(len(ds), 256))))
     candidates = ["cpu"] + (["mps"] if torch.backends.mps.is_available() else [])
     measured = {}
     for device in candidates:
         seed_all(CONFIG.seed)
-        model = MacroTransformer(meta["feature_dim"], len(meta["item_vocab"]) + 2).to(device)
+        model = MacroTransformer(meta["feature_dim"], len(meta["item_vocab"]) + 2,
+                                 width=width, layers=layers, spatial_head=spatial_head).to(device)
         optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4)
         weights = torch.tensor(meta["region_weights"], dtype=torch.float32, device=device)
         loader = DataLoader(sample, batch_size=batch_size, shuffle=False)
@@ -78,51 +84,64 @@ def benchmark(meta: dict, processed: Path, batch_size: int = 64) -> dict:
 
 def train(processed: Path = CONFIG.processed, models: Path = CONFIG.models, runs: Path = CONFIG.runs,
           epochs: int = 25, batch_size: int = 64, patience: int = 5,
-          lr: float = 3e-4, width: int = 128, layers: int = 2, force: bool = False) -> dict:
+          lr: float = 3e-4, width: int = 128, layers: int = 2, force: bool = False,
+          view: str = "proxy", region_balance: float = .3, spatial_head: bool = False) -> dict:
     meta = read_json(processed / "meta.json")
     if not meta:
         raise FileNotFoundError("Processed meta.json missing; run parse first")
     seed_all(CONFIG.seed)
+    if not 0 <= region_balance <= 1:
+        raise ValueError("region_balance must be between 0 and 1")
     models.mkdir(parents=True, exist_ok=True)
     runs.mkdir(parents=True, exist_ok=True)
     sig = signature(meta)
     checkpoint = models / "best.pt"
     if checkpoint.exists():
         existing = torch.load(checkpoint, map_location="cpu", weights_only=False)
+        existing_params = {"spatial_head": False, **existing.get("hyperparams", {})}
         if (not force and existing.get("signature") == sig and existing.get("epochs_target", 0) >= epochs
-                and existing.get("hyperparams") == {"lr": lr, "width": width, "layers": layers}):
+                and existing_params == {"lr": lr, "width": width, "layers": layers, "view": view,
+                                        "region_balance": region_balance, "spatial_head": spatial_head}):
             LOG.info("Reusing checkpoint for matching dataset signature")
             return existing["training"]
-    timings = benchmark(meta, processed, batch_size)
+    timings = benchmark(meta, processed, batch_size, view, width, layers, spatial_head)
     device = min(timings, key=timings.get)
     seed_all(CONFIG.seed)
-    model = MacroTransformer(meta["feature_dim"], len(meta["item_vocab"]) + 2, width=width, layers=layers).to(device)
+    model = MacroTransformer(meta["feature_dim"], len(meta["item_vocab"]) + 2, width=width, layers=layers,
+                             spatial_head=spatial_head).to(device)
     if parameter_count(model) >= 5_000_000:
         raise AssertionError("Model exceeds 5M parameters")
     training = {"device": device, "benchmark_seconds": timings, "parameters": parameter_count(model),
-                "seed": CONFIG.seed, "signature": sig, "hyperparams": {"lr": lr, "width": width, "layers": layers}, "history": []}
+                "seed": CONFIG.seed, "signature": sig, "hyperparams": {"lr": lr, "width": width, "layers": layers,
+                                                                          "view": view, "region_balance": region_balance,
+                                                                          "spatial_head": spatial_head}, "history": []}
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=.01)
     weights = torch.tensor(meta["region_weights"], dtype=torch.float32, device=device)
-    train_loader = DataLoader(MatchDataset(processed, meta, "train"), batch_size=batch_size, shuffle=True, num_workers=0)
-    val_loader = DataLoader(MatchDataset(processed, meta, "val"), batch_size=batch_size, shuffle=False, num_workers=0)
-    writer = SummaryWriter(str(runs / sig[:12]))
+    train_loader = DataLoader(MatchDataset(processed, meta, "train", view=view), batch_size=batch_size, shuffle=True, num_workers=0)
+    val_loader = DataLoader(MatchDataset(processed, meta, "val", view=view), batch_size=batch_size, shuffle=False, num_workers=0)
+    writer = SummaryWriter(str(runs / f"{sig[:12]}-{view}-{width}-{lr}-balance{region_balance}-spatial{int(spatial_head)}"))
     best, stale = float("inf"), 0
     for epoch in tqdm(range(1, epochs + 1), desc="training", unit="epoch"):
-        tr = train_epoch(model, train_loader, optimizer, device, weights)
-        va = train_epoch(model, val_loader, optimizer, device, weights, train=False)
-        row = {"epoch": epoch, "train_loss": tr[0], "val_loss": va[0], "train_region_acc": tr[4], "val_region_acc": va[4]}
+        tr = train_epoch(model, train_loader, optimizer, device, weights, region_balance=region_balance)
+        va = train_epoch(model, val_loader, optimizer, device, weights, train=False, region_balance=region_balance)
+        row = {"epoch": epoch, "train_loss": tr[0], "val_loss": va[0], "train_region_acc": tr[5], "val_region_acc": va[5],
+               "train_value_loss": tr[4], "val_value_loss": va[4]}
         training["history"].append(row)
         for k, value in row.items():
             if k != "epoch":
                 writer.add_scalar(k, value, epoch)
-        LOG.info("Epoch %d train %.3f val %.3f region %.3f", epoch, tr[0], va[0], va[4])
+        LOG.info("Epoch %d train %.3f val %.3f region %.3f", epoch, tr[0], va[0], va[5])
         if va[0] < best - 1e-4:
             best, stale = va[0], 0
             state = {key: value.detach().cpu().clone() for key, value in model.state_dict().items()}
+            temp_checkpoint = checkpoint.with_suffix(".tmp")
             torch.save({"state_dict": state, "signature": sig, "epochs_target": epochs,
-                        "hyperparams": {"lr": lr, "width": width, "layers": layers},
+                        "hyperparams": {"lr": lr, "width": width, "layers": layers, "view": view,
+                                         "region_balance": region_balance, "spatial_head": spatial_head},
                         "training": training.copy(), "config": {"feature_dim": meta["feature_dim"], "items": len(meta["item_vocab"]) + 2,
-                                                             "width": width, "layers": layers}}, checkpoint)
+                                                             "width": width, "layers": layers, "view": view,
+                                                             "spatial_head": spatial_head}}, temp_checkpoint)
+            os.replace(temp_checkpoint, checkpoint)
         else:
             stale += 1
             if stale >= patience:
@@ -133,7 +152,9 @@ def train(processed: Path = CONFIG.processed, models: Path = CONFIG.models, runs
     atomic_json(models / "training.json", training)
     saved = torch.load(checkpoint, map_location="cpu", weights_only=False)
     saved["training"] = training
-    torch.save(saved, checkpoint)
+    temp_checkpoint = checkpoint.with_suffix(".tmp")
+    torch.save(saved, temp_checkpoint)
+    os.replace(temp_checkpoint, checkpoint)
     return training
 
 
@@ -141,9 +162,17 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--epochs", type=int, default=25)
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--view", choices=["proxy", "oracle"], default="proxy")
+    parser.add_argument("--region-balance", type=float, default=.3)
+    parser.add_argument("--width", type=int, default=128)
+    parser.add_argument("--layers", type=int, default=2)
+    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--spatial-head", action="store_true")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
-    print(train(epochs=args.epochs, batch_size=args.batch_size))
+    print(train(epochs=args.epochs, batch_size=args.batch_size, view=args.view,
+                region_balance=args.region_balance, width=args.width, layers=args.layers, lr=args.lr,
+                spatial_head=args.spatial_head))
 
 
 if __name__ == "__main__":

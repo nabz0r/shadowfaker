@@ -23,20 +23,29 @@ def demo(processed: Path = CONFIG.processed, models: Path = CONFIG.models,
         raise ValueError("Demo match must belong to the held-out test split")
     model = load_model(meta, models / "best.pt")
     with np.load(processed / "matches" / f"{match_id}.npz") as z:
-        x = torch.from_numpy(z["x"].copy())
+        x = torch.from_numpy(z["x_oracle" if model.view == "oracle" else "x"].copy())
         champ = torch.from_numpy(z["champion"].copy())
         actual = z["region"].copy()
         minutes = z["minute"].copy()
+        won = bool(z["win"][0])
     with torch.no_grad():
-        probs = torch.cat([model(x[i:i + 128], champ[i:i + 128])[0].softmax(-1) for i in range(0, len(x), 128)]).numpy()
+        predictions = [model(x[i:i + 128], champ[i:i + 128]) for i in range(0, len(x), 128)]
+        probs = torch.cat([out[0].softmax(-1) for out in predictions]).numpy()
+        value = torch.cat([out[3].sigmoid() for out in predictions]).numpy()
     frames = min(max_frames, len(actual))
-    fig, ax = plt.subplots(figsize=(6.2, 6.6))
+    fig, (ax, value_ax) = plt.subplots(1, 2, figsize=(11.5, 5.8), gridspec_kw={"width_ratios": [1.2, 1]})
     heat = ax.imshow(probs[0].reshape(16, 16), origin="lower", extent=(0, 16, 0, 16), vmin=0, vmax=max(.04, float(probs.max())), cmap="viridis")
     dot_actual, = ax.plot([], [], "ro", markersize=10, label="Actual next region")
     dot_pred, = ax.plot([], [], "wx", markersize=10, markeredgewidth=2, label="Predicted top-1")
     ax.set(xlim=(0, 16), ylim=(0, 16), xlabel="Map grid X", ylabel="Map grid Y")
     ax.legend(loc="upper left")
     fig.colorbar(heat, ax=ax, label="Predicted probability")
+    value_ax.plot(minutes, value, color="tab:blue", lw=2, label="Estimated eventual win P")
+    value_ax.axhline(float(won), color="tab:green", linestyle="--", alpha=.6, label=f"Final outcome: {'win' if won else 'loss'}")
+    marker, = value_ax.plot([], [], "o", color="tab:red", markersize=9)
+    value_ax.set(xlim=(0, max(1, float(minutes[-1]))), ylim=(-.03, 1.03), xlabel="Game minute", ylabel="P(eventual win)",
+                 title="Estimated eventual win probability\n(state association, not action value)")
+    value_ax.legend(loc="lower right", fontsize=8)
 
     def update(i):
         heat.set_data(probs[i].reshape(16, 16))
@@ -44,7 +53,8 @@ def demo(processed: Path = CONFIG.processed, models: Path = CONFIG.models,
         dot_actual.set_data([r % 16 + .5], [r // 16 + .5])
         dot_pred.set_data([p % 16 + .5], [p // 16 + .5])
         ax.set_title(f"Held-out match {match_id}\nMinute {minutes[i]:.0f}: next region")
-        return heat, dot_actual, dot_pred
+        marker.set_data([minutes[i]], [value[i]])
+        return heat, dot_actual, dot_pred, marker
 
     animation = FuncAnimation(fig, update, frames=frames, interval=500, blit=False)
     artifacts.mkdir(parents=True, exist_ok=True)

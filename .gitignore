@@ -3,8 +3,7 @@
 __pycache__/
 .pytest_cache/
 *.py[cod]
-data/raw/
-data/processed/
+data/
 models/
 runs/
 artifacts/

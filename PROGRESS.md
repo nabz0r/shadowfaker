@@ -13,7 +13,7 @@
 - [x] Phase 8 (documentation) : README de setup, sorties, limites et sources ; `PLAN.md` et ce journal.
 - [x] Phases 3 à 7 sur cinq parties réelles : parsing réussi, 23 observations pour le match test, checkpoint et GIF produits. Top-1 région 0,0435 ; meilleure baseline 0,0870. Cette taille ne permet pas de conclusion ; collecte cible lancée.
 - [x] Benchmark mini-époque sur cinq parties réelles : CPU 0,034 s, MPS 1,513 s ; sélection CPU conformément au benchmark.
-- [ ] Collecte cible `--limit 1000 --epochs 25` lancée. Journal local `data/pipeline.log`, exclu de Git.
+- [x] Collecte cible `--limit 1000 --epochs 25` terminée avec tout l'historique disponible. Journaux locaux exclus de Git.
 
 ## Checklist explicite
 
@@ -26,13 +26,42 @@
 - [x] Lecture NPZ par match, cache maximal de deux matches ; corpus non chargé entièrement en RAM.
 - [x] Seed 42 et versions directes épinglées dans `requirements.txt`.
 - [x] Mesure réelle sur cinq parties effectuée.
-- [ ] ~1 000 parties et comparaison finale aux baselines : en cours.
-- [ ] Phase 2 : fetch cinq parties, puis cible ~1 000.
-- [ ] Phase 3 : parse et split.
-- [ ] Phase 4-5 : benchmark et entraînement.
-- [ ] Phase 6 : évaluation et baselines.
-- [ ] Phase 7 : GIF.
-- [ ] Phase 8 : README, validation et publication.
+- [x] 470 IDs disponibles via l'API, 465 parties exploitables ; comparaison aux baselines effectuée. L'objectif de ~1 000 n'est pas atteignable depuis cet historique de compte au jour de la collecte.
+- [x] Audit sur une partie Vi : `jungleMinionsKilled` était séparé de `minionsKilled` dans les frames. CS corrigé pour tous les joueurs, schéma passé à v3 ; collecte interrompue puis reprise à partir du cache (39 timelines déjà présentes, aucun JSON à retélécharger).
+- [x] Pagination complète : l'API ne renvoie que 470 IDs ranked solo (page 400 = 70 IDs, puis fin). L'objectif « ~1 000 » est impossible avec l'historique actuellement disponible pour ce PUUID. La barre de progression a été corrigée pour refléter les IDs effectivement disponibles ; les 45 timelines déjà en cache sont conservées.
+- [x] Trois PDF fournis par l'utilisateur lus et analysés dans `RESEARCH_NOTES.md`. Le papier Applied Sciences motive l'ajout de l'écart d'XP entre équipes et d'événements Baron/Herald ; le diagnostic par patch répond au risque de score agrégé masquant la dérive. Le schéma passe à v4. La sélection d'événements basée sur `t+1` est écartée des entrées pour éviter une fuite du futur. Les deux autres articles portent sur les LLM et ne sont pas présentés comme validation de ce modèle de jeu.
+- [x] Pilote indépendant sur 90 matches (2 404 observations, schéma v4) : top-1 région 0,0610 contre 0,0854 pour la baseline région fréquente ; copie 0,0569. Diagnostic : la perte fortement pondérée semble sous-prédire les régions centrales fréquentes (région 119 = 198/1 923 observations train). La perte région devient 30 % pondérée + 70 % non pondérée pour conserver le traitement du déséquilibre sans sacrifier la top-1 ; nouvel essai lancé sur le même split.
+- [x] Second pilote sur les mêmes 90 matches : top-1 région 0,0650, top-5 0,1748 ; légère amélioration mais encore sous la baseline 0,0854. Le corpus final disponible reste nécessaire.
+- [x] Clarifications utilisateur intégrées : la cible est exclusivement l'action de Faker ; les rôles alliés sont identifiés et ordonnés (jungle, bot, support, mid, top), avec signaux de wards, kills et variations or/XP. Les dix positions sont conservées en vue macro complète, mais le modèle par défaut utilise un proxy de minimap qui masque les ennemis éloignés des alliés. Riot ne fournit pas visibilité exacte, coordonnées de wards, pings ni communication ; ils ne sont pas inventés.
+- [x] Analyse descriptive des rotations par phase, rôle et issue ajoutée ; une tête auxiliaire estime l'issue finale sans l'utiliser en entrée. Cette estimation ne prouve aucun effet causal d'une action. Le schéma versionné passe à v6 ; tests synthétiques de bout en bout réussis.
+- [x] Piste replay étudiée : aucun client LoL/`.rofl`/VOD LoL présent, Replay API locale indisponible. Support Riot : replays du patch courant, 20 dernières parties, sans chat. `REPLAY_FEASIBILITY.md` décrit l'export vidéo via l'API Replay officielle, l'alignement timeline et la validation des annotations de minimap/wards/pings ; aucune observation visuelle ou communication n'est prétendue disponible pour les 470 parties actuelles.
+- [x] Pilote 200 matches, schéma v6 et vue minimap proxy : 5 274 observations, 20 matches test, top-1 région 0,0845 contre 0,0786 pour la meilleure baseline ; top-5 0,2927. L'achat reste sous la baseline « aucun achat » (0,4853 contre 0,5403) et la tête de victoire sous la prévalence constante (Brier 0,3090 contre 0,2607).
+- [x] Diagnostic achats : `currentGold` est présent dans les timelines brutes, mais absent de la première représentation. Ajout de l'or non dépensé, de la proximité de la base, des morts récentes et des variations de niveau/or de Faker ; schéma v7. Nouveau pilote 200 matches lancé avant l'entraînement final.
+- [x] Second pilote 200 matches, schéma v7 : top-1 région 0,0845, top-5 0,2986 ; achat 0,5187 contre baseline « aucun achat » 0,5403. L'issue auxiliaire reste non calibrée (Brier 0,3542 contre constante 0,2607) ; ne pas la présenter comme un estimateur causal.
+- [x] Analyse enrichie : proximité Faker–jungler/bot/support et variation d'écart d'or/XP dans les deux minutes suivantes, comparées descriptivement aux minutes éloignées, agrégées par match, phase et issue. Les positions absentes sont exclues ; interprétation non causale explicite.
+- [x] Sélection de la configuration déplacée vers le split validation ; le test final n'est exécuté qu'après ce choix. Les deux pilotes antérieurs ont servi au développement des features, donc leurs scores restent exploratoires.
+- [x] Recherche complémentaire sur entraînements dans StarCraft II (AlphaStar et Unplugged), Dota 2 (OpenAI Five), Atari (Decision Transformer) et Minecraft (VPT/MineRL). Sources primaires et implications exploitables consignées dans `OTHER_GAMES_RESEARCH.md` ; self-play et RL hors ligne ne sont pas présentés comme réalisables depuis 470 timelines seules.
+- [x] Travaux MOBA hiérarchiques et macro-goals lus : intégration expérimentale de distances rôle par rôle et Dragon/Baron dans les états, en cohérence avec les cibles « où aller »/« quelle ressource » ; schéma v8, pilote 200 matches relancé. Corpus TLoL de replays décodés identifié comme référence potentielle, sans transfert aveugle des anciens patches/ADC au style Faker.
+- [x] Objectif utilisateur « Shadow Faker à 110 % » cadré dans `SHADOW_PLUS.md` : fidélité mesurable maintenant, supériorité de jeu exigeant valeur conditionnée à l'action, support hors ligne et parties jouées. IQL, CQL et AWR documentés comme voies expérimentales, sans confondre la tête actuelle de victoire avec une estimation causale d'action.
+- [x] Revue multilingue initiale de sources publiques : VOD officielle Worlds 2024, vidéo T1 de communications en coréen, entretien direct Inven en coréen et traduction anglaise, commentaires Reddit. Provenance, statut « lu » vs « localisé », domaine pro vs solo queue et contrat d'annotation consignés dans `PUBLIC_GAME_ANALYSIS.md`. Recherche X peu concluante ; aucun commentaire non vérifié n'a été converti en label.
+- [x] Collecte cible terminée : 470 IDs disponibles, 465 matches exploitables, cinq remakes exclus, zéro erreur de parse ; schéma v8, 12 510 observations, split 373/46/46 matches train/val/test. Pipeline complet lancé. L'évaluation ajoute un intervalle bootstrap apparié par match pour le gain top-1 contre la meilleure baseline.
+- [x] Premier entraînement complet : validation top-1 0,0941 contre baseline 0,0808, mais test 0,0977 contre baseline 0,1128 (gain −1,50 point ; bootstrap 95 % de −3,33 à +0,43). Le critère final n'est pas satisfait. Diagnostic : répartition de rôle différente (65 % mid en validation, 82 % en test) et région 119 plus fréquente en test.
+- [x] Prior spatial par rôle et phase ajouté depuis les matches train, l'interpolation et le lissage choisis sur validation. Sur le checkpoint initial, validation top-1 0,1059 contre la meilleure baseline enrichie à 0,0902, gain 1,57 point avec bootstrap apparié 95 % de +0,40 à +2,57. Test de cette variante : 0,1128 contre la baseline prior à 0,1161 ; le critère final n'est pas satisfait. Le test de la variante retenue reste exploratoire après la première consultation du test.
+- [x] Ablation sans pondération de classe région : validation calibrée top-1 0,1028 ; moins forte que la variante mixte sur le split de sélection. Variante mixte restaurée. Essai de largeur 192, trois couches, LR 0,001 lancé sans fuite du test dans la sélection.
+- [x] Variante large (1 424 292 paramètres, CPU plus rapide que MPS : 0,192 s contre 1,278 s au mini-benchmark) : arrêt anticipé à 15 époques, meilleure perte à l'époque 10 ; top-1 région calibrée en validation 0,1020, sous le modèle compact à 0,1059. Modèle compact retenu.
+- [x] Calibrage de la classe « aucun achat » et « pas de compétence » sur validation : modèle compact 0,5969 achats contre baseline 0,5678 ; 0,5631 compétences contre baseline « aucune » 0,4776. Sur test : achats 0,5881 contre 0,5530 ; compétences 0,5530 contre 0,4703. Le score d'achat conditionnel à un achat réel reste faible (0,1009).
+- [x] Test après cette sélection : top-1 région 0,1128, top-5 0,3358, région la plus fréquente 0,1128, prior rôle/phase 0,1161 ; gain contre la meilleure baseline −0,334 point, IC bootstrap 95 % [−1,513 ; +0,868]. L'issue auxiliaire obtient Brier 0,2242 contre 0,2505 pour la prévalence constante ; cela n'établit pas la valeur d'une action. Variante spatiale supplémentaire lancée ensuite sur le split validation.
+- [x] Variante spatiale explicite (~538 790 paramètres) : direction de déplacement apprise depuis la position présente, arrêt anticipé à 20 époques ; top-1 validation calibré 0,1051 contre 0,1059 pour le modèle compact. Non évaluée sur test, modèle compact restauré.
+- [x] Diagnostic additionnel : tableau de transitions spatiales conditionné par région actuelle/rôle/phase, ajusté sur train, 0,1075 sur validation seul. Une recherche large d'interpolation atteint 0,1082 (trois exemples de plus que le compact sur 1 275) ; gain minuscule et exploratoire, donc non promu ni évalué sur test.
+- [x] Distance spatiale ajoutée à l'évaluation : sur test, erreur moyenne 4,37 cases pour le modèle compact contre 3,99 pour la région fréquente et 3,97 pour le prior rôle/phase. Cela confirme que le top-1 faible n'est pas simplement une erreur de case voisine.
+- [x] Vérification finale locale : `pytest -q` = 4 tests passés ; relance de la commande complète depuis le cache, 465 matches repris, checkpoint réutilisé, métriques et GIF régénérés en quelques secondes. `RESULTS.md` documente le critère de performance non atteint sans masquer la première consultation du test.
+- [x] Lecture descriptive des 465 matches : proximité support en milieu de partie 23,1 % des minutes dans les parties gagnées contre 21,0 % dans les perdues ; proximité Dragon 11,5 % contre 9,5 % ; proximité bot après 20 min 34,7 % contre 32,2 %. Jungle en début de partie 23,2 % contre 22,3 %. Les écarts sont petits, non corrigés des situations de jeu et ne démontrent aucun effet causal.
+- [x] Phase 2 : fetch cinq parties, puis totalité des parties disponibles.
+- [x] Phase 3 : parse et split par match.
+- [x] Phase 4-5 : benchmark et entraînement.
+- [x] Phase 6 : évaluation et baselines.
+- [x] Phase 7 : GIF.
+- [ ] Phase 8 : README, validation finale et publication des derniers changements sur `main`.
 
 - [2026-10-09T20:51] Fetch 5: 5 usable ranked matches cached.
 
@@ -53,3 +82,93 @@
 - [2026-10-09T20:51] Evaluate 5: region top-1 0.0435, best baseline 0.0870.
 
 - [2026-10-09T20:51] Demo 5: predicted_vs_actual.gif generated from held-out test match.
+
+- [2026-10-09T20:53] Fetch 5: 39 usable ranked matches cached.
+
+- [2026-10-09T20:53] Parse 5: 5 matches, 136 observations, 0 errors.
+
+- [2026-10-09T20:53] Train 5: 3 epochs, device cpu, 516133 parameters.
+
+- [2026-10-09T20:53] Evaluate 5: region top-1 0.0435, best baseline 0.0870.
+
+- [2026-10-09T20:53] Demo 5: predicted_vs_actual.gif generated from held-out test match.
+
+- [2026-10-09T20:54] Fetch 5: 45 usable ranked matches cached.
+
+- [2026-10-09T20:54] Parse 5: 5 matches, 136 observations, 0 errors.
+
+- [2026-10-09T20:54] Train 5: 3 epochs, device cpu, 516133 parameters.
+
+- [2026-10-09T20:54] Evaluate 5: region top-1 0.0435, best baseline 0.0870.
+
+- [2026-10-09T20:54] Demo 5: predicted_vs_actual.gif generated from held-out test match.
+
+- [2026-10-09T20:56] Fetch 5: 94 usable ranked matches cached.
+
+- [2026-10-09T20:56] Parse 5: 5 matches, 136 observations, 0 errors.
+
+- [2026-10-09T20:56] Train 5: 3 epochs, device cpu, 516773 parameters.
+
+- [2026-10-09T20:56] Evaluate 5: region top-1 0.0435, best baseline 0.0870.
+
+- [2026-10-09T20:56] Demo 5: predicted_vs_actual.gif generated from held-out test match.
+
+- [2026-10-09T21:13] Fetch 5: 5 usable ranked matches available for this stage.
+
+- [2026-10-09T21:13] Parse 5: 5 matches, 136 observations, 0 errors.
+
+- [2026-10-09T21:13] Analyze 5: proximity by role/phase/outcome from 5 matches.
+
+- [2026-10-09T21:13] Train 5: 3 epochs, device cpu, 522278 parameters.
+
+- [2026-10-09T21:13] Validate 5: region top-1 0.0455, best baseline 0.0909.
+
+- [2026-10-09T21:13] Demo 5: predicted_vs_actual.gif generated from held-out test match.
+
+- [2026-10-09T21:13] Fetch 1000: 465 usable ranked matches available for this stage.
+
+- [2026-10-09T21:13] Parse 1000: 465 matches, 12510 observations, 0 errors.
+
+- [2026-10-09T21:13] Analyze 1000: proximity by role/phase/outcome from 465 matches.
+
+- [2026-10-09T21:17] Train 1000: 25 epochs, device cpu, 538532 parameters.
+
+- [2026-10-09T21:17] Validate 1000: region top-1 0.0941, best baseline 0.0808.
+
+- [2026-10-09T21:17] Demo 1000: predicted_vs_actual.gif generated from held-out test match.
+
+- [2026-10-09T21:17] Final test 1000: region top-1 0.0977, best baseline 0.1128.
+
+- [2026-10-09T21:32] Fetch 1000: 465 usable ranked matches available for this stage.
+
+- [2026-10-09T21:32] Parse 1000: 465 matches, 12510 observations, 0 errors.
+
+- [2026-10-09T21:32] Analyze 1000: proximity by role/phase/outcome from 465 matches.
+
+- [2026-10-09T21:32] Train 1000: 25 epochs, device cpu, 538532 parameters.
+
+- [2026-10-09T21:32] Calibrate 1000: train-only role/phase spatial prior, alpha 0.75, validation accuracy 0.1059.
+
+- [2026-10-09T21:32] Validate 1000: region top-1 0.1059, best baseline 0.0902.
+
+- [2026-10-09T21:32] Demo 1000: predicted_vs_actual.gif generated from held-out test match.
+
+- [2026-10-09T21:32] Final test 1000: region top-1 0.1128, best baseline 0.1161.
+
+- [2026-10-09T21:34] Fetch 1000: 465 usable ranked matches available for this stage.
+
+- [2026-10-09T21:34] Parse 1000: 465 matches, 12510 observations, 0 errors.
+
+- [2026-10-09T21:34] Analyze 1000: proximity by role/phase/outcome from 465 matches.
+
+- [2026-10-09T21:34] Train 1000: 25 epochs, device cpu, 538532 parameters.
+
+- [2026-10-09T21:34] Calibrate 1000: train-only role/phase spatial prior, alpha 0.75, validation accuracy 0.1059.
+
+- [2026-10-09T21:34] Validate 1000: region top-1 0.1059, best baseline 0.0902.
+
+- [2026-10-09T21:34] Demo 1000: predicted_vs_actual.gif generated from held-out test match.
+
+- [2026-10-09T21:34] Final test 1000: region top-1 0.1128, best baseline 0.1161.
+
+- [2026-10-09T21:34] Performance gate unmet: test region gain is not clearly above the strongest baseline.

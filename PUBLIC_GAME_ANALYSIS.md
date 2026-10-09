@@ -1,0 +1,21 @@
+# Public match analysis: multilingual evidence register
+
+Reviewed on 2026-10-09. Public Worlds/LCK material is a source of **hypotheses and annotations**, not a substitute for the match timeline or evidence that a solo-queue match had the same team communication. This register distinguishes what was actually read from videos that were only located.
+
+| Source | Language / evidence level | What we verified | Pipeline implication |
+|---|---|---|---|
+| [LoL Esports: T1 vs BLG, Worlds 2024 final VOD](https://www.youtube.com/watch?v=jWjrdz-lLdU) | Official match video; located, not transcribed | A match-specific official broadcast exists. The broadcast view is a spectator view. | Candidate for timestamped manual annotation of Faker rotations, objective setups and visible team formations, kept in a **professional-match** domain. Do not infer Faker's own screen from the broadcast. |
+| [T1: T1scord 2024 episode 18](https://www.youtube.com/watch?v=MPcUGG8zvrc) | Korean, team-published edited communications; located through a [Korean listing](https://mania.kr/g2/bbs/board.php?bo_table=loltalk&wr_id=256801), not independently transcribed | A match-related communications video is publicly linked. It is an edited selection, not a full synchronized voice log. | Potential communication annotations require original Korean, translation, timestamps, speaker identity and match/game mapping. Absence of a call in the edit is not evidence of silence. |
+| [Inven interview with Faker after LCK 2025 T1–NS](https://www.invenglobal.com/articles/19605/t1s-faker-discusses-draft-challenges-after-narrow-lck-2025-win-vs-nongshim-redforce) and its [Korean original](https://www.inven.co.kr/webzine/news/?news=308693) | Direct player interview, English translation of Korean original; both read | Faker described an early move to support a top-side play and a separate moment spent monitoring bottom lane. He and his team discussed how to use macro advantages. | Do not hard-code top as irrelevant. Keep phase- and state-dependent role signals. These remarks concern a professional series and cannot label individual solo-queue frames without exact game/time alignment. |
+| [Reddit discussion of T1scord episode 18](https://www.reddit.com/r/leagueoflegends/comments/1go72ap/t1_voice_comms_of_the_entire_worlds_2024_finals/) | English fan interpretation; read, secondary | Commenters discuss mid–jungle coordination and cooldown awareness, sometimes disagreeing on what caused a play. | Candidate hypotheses only: coordination timing and cooldown/resource state. Reddit comments are never ground-truth labels of Faker's intent. |
+| [Faker Worlds 2024 teleport clip](https://www.youtube.com/watch?v=S7K-v5sET6Y) | English titled fan/creator clip; located, not transcribed | A game-specific clip on map control is indexed. | Candidate example for a timestamped teleport/objective annotation, after verifying match ID and perspective. |
+
+An X search was performed, but it did not return a reliable, game- and timestamp-specific tactical source. No X claim was promoted into a feature or label.
+
+## Annotation contract for future media ingestion
+
+Each annotation must include `source_url`, `source_type`, `language`, `original_text` or observable visual event, optional `translation`, `game_id`, `video_time_s`, `game_time_s`, `player`, `perspective` (`broadcast`, `player`, `team_voice`), `claim_type`, and `confidence`. The same match must remain wholly within one train/validation/test split. Only information available by game time `t` may enter `state_t`; later commentary may be used for retrospective analysis or label verification but never as contemporaneous input.
+
+Professional LCK/Worlds games and KR ranked solo queue have different rosters, drafts, communication and incentives. Source domain must be explicit. A model trained on both needs separate held-out results by domain and patch before a claim of transfer to Faker's solo-queue style.
+
+Current implementation already measures role-specific distances, recent wards/objectives and two-minute changes in team advantage after observed Faker proximity. The public sources motivate auditing these measurements; **no video, voice, Reddit or X text has been silently inserted into the numeric dataset**.

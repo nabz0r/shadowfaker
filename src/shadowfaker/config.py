@@ -21,7 +21,7 @@ class Config:
     seed: int = 42
     window: int = 8
     grid: int = 16
-    schema_version: int = 2
+    schema_version: int = 8
 
     def make_dirs(self) -> None:
         for path in (self.raw, self.processed, self.models, self.runs, self.artifacts):

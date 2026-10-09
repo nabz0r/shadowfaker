@@ -2,7 +2,6 @@ import argparse
 import json
 import logging
 from pathlib import Path
-import time
 
 from tqdm import tqdm
 
@@ -62,14 +61,15 @@ def fetch(limit: int = 1000, game_name: str | None = None, tag_line: str | None 
     ids = fetch_ids(client, account["puuid"], limit)
     if not ids:
         raise RiotError(404, "No ranked solo games returned for this Riot ID")
+    if len(ids) < limit:
+        LOG.warning("Only %d ranked solo match IDs are available; target was %d", len(ids), limit)
     manifest_path = CONFIG.raw / "manifest.json"
     manifest = read_json(manifest_path, {"account": account, "games": {}, "order": []})
     if manifest.get("account", {}).get("puuid") != account["puuid"]:
         raise RiotError(0, "Cached manifest belongs to another PUUID; use a fresh data/raw directory")
     manifest["account"] = account
-    started = time.monotonic()
     eligible = 0
-    bar = tqdm(total=limit, desc="ranked games", unit="game")
+    bar = tqdm(total=len(ids), desc="match IDs", unit="ID")
     for match_id in ids:
         if eligible >= limit:
             break
@@ -79,6 +79,7 @@ def fetch(limit: int = 1000, game_name: str | None = None, tag_line: str | None 
             bar.update(1)
             continue
         if entry and entry.get("status") in ("remake", "not_ranked", "wrong_region", "wrong_account", "no_timeline", "missing_match"):
+            bar.update(1)
             continue
         try:
             if not match_id.startswith("KR_"):
@@ -102,7 +103,6 @@ def fetch(limit: int = 1000, game_name: str | None = None, tag_line: str | None 
             manifest["games"][match_id] = {"status": status}
             if status == "ok":
                 eligible += 1
-                bar.update(1)
             else:
                 LOG.warning("Skipped %s: %s", match_id, status)
         except RiotError as exc:
@@ -114,9 +114,8 @@ def fetch(limit: int = 1000, game_name: str | None = None, tag_line: str | None 
             manifest["games"][match_id] = {"status": "error", "reason": str(exc)}
         manifest["order"] = [mid for mid in ids if manifest["games"].get(mid, {}).get("status") == "ok"]
         atomic_json(manifest_path, manifest)
-        elapsed = time.monotonic() - started
-        if eligible:
-            bar.set_postfix(eta_min=round((limit - eligible) * elapsed / eligible / 60, 1))
+        bar.update(1)
+        bar.set_postfix(usable=eligible)
     bar.close()
     LOG.info("Fetched %d/%d usable matches (%d IDs scanned)", eligible, limit, len(ids))
     return manifest
