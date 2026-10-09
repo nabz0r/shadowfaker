@@ -61,7 +61,8 @@
 - [x] Phase 4-5 : benchmark et entraînement.
 - [x] Phase 6 : évaluation et baselines.
 - [x] Phase 7 : GIF.
-- [ ] Phase 8 : README, validation finale et publication des derniers changements sur `main`.
+- [x] Phase 8 : README international, résultats honnêtes, validation finale et publication des changements sur `main`.
+- [x] Publication initiale des analyses et du pipeline enrichi sur `main` : commit `884404abd5316eb0f508df9d178d94ae889ce1e0`, référence distante vérifiée identique et arbre de travail propre après synchronisation. Seuls les fichiers de code/documentation ont été publiés ; `.env`, `data/`, `models/`, `runs/` et `artifacts/` restent locaux et ignorés.
 
 - [2026-10-09T20:51] Fetch 5: 5 usable ranked matches cached.
 
