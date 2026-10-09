@@ -63,6 +63,8 @@
 - [x] Phase 7 : GIF.
 - [x] Phase 8 : README international, résultats honnêtes, validation finale et publication des changements sur `main`.
 - [x] Publication initiale des analyses et du pipeline enrichi sur `main` : commit `884404abd5316eb0f508df9d178d94ae889ce1e0`, référence distante vérifiée identique et arbre de travail propre après synchronisation. Seuls les fichiers de code/documentation ont été publiés ; `.env`, `data/`, `models/`, `runs/` et `artifacts/` restent locaux et ignorés.
+- [x] Suite au bilan, audit à résolution macro sans réentraînement : probabilités 16×16 regroupées en 8×8 et 4×4, baselines recalculées à chaque grille, bootstrap apparié par match. Sur le test déjà consulté, 8×8 : 0,1754 contre meilleure baseline 0,1537, gain +2,17 points [0,09 ; 4,22] ; 4×4 : 0,2364 contre 0,1980, gain +3,84 points [0,25 ; 6,13]. Intervalles validation contenant zéro et choix de métriques après examen du test : résultats exploratoires, pas une nouvelle preuve indépendante ni une réparation du critère 16×16. Prochaine étude : métriques macro préspécifiées sur de nouvelles parties non vues.
+- [x] Après l'audit macro : `pytest -q` toujours 4/4 ; relance de la commande complète depuis le cache réussie, sans nouvel entraînement ni appel réseau pour les matches déjà cachés. `RESULTS.md` et README actualisés.
 
 - [2026-10-09T20:51] Fetch 5: 5 usable ranked matches cached.
 
@@ -173,3 +175,21 @@
 - [2026-10-09T21:34] Final test 1000: region top-1 0.1128, best baseline 0.1161.
 
 - [2026-10-09T21:34] Performance gate unmet: test region gain is not clearly above the strongest baseline.
+
+- [2026-10-09T21:45] Fetch 1000: 465 usable ranked matches available for this stage.
+
+- [2026-10-09T21:46] Parse 1000: 465 matches, 12510 observations, 0 errors.
+
+- [2026-10-09T21:46] Analyze 1000: proximity by role/phase/outcome from 465 matches.
+
+- [2026-10-09T21:46] Train 1000: 25 epochs, device cpu, 538532 parameters.
+
+- [2026-10-09T21:46] Calibrate 1000: train-only role/phase spatial prior, alpha 0.75, validation accuracy 0.1059.
+
+- [2026-10-09T21:46] Validate 1000: region top-1 0.1059, best baseline 0.0902.
+
+- [2026-10-09T21:46] Demo 1000: predicted_vs_actual.gif generated from held-out test match.
+
+- [2026-10-09T21:46] Final test 1000: region top-1 0.1128, best baseline 0.1161.
+
+- [2026-10-09T21:46] Performance gate unmet: test region gain is not clearly above the strongest baseline.

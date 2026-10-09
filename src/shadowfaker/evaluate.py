@@ -55,10 +55,17 @@ def evaluate(processed: Path = CONFIG.processed, models: Path = CONFIG.models,
     most_common = train_regions.most_common(1)[0][0]
     predictions, truths, item_pred, item_true, skill_pred, skill_true, champions, top5 = [], [], [], [], [], [], [], []
     value_pred, value_true, prior_predictions = [], [], []
+    macro_predictions = {8: [], 4: []}
+    macro_prior_predictions = {8: [], 4: []}
+    def pooled_region(logits: torch.Tensor, grid: int) -> torch.Tensor:
+        block = 16 // grid
+        return logits.reshape(-1, grid, block, grid, block).logsumexp(-1).logsumexp(2).reshape(-1, grid * grid).argmax(-1)
     with torch.no_grad():
         for x, champ, r, item, skill, win in tqdm(loader, desc="evaluate", unit="batch"):
             out_r, out_i, out_s, out_v = model(x, champ)
             predictions.extend(out_r.argmax(-1).numpy().tolist())
+            for grid in macro_predictions:
+                macro_predictions[grid].extend(pooled_region(out_r, grid).numpy().tolist())
             top5.extend((out_r.topk(5, dim=-1).indices == r[:, None]).any(-1).numpy().tolist())
             truths.extend(r.numpy().tolist())
             item_pred.extend(out_i.argmax(-1).numpy().tolist())
@@ -72,7 +79,10 @@ def evaluate(processed: Path = CONFIG.processed, models: Path = CONFIG.models,
                 role = (x[:, -1, model.role_feature_index] * 5).round().long().clamp(0, 5)
                 minute = x[:, -1, 0] * 50
                 phase = (minute >= 10).long() + (minute >= 20).long()
-                prior_predictions.extend(model.region_log_prior[role, phase].argmax(-1).numpy().tolist())
+                prior_logits = model.region_log_prior[role, phase]
+                prior_predictions.extend(prior_logits.argmax(-1).numpy().tolist())
+                for grid in macro_prior_predictions:
+                    macro_prior_predictions[grid].extend(pooled_region(prior_logits, grid).numpy().tolist())
     previous, minutes, gold_diffs = [], [], []
     for mid in meta["splits"][split]:
         with np.load(processed / "matches" / f"{mid}.npz") as z:
@@ -165,6 +175,43 @@ def evaluate(processed: Path = CONFIG.processed, models: Path = CONFIG.models,
         gains.append(100 * (model_score - base_score))
     result["region_gain_bootstrap95_pp"] = [float(v) for v in np.quantile(gains, [.025, .975])]
     result["region_gain_clear_by_bootstrap"] = result["region_gain_bootstrap95_pp"][0] > 0
+    def coarse_labels(regions: np.ndarray, grid: int) -> np.ndarray:
+        block = 16 // grid
+        regions = np.asarray(regions)
+        return np.where(regions >= 0, (regions // 16 // block) * grid + (regions % 16 // block), -1)
+    result["macro_grids_exploratory"] = {}
+    for grid in (8, 4):
+        coarse_true = coarse_labels(true, grid)
+        coarse_prev = coarse_labels(prev, grid)
+        coarse_model = np.asarray(macro_predictions[grid])
+        # Several fine cells pool to one coarse cell, so sum their training counts.
+        coarse_train = Counter()
+        for region, count in train_regions.items():
+            coarse_train[int(coarse_labels(np.array([region]), grid)[0])] += count
+        common_coarse = coarse_train.most_common(1)[0][0]
+        baseline_scores = {"most_frequent": float(np.mean(coarse_true == common_coarse)),
+                           "copy_previous": float(np.mean(coarse_true == coarse_prev)),
+                           "stay_mid": float(np.mean(coarse_true == (grid // 2 * grid + grid // 2)))}
+        if prior is not None:
+            coarse_prior = np.asarray(macro_prior_predictions[grid])
+            baseline_scores["role_phase_prior"] = float(np.mean(coarse_true == coarse_prior))
+        model_score = float(np.mean(coarse_true == coarse_model))
+        coarse_gains = []
+        coarse_rng = np.random.default_rng(CONFIG.seed + grid)
+        for _ in range(2000):
+            chosen = coarse_rng.integers(0, len(match_indices), size=len(match_indices))
+            idx = np.concatenate([match_indices[j] for j in chosen])
+            base = max(np.mean(coarse_true[idx] == common_coarse),
+                       np.mean(coarse_true[idx] == coarse_prev[idx]),
+                       np.mean(coarse_true[idx] == (grid // 2 * grid + grid // 2)))
+            if prior is not None:
+                base = max(base, np.mean(coarse_true[idx] == coarse_prior[idx]))
+            coarse_gains.append(100 * (np.mean(coarse_true[idx] == coarse_model[idx]) - base))
+        interval = [float(v) for v in np.quantile(coarse_gains, [.025, .975])]
+        result["macro_grids_exploratory"][f"{grid}x{grid}"] = {
+            "model_top1": model_score, "baselines": baseline_scores,
+            "gain_vs_best_baseline_pp": 100 * (model_score - max(baseline_scores.values())),
+            "gain_bootstrap95_pp": interval}
     artifacts.mkdir(parents=True, exist_ok=True)
     suffix = "" if split == "test" else f"_{split}"
     np.save(artifacts / f"region_confusion{suffix}.npy", confusion)
