@@ -22,7 +22,10 @@ def role_phase(x: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return role, phase
 
 
-def calibrate(processed: Path = CONFIG.processed, checkpoint: Path = CONFIG.models / "best.pt") -> dict:
+def calibrate(processed: Path = CONFIG.processed, checkpoint: Path = CONFIG.models / "best.pt",
+              region_grid: int = 16) -> dict:
+    if region_grid not in (16, 8, 4):
+        raise ValueError("region_grid must be 16, 8, or 4")
     meta = read_json(processed / "meta.json")
     model = load_model(meta, checkpoint, use_calibration=False)
     counts = np.zeros((6, 3, 256), dtype=np.float64)
@@ -53,6 +56,14 @@ def calibrate(processed: Path = CONFIG.processed, checkpoint: Path = CONFIG.mode
     logits = np.concatenate(scores)
     actual = np.concatenate(labels)
     val_role, val_phase = np.concatenate(roles), np.concatenate(phases)
+    def grid_predictions(fine_logits: np.ndarray) -> np.ndarray:
+        if region_grid == 16:
+            return fine_logits.argmax(-1)
+        block = 16 // region_grid
+        pooled = torch.from_numpy(fine_logits).reshape(-1, region_grid, block,
+                                                       region_grid, block).logsumexp(-1).logsumexp(2)
+        return pooled.reshape(-1, region_grid * region_grid).argmax(-1).numpy()
+    coarse_actual = (actual // 16 // (16 // region_grid)) * region_grid + (actual % 16 // (16 // region_grid))
     best = {"accuracy": -1.0, "alpha": 0.0, "strength": 100}
     best_prior = None
     for strength in (20, 100, 500):
@@ -60,7 +71,7 @@ def calibrate(processed: Path = CONFIG.processed, checkpoint: Path = CONFIG.mode
         log_prior = np.log(probabilities).astype(np.float32)
         example_prior = log_prior[val_role, val_phase]
         for alpha in (0.0, .1, .2, .3, .5, .75, 1.0):
-            accuracy = float(np.mean((logits + alpha * example_prior).argmax(-1) == actual))
+            accuracy = float(np.mean(grid_predictions(logits + alpha * example_prior) == coarse_actual))
             if accuracy > best["accuracy"] + 1e-12:
                 best = {"accuracy": accuracy, "alpha": alpha, "strength": strength}
                 best_prior = log_prior
@@ -82,6 +93,7 @@ def calibrate(processed: Path = CONFIG.processed, checkpoint: Path = CONFIG.mode
     saved["calibration"] = {**best, "log_prior": best_prior.tolist(),
                             "item_none_bias": item_bias, "item_validation_accuracy": item_accuracy,
                             "skill_none_bias": skill_bias, "skill_validation_accuracy": skill_accuracy,
+                            "region_grid": region_grid,
                             "method": "train role/phase counts with global Dirichlet smoothing; region alpha and no-event biases selected on validation"}
     temp = checkpoint.with_suffix(".tmp")
     torch.save(saved, temp)
@@ -90,4 +102,9 @@ def calibrate(processed: Path = CONFIG.processed, checkpoint: Path = CONFIG.mode
 
 
 if __name__ == "__main__":
-    print(json.dumps(calibrate(), indent=2))
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--checkpoint", type=Path, default=CONFIG.models / "best.pt")
+    parser.add_argument("--region-grid", type=int, choices=(16, 8, 4), default=16)
+    args = parser.parse_args()
+    print(json.dumps(calibrate(checkpoint=args.checkpoint, region_grid=args.region_grid), indent=2))

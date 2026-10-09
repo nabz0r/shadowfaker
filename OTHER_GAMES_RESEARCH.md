@@ -20,3 +20,7 @@ Recherche de sources primaires effectuée le 2026-10-09. Les expériences ci-des
 2. Garder deux vues du même exemple, `proxy` et `oracle`, afin de mesurer la sensibilité aux informations normalement cachées. La vue `proxy` reste imparfaite puisque les agrégats or/XP adverses sont complets.
 3. Conserver les fenêtres temporelles et les rôles des coéquipiers, puis sélectionner les variantes sur validation. Le schéma v8 rend explicites les distances à chaque rôle allié et aux pits Dragon/Baron. Les interactions jungle/bot/support sont mesurées par phase ; leur association au résultat n'est pas interprétée comme effet causal.
 4. Documenter un chemin vidéo/replay testable dans [REPLAY_FEASIBILITY.md](REPLAY_FEASIBILITY.md). Ne pas entraîner une politique RL ou vidéo sans observations correspondantes ni validation.
+
+## Traduction en expériences suivantes
+
+La [roadmap](ROADMAP.md) transforme ces références en deux étapes vérifiables : **M3**, comparer une prédiction macro hiérarchique ou un préentraînement haut niveau sur le split de développement ; **M5**, mesurer les conséquences dans un environnement jouable crédible. La [figure des trois échelles](RESULTS.md) motive une cible macro, mais son choix après lecture du test historique interdit de l'annoncer comme confirmation indépendante. Tout modèle M3 reçoit son propre futur jeu de test, séparé du [candidat déjà figé](BENCHMARK_PROTOCOL.md). Les tags jungle/bot/support de M2 restent des observations de mouvement, sans intention empruntée aux travaux sur d'autres jeux.

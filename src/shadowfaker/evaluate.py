@@ -1,5 +1,6 @@
 import argparse
 from collections import Counter, defaultdict
+import copy
 import json
 from pathlib import Path
 
@@ -41,17 +42,35 @@ def load_model(meta: dict, checkpoint: Path, device: str = "cpu", use_calibratio
 
 def evaluate(processed: Path = CONFIG.processed, models: Path = CONFIG.models,
              artifacts: Path = CONFIG.artifacts, batch_size: int = 128,
-             split: str = "test") -> dict:
+             split: str = "test", *, meta_path: Path | None = None,
+             checkpoint_path: Path | None = None, match_ids: list[str] | None = None,
+             match_metadata: dict | None = None, train_region_counts: dict | None = None,
+             output_tag: str | None = None) -> dict:
     if split not in ("val", "test"):
         raise ValueError("Evaluation split must be val or test")
-    meta = read_json(processed / "meta.json")
-    model = load_model(meta, models / "best.pt")
+    meta = read_json(meta_path or processed / "meta.json")
+    model = load_model(meta, checkpoint_path or models / "best.pt")
+    if match_ids is not None:
+        if not match_ids or len(match_ids) != len(set(match_ids)):
+            raise ValueError("Prospective match IDs must be nonempty and unique")
+        development = set().union(*meta["splits"].values())
+        if development.intersection(match_ids):
+            raise ValueError("Prospective matches overlap development matches")
+        if not match_metadata:
+            raise ValueError("Prospective match metadata is required")
+        meta = copy.deepcopy(meta)
+        meta["splits"][split] = match_ids
+        for field in ("counts", "patches", "faker_roles", "faker_wins", "game_start_ms"):
+            meta[field].update(match_metadata.get(field, {}))
+        if any(mid not in meta["counts"] for mid in match_ids):
+            raise ValueError("Prospective match counts are incomplete")
     ds = MatchDataset(processed, meta, split, view=model.view)
     loader = DataLoader(ds, batch_size=batch_size, shuffle=False, num_workers=0)
-    train_regions = Counter()
-    for mid in meta["splits"]["train"]:
-        with np.load(processed / "matches" / f"{mid}.npz") as z:
-            train_regions.update(int(x) for x in z["region"])
+    train_regions = Counter({int(k): int(v) for k, v in train_region_counts.items()}) if train_region_counts is not None else Counter()
+    if train_region_counts is None:
+        for mid in meta["splits"]["train"]:
+            with np.load(processed / "matches" / f"{mid}.npz") as z:
+                train_regions.update(int(x) for x in z["region"])
     most_common = train_regions.most_common(1)[0][0]
     predictions, truths, item_pred, item_true, skill_pred, skill_true, champions, top5 = [], [], [], [], [], [], [], []
     value_pred, value_true, prior_predictions = [], [], []
@@ -101,7 +120,8 @@ def evaluate(processed: Path = CONFIG.processed, models: Path = CONFIG.models,
     conditional = items != 0
     skill_conditional = skills != 0
     prior = np.asarray(prior_predictions) if prior_predictions else None
-    result = {"view": model.view, "split": split, "matches": len(meta["splits"][split]), "samples": len(true),
+    result = {"view": model.view, "split": split, "prospective": match_ids is not None,
+              "matches": len(meta["splits"][split]), "samples": len(true),
               "model_region_top1": float((pred == true).mean()), "model_region_top5": float(np.mean(top5)),
               "model_region_distance_cells": grid_distance(pred, true),
               "baseline_most_frequent": float((true == most_common).mean()),
@@ -213,7 +233,7 @@ def evaluate(processed: Path = CONFIG.processed, models: Path = CONFIG.models,
             "gain_vs_best_baseline_pp": 100 * (model_score - max(baseline_scores.values())),
             "gain_bootstrap95_pp": interval}
     artifacts.mkdir(parents=True, exist_ok=True)
-    suffix = "" if split == "test" else f"_{split}"
+    suffix = f"_{output_tag}" if output_tag else ("" if split == "test" else f"_{split}")
     np.save(artifacts / f"region_confusion{suffix}.npy", confusion)
     fig, ax = plt.subplots(figsize=(8, 7))
     image = ax.imshow(np.log1p(confusion), origin="lower", cmap="magma", aspect="auto")

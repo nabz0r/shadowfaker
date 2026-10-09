@@ -27,3 +27,7 @@ Consultés le 2026-10-09. Les articles servent de références méthodologiques 
 - `meta.json` garde `schema_version=8`, patch et rôle de Faker par match, seed, split et effectifs. `evaluation.json` contient maintenant `by_patch`, les phases de jeu et les rôles.
 - Le test de non-fuite modifie la frame future et vérifie que les états antérieurs restent identiques.
 - Les PDF et les données Riot ne sont pas inclus dans le dépôt.
+
+## Effet sur le protocole et les visualisations
+
+Le risque général de contamination d'évaluation relevé dans le second article a conduit à documenter explicitement que les scores 8×8 et 4×4 ont été explorés après lecture du test historique. Le [protocole prospectif](BENCHMARK_PROTOCOL.md) fige avant toute nouvelle partie le candidat, le seuil de 100 matches et la règle de comparaison. La [figure des scores](RESULTS.md) signale visuellement cette limite. Les nouveaux tags jungle/bot/support/objectif utilisent la géométrie observée ; aucun des trois articles ne fournit une vérité terrain sur l'intention ou les communications de Faker. La [roadmap](ROADMAP.md) demande une annotation indépendante avant de faire cette interprétation.

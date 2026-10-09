@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import random
+import re
 import time
 from urllib.parse import quote
 
@@ -97,9 +98,15 @@ class RiotClient:
         name, tag = quote(game_name, safe=""), quote(tag_line, safe="")
         return self.get(f"/riot/account/v1/accounts/by-riot-id/{name}/{tag}", self.raw / "account" / f"{name}_{tag}.json", missing_ok=True)
 
-    def ids(self, puuid: str, start: int, count: int = 100):
+    def ids(self, puuid: str, start: int, count: int = 100, snapshot: str | None = None):
         identity = hashlib.sha256(puuid.encode()).hexdigest()[:16]
-        return self.get(f"/lol/match/v5/matches/by-puuid/{quote(puuid, safe='')}/ids", self.raw / "ids" / identity / f"{start}_{count}.json", params={"queue": 420, "start": start, "count": count})
+        if snapshot is not None and not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", snapshot):
+            raise ValueError("snapshot must contain only letters, digits, underscores or hyphens")
+        cache_dir = self.raw / "ids" / identity
+        if snapshot is not None:
+            cache_dir = cache_dir / "snapshots" / snapshot
+        return self.get(f"/lol/match/v5/matches/by-puuid/{quote(puuid, safe='')}/ids",
+                        cache_dir / f"{start}_{count}.json", params={"queue": 420, "start": start, "count": count})
 
     def match(self, match_id: str):
         return self.get(f"/lol/match/v5/matches/{quote(match_id, safe='')}", self.raw / "matches" / f"{match_id}.json", missing_ok=True)

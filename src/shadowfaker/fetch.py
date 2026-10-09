@@ -31,12 +31,12 @@ def resolve_account(client: RiotClient, game_name: str, tag_line: str) -> dict:
     raise RiotError(404, f"Riot ID {game_name}#{tag_line} not found via account-v1 after case variants")
 
 
-def fetch_ids(client: RiotClient, puuid: str, target: int) -> list[str]:
+def fetch_ids(client: RiotClient, puuid: str, target: int, snapshot: str | None = None) -> list[str]:
     ids, seen = [], set()
     # More IDs than target allow for remakes and missing timelines.
     maximum = target + max(20, target // 5)
     for start in range(0, maximum, 100):
-        page = client.ids(puuid, start, 100)
+        page = client.ids(puuid, start, 100, snapshot=snapshot) if snapshot is not None else client.ids(puuid, start, 100)
         if not isinstance(page, list):
             raise RiotError(200, "Unexpected match-id response")
         for match_id in page:
@@ -54,11 +54,12 @@ def duration_seconds(info: dict) -> float:
     return duration / 1000 if duration > 100000 else duration
 
 
-def fetch(limit: int = 1000, game_name: str | None = None, tag_line: str | None = None) -> dict:
+def fetch(limit: int = 1000, game_name: str | None = None, tag_line: str | None = None,
+          id_snapshot: str | None = None) -> dict:
     CONFIG.make_dirs()
     client = RiotClient()
     account = resolve_account(client, game_name or CONFIG.game_name, tag_line or CONFIG.tag_line)
-    ids = fetch_ids(client, account["puuid"], limit)
+    ids = fetch_ids(client, account["puuid"], limit, id_snapshot)
     if not ids:
         raise RiotError(404, "No ranked solo games returned for this Riot ID")
     if len(ids) < limit:
@@ -117,6 +118,10 @@ def fetch(limit: int = 1000, game_name: str | None = None, tag_line: str | None 
         bar.update(1)
         bar.set_postfix(usable=eligible)
     bar.close()
+    manifest["order"] = [mid for mid in ids if manifest["games"].get(mid, {}).get("status") == "ok"]
+    if id_snapshot is not None:
+        manifest["latest_id_snapshot"] = id_snapshot
+    atomic_json(manifest_path, manifest)
     LOG.info("Fetched %d/%d usable matches (%d IDs scanned)", eligible, limit, len(ids))
     return manifest
 
@@ -126,9 +131,10 @@ def main() -> None:
     parser.add_argument("--limit", type=int, default=1000)
     parser.add_argument("--game-name")
     parser.add_argument("--tag-line")
+    parser.add_argument("--id-snapshot", help="Fresh named match-ID listing; existing match/timeline JSON stays cached")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    fetch(args.limit, args.game_name, args.tag_line)
+    fetch(args.limit, args.game_name, args.tag_line, args.id_snapshot)
 
 
 if __name__ == "__main__":

@@ -15,3 +15,5 @@
 5. Si une VOD contient un commentaire parlé, le transcrire séparément et l'identifier comme commentaire du créateur de la VOD. Un `.rofl` ne fournit ni le chat de la partie, ni une transcription vocale des communications de l'équipe.
 
 Ce module vidéo ne peut pas être validé pour les 470 parties actuelles sans replay ou VOD correspondante. Construire une interface qui prétend extraire la vision ou les communications de Faker depuis les JSON match-v5 fabriquerait des données. Le pipeline actuel conserve les JSON localement et une séparation des vues pour accueillir des annotations vidéo plus tard.
+
+Les [nouveaux tags macro](RESULTS.md) dépendent uniquement des positions à une minute et ne reconstituent pas la vision de Faker. La collecte prospective du [protocole figé](BENCHMARK_PROTOCOL.md) a trouvé 0/100 nouvelles parties lors du premier instantané ; elle ne crée donc aucun replay ou point de vue vidéo supplémentaire. La [roadmap](ROADMAP.md) garde l'audit par VOD comme étape distincte, avec provenance et synchronisation obligatoires.

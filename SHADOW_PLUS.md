@@ -1,5 +1,16 @@
 # Shadow Faker → Shadow Plus
 
+```mermaid
+flowchart LR
+    A[Imiter les actions du compte] --> B[Prédire sur des parties futures]
+    B --> C[Estimer l'effet d'une action<br/>contre un état seul]
+    C --> D[Politique conservatrice<br/>dans les actions couvertes]
+    D --> E[Parties jouées comparables]
+    E --> F[Éventuelle preuve de meilleur jeu]
+```
+
+La [courbe de précision actuelle](RESULTS.md) est à l'étape A : elle n'établit pas encore une victoire claire en 16×16. Les tags de mouvement donnent un langage pour étudier *où* Faker se déplace auprès de l'équipe ; leurs fréquences ne sont pas des points de victoire. Le [test futur figé](BENCHMARK_PROTOCOL.md) vise B et reste `pending` à 0/100 nouvelles parties.
+
 ## Deux critères distincts
 
 1. **Fidélité** : sur des parties tenues à part, le modèle prédit mieux que les baselines où Faker se rend, ce qu'il achète et ce qu'il améliore. C'est mesurable avec les timelines actuelles.

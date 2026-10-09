@@ -1,8 +1,72 @@
+![Laboratoire visuel Shadow Faker, compte observé et prédictions du modèle](docs/figures/readme_hero_fr.svg)
+
 # Shadow Faker
+
+[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Explorer la surface 3D**](#le-paysage-des-prochains-mouvements) · [**Lire les résultats**](RESULTS.md) · [**English**](README.md)
 
 La [documentation anglaise](README.md) est la version internationale de référence pour les résultats et la calibration les plus récents.
 
-Pipeline de recherche local pour modéliser **les décisions macro de Faker** à une minute à partir du compte Riot ID « Hide on bush#KR1 ». Les actions cibles appartiennent uniquement au joueur de ce PUUID ; les neuf autres joueurs fournissent un contexte de partie. Le code récupère des parties ranked solo KR (queue 420), transforme les timelines en observations causales, entraîne un petit transformer multi-têtes et compare ses prédictions à trois baselines. Le clone fidèle est le premier étage d'un objectif plus ambitieux : rechercher une politique meilleure en jeu, selon les étapes et critères de [SHADOW_PLUS.md](SHADOW_PLUS.md). **L'identité réelle du joueur ne peut pas être établie par l'API seule.**
+Pipeline de recherche local visant à modéliser **les décisions macro de Faker à moins d'une minute** à partir du compte Riot ID « Hide on bush#KR1 ». **Aujourd'hui, les données Riot disponibles ici sont échantillonnées à environ 60 secondes : le modèle validé prédit donc la minute suivante, pas encore une décision sous la minute.** Atteindre cette résolution demandera des replays ou vidéos alignés, des labels plus fréquents et un nouveau benchmark. Les actions cibles appartiennent uniquement au joueur de ce PUUID ; les neuf autres joueurs fournissent un contexte de partie. Le code récupère des parties ranked solo KR (queue 420), transforme les timelines en observations causales, entraîne un petit transformer multi-têtes et compare ses prédictions à quatre baselines régionales. Le clone fidèle est le premier étage d'un objectif plus ambitieux : rechercher une politique meilleure en jeu, selon les étapes et critères de [SHADOW_PLUS.md](SHADOW_PLUS.md). **L'identité réelle du joueur ne peut pas être établie par l'API seule.**
+
+## Ce qui est mesuré aujourd'hui
+
+**465 parties exploitables, 12 510 observations.** La région exacte suivante (grille 16×16) est prédite dans **11,28 %** des observations du test déjà examiné, contre **11,61 %** pour la meilleure baseline rôle/phase. La condition initiale « battre nettement les baselines » n'est donc **pas remplie**. Après regroupement des probabilités en zones plus larges, le modèle atteint **17,54 % en 8×8** contre **15,37 %**, et **23,64 % en 4×4** contre **19,80 %**. Ces deux diagnostics ont été choisis après consultation du test : ils demandent une confirmation sur des parties futures.
+
+### Le paysage des prochains mouvements
+
+![Surface 3D des fréquences de positions réelles et de celles prédites par Shadow](docs/figures/probability_surface_3d.png)
+
+Le plan horizontal représente les **256 cases de la carte** ; la hauteur indique la **part des positions à la minute suivante** dans chaque case, agrégée sur 46 parties du test historique. Ce n'est ni le relief de la carte, ni le replay d'une partie, ni l'ensemble des futurs possibles. Le pic central de Shadow révèle surtout un biais à corriger. Le [tableau de bord local](#tableau-de-bord-visuel) permet d'orienter une vue isométrique, de lire les cases, de suivre le tempo et de rejouer une partie test minute par minute.
+
+![Lieux réels du compte comparés aux prédictions de Shadow Faker sur une grille de minimap](docs/figures/faker_vs_shadow_minimap.png)
+
+La différence saute aux yeux : les positions réelles sont plus dispersées, alors que Shadow place **39,43 % de ses prédictions** dans une seule case centrale, qui ne représente que **11,28 % des vraies positions**. C'est une piste concrète pour corriger sa tendance à « rester au milieu ». Cette carte agrège 46 matches du test historique ; elle ne reproduit pas l'écran ou la vision du joueur.
+
+![Comparaison visuelle du modèle et de la meilleure baseline selon la taille des régions](docs/figures/benchmark_scales.png)
+
+```mermaid
+flowchart LR
+    A[Parties ranked KR] --> B[Timeline cachée localement]
+    B --> C[État causal à la minute t]
+    C --> D[Action de ce compte à t+1]
+    C --> E[Contexte équipe, adversaires, objectifs]
+    D --> F[Modèle et baselines]
+    E --> F
+    F --> G[Test par match + GIF]
+    G --> H[Nouvelles parties : 0/100]
+```
+
+Les **huit tags de mouvement** suivent notamment l'approche du jungler, du bot et du support. Ils montrent comment le contexte d'équipe varie selon la phase ; un rapprochement géométrique n'établit ni intention, ni communication, ni aide causale à la victoire.
+
+![Tempo du rapprochement vers jungle, bot et support par tranches de cinq minutes](docs/figures/team_tempo.png)
+
+![Taux de rapprochement vers les rôles alliés selon la phase](docs/figures/role_approach_by_phase.png)
+
+Pour explorer des idées vraiment nouvelles, on mesure aussi ce que les données **ne couvrent pas**. L'exemple « cinq joueurs autour du bot carry » apparaît une seule fois en début de partie, sur une seule minute, parmi 3 255 frames éligibles. Être proche du carry ne signifie pas jouer volontairement bot lane.
+
+![Rassemblements de trois, quatre ou cinq alliés près du bot carry](docs/figures/team_clustering.png)
+
+Le [laboratoire de stratégies](GAME_THEORY_LAB.md) transforme l'idée « cinq bot » en hypothèse à évaluer face aux ressources abandonnées ailleurs et aux réponses adverses. Ces parties classées ne permettent pas de conclure qu'une telle stratégie gagnerait aux Worlds. [RESULTS.md](RESULTS.md) raconte les graphiques pas à pas.
+
+Les graphiques et bannières proviennent de [résultats agrégés publics](docs/data/public_summary.json), sans JSON Riot brut. Les régénérer avec `.venv/bin/python scripts/render_results.py --from-summary`. Voir [RESULTS.md](RESULTS.md) pour les intervalles et [ROADMAP.md](ROADMAP.md) pour la suite.
+
+## Tableau de bord visuel
+
+Après installation, lancer le serveur local et ouvrir [http://127.0.0.1:8008/](http://127.0.0.1:8008/). L'interface FR/EN compare **Faker observé, Shadow et niveau de preuve**, avec carte interactive, surface 3D, tempo et hypothèses de stratégie. Le rejeu d'une partie du test et le GIF apparaissent si le pipeline a déjà produit ses fichiers locaux.
+
+```bash
+.venv/bin/python scripts/serve_dashboard.py
+# Facultatif : exporter le rejeu local avant d'ouvrir la page.
+.venv/bin/python -m shadowfaker.demo --max-frames 30
+```
+
+Le serveur écoute sur `127.0.0.1` et ne sert que les visuels publics et les fichiers de rejeu locaux autorisés. Les traces par partie restent exclues de Git. [Code de l'interface](dashboard/), [générateur des visuels](scripts/render_results.py), [analyse des résultats](RESULTS.md).
+
+### D'où viennent les 470, 465 et 12 510 ?
+
+L'API a renvoyé **470 identifiants** de ranked solo KR (queue 420) pour ce PUUID, en cinq pages de **100 + 100 + 100 + 100 + 70**. Ce n'est pas la totalité supposée des parties jouées par Faker au cours de sa carrière, seulement ce que cet historique renvoie à la date du contrôle. Après vérification de chaque partie, **5 duraient moins de cinq minutes** et ont été exclues comme remakes ; les **465 autres** possédaient une timeline utilisable.
+
+Dans une partie de `F` frames à environ une minute d'intervalle, le parseur construit `F − 1` exemples : l'état à la minute `t` sert à prédire l'action observée à `t+1`. La somme sur les 465 parties donne **12 510 paires de frames**, toutes avec une position cible disponible. Chaque partie apporte 13 à 47 exemples (médiane 27). La fenêtre d'entrée de huit frames est complétée au début de la partie, donc elle ne retire pas les premières minutes. **12 510 observations ne sont pas 12 510 parties indépendantes** : le découpage et les intervalles d'incertitude sont calculés par match.
 
 ## Démarrage
 
@@ -45,7 +109,14 @@ Le client respecte un intervalle local de 1,3 s entre requêtes, persistant entr
 
 ## Lire les résultats
 
-`evaluation.json` donne top-1/top-5 région, accuracy achat et compétence, taux d'actions, accuracy conditionnelle quand un événement survient, Brier score pour l'issue finale, résultats par champion, patch, phase de jeu, rôle de Faker et avance/retard d'or, et trois baselines régionales : région la plus fréquente du train, copie de la région courante et centre de la carte (« reste mid »). La matrice de confusion est indexée par les 256 régions. `faker_rotations.json` décrit, par phase et victoire/défaite, la fraction des minutes où Faker se trouve près du jungler, bot, support, top et des pits Dragon/Baron. Il donne aussi la variation d'avance d'or/XP pendant les deux minutes suivant chaque observation proche ou éloignée d'un rôle allié, moyennée d'abord par match. Ces associations **ne prouvent pas** qu'une rotation a causé la victoire ou le gain d'or. Le script essaie une seconde configuration (modèle plus large et learning rate plus élevé) si le premier modèle ne bat pas toutes les baselines **sur la validation** ; il choisit alors le meilleur des deux sur cette validation avant d'évaluer une seule fois le test final. Les artefacts de validation portent le suffixe `_val`.
+`evaluation.json` donne top-1/top-5 région, accuracy achat et compétence, taux d'actions, accuracy conditionnelle quand un événement survient, Brier score pour l'issue finale, résultats par champion, patch, phase de jeu, rôle de Faker et avance/retard d'or. Il compare quatre baselines régionales : région la plus fréquente du train, copie de la région courante, centre de la carte et prior rôle/phase calculé sur le train. La matrice de confusion est indexée par les 256 régions. `faker_rotations.json` décrit, par phase et victoire/défaite, la proximité de Faker aux alliés et objectifs ainsi que la variation descriptive d'avance or/XP les deux minutes suivantes. Ces associations **ne prouvent pas** qu'une rotation a causé la victoire ou le gain d'or. Trois variantes supplémentaires ont été comparées sur validation ; le modèle compact calibré a été retenu. Le test existant a déjà influencé l'analyse et ne constitue plus un jeu de confirmation intact.
+
+Le [protocole prospectif figé](BENCHMARK_PROTOCOL.md) attend au moins **100 nouvelles parties** après le 1er octobre 2026 pour évaluer une seule fois le modèle actuel en 8×8 face aux quatre baselines. Premier contrôle réel : **0/100**, donc résultat `pending` et aucun score futur inventé. La collecte se relance avec un nouvel instantané nommé :
+
+```bash
+.venv/bin/python scripts/run_prospective.py --offline
+.venv/bin/python scripts/run_prospective.py --snapshot 20261010
+```
 
 ## Limites et données
 
@@ -58,6 +129,6 @@ Le client respecte un intervalle local de 1,3 s entre requêtes, persistant entr
 - Le Riot ID résolu et la présence du PUUID dans les matches prouvent seulement que les parties appartiennent à ce compte, pas qu'il appartient personnellement à Faker.
 - `data/raw/`, `data/processed/`, `models/`, `runs/`, `artifacts/` et `.env` sont exclus de Git. **Ne redistribuez pas les JSON Riot bruts.** Usage personnel/recherche uniquement, sous les conditions applicables de Riot.
 
-Le projet lui-même est sous la licence AGPL-3.0 du dépôt. Consulter [README.md](README.md) pour la documentation internationale à jour, [PLAN.md](PLAN.md) pour l'architecture, [PROGRESS.md](PROGRESS.md) pour les validations, [RESEARCH_NOTES.md](RESEARCH_NOTES.md) pour les trois PDF, [OTHER_GAMES_RESEARCH.md](OTHER_GAMES_RESEARCH.md) pour les autres jeux, [PUBLIC_GAME_ANALYSIS.md](PUBLIC_GAME_ANALYSIS.md) pour les analyses de matchs publiques et [SHADOW_PLUS.md](SHADOW_PLUS.md) pour la voie vers une politique plus forte.
+Le projet lui-même est sous la licence AGPL-3.0 du dépôt. Consulter [README.md](README.md) pour la documentation internationale à jour, [PLAN.md](PLAN.md) pour l'architecture, [PROGRESS.md](PROGRESS.md) pour les validations, [RESEARCH_NOTES.md](RESEARCH_NOTES.md) pour les trois PDF, [OTHER_GAMES_RESEARCH.md](OTHER_GAMES_RESEARCH.md) pour les autres jeux, [PUBLIC_GAME_ANALYSIS.md](PUBLIC_GAME_ANALYSIS.md) pour les analyses de matchs publiques, [BENCHMARK_PROTOCOL.md](BENCHMARK_PROTOCOL.md) pour le test futur figé, [DIAMOND.md](DIAMOND.md) pour les facettes de décision et [SHADOW_PLUS.md](SHADOW_PLUS.md) pour la voie vers une politique plus forte.
 
 Sources API : [référence Riot](https://developer.riotgames.com/apis) et [clés, codes HTTP, rate limits](https://developer.riotgames.com/docs/portal).
