@@ -1,0 +1,93 @@
+{
+  "scope": "historical development validation; epoch, variant and calibration selected here",
+  "train_matches": 373,
+  "val_matches": 46,
+  "train_samples": 10038,
+  "val_samples": 1275,
+  "selected_variant": "full",
+  "baseline8": {
+    "most_frequent": 0.12941176470588237,
+    "copy_previous": 0.10980392156862745,
+    "stay_mid": 0.09803921568627451,
+    "role_phase_prior": 0.15294117647058825
+  },
+  "paired_context_deltas": {
+    "allies_minus_faker_raw_pp": {
+      "delta": -0.1568627450980392,
+      "bootstrap95": [
+        -1.4880410378352504,
+        1.1687099029902097
+      ]
+    },
+    "full_minus_faker_raw_pp": {
+      "delta": 1.7254901960784315,
+      "bootstrap95": [
+        0.15828534987106851,
+        3.496518053137537
+      ]
+    }
+  },
+  "variants": {
+    "faker": {
+      "active_features": 24,
+      "parameters": 732782,
+      "selected_epoch": 10,
+      "checkpoint_sha256": "4f98c13217456659a9eeba235c04bd7902a6c94193542305441bed884f8fdf99",
+      "raw_top1_8": 0.15137254901960784,
+      "top1_8": 0.17098039215686275,
+      "top1_16": 0.0996078431372549,
+      "top1_64": 0.008627450980392156,
+      "prior_alpha": 3.0,
+      "gain_vs_best_pp": 1.8039215686274508,
+      "gain_bootstrap95_pp": [
+        0.565682299097868,
+        3.048825856562137
+      ],
+      "decision_accuracy": 0.6313725490196078,
+      "decision_most_frequent_baseline": 0.7003921568627451,
+      "decision_macro_f1": 0.24521079337980747,
+      "decision_majority_macro_f1": 0.164760147601476
+    },
+    "allies": {
+      "active_features": 73,
+      "parameters": 732782,
+      "selected_epoch": 4,
+      "checkpoint_sha256": "f8d49c99599198c8d5cd2842ef14d4669c1ace6e05bb71c374afc6af1d08b652",
+      "raw_top1_8": 0.14980392156862746,
+      "top1_8": 0.16862745098039217,
+      "top1_16": 0.1011764705882353,
+      "top1_64": 0.010980392156862745,
+      "prior_alpha": 3.0,
+      "gain_vs_best_pp": 1.5686274509803921,
+      "gain_bootstrap95_pp": [
+        0.4627525252525246,
+        2.7972727272727265
+      ],
+      "decision_accuracy": 0.6776470588235294,
+      "decision_most_frequent_baseline": 0.7003921568627451,
+      "decision_macro_f1": 0.24234557929235256,
+      "decision_majority_macro_f1": 0.164760147601476
+    },
+    "full": {
+      "active_features": 147,
+      "parameters": 732782,
+      "selected_epoch": 17,
+      "checkpoint_sha256": "39abb02c5791531beff5b12bd6a0d82137575061a0e57c885af3b81bf93e9d05",
+      "raw_top1_8": 0.16862745098039217,
+      "top1_8": 0.17490196078431372,
+      "top1_16": 0.09647058823529411,
+      "top1_64": 0.011764705882352941,
+      "prior_alpha": 0.25,
+      "gain_vs_best_pp": 2.1960784313725474,
+      "gain_bootstrap95_pp": [
+        -0.15631831279809166,
+        4.560851157497388
+      ],
+      "decision_accuracy": 0.6862745098039216,
+      "decision_most_frequent_baseline": 0.7003921568627451,
+      "decision_macro_f1": 0.44919308900269994,
+      "decision_majority_macro_f1": 0.164760147601476
+    }
+  },
+  "warning": "No old-test or prospective score; omniscient global features remain in the full variant."
+}

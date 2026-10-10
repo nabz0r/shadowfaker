@@ -1,6 +1,24 @@
-# Measured results (2026-10-09)
+# Measured results (updated 2026-10-10)
 
 ![Shadow Faker visual research dashboard](docs/figures/readme_hero_en.svg)
+
+## New development experiment — a decision-shaped Shadow (2026-10-10)
+
+![Faker-only, team and full-context model ablation on historical validation](docs/figures/hierarchical_ablation.png)
+
+The new policy predicts the observed account's **next broad location** as a coherent `8×8 → 16×16 → 64×64` probability tree. It also predicts five *observable* movement types: nearby hold, return to base, approach a live Dragon, approach a live Baron, or another move. Those categories come from the next observed position and existing geometric movement tags. They are **not clicks, thoughts, communication, or causal influence**. Each input comes from the current or earlier minute. All three ablations have the same 732,782-parameter transformer and were trained on **373 matches / 10,038 pairs**, then selected and calibrated on the same **46-match / 1,275-pair validation split**. The pilot used five real games first. The previously inspected historical test and future-game lockbox were not scored for this experiment.
+
+| Available context | Input channels | Raw 8×8 top-1 | Train-prior calibrated 8×8 top-1 | 16×16 / 64×64 top-1 | Decision macro F1 |
+|---|---:|---:|---:|---:|---:|
+| Target account only | 24 | 15.14% | 17.10% | 9.96% / 0.86% | 24.5% |
+| Account + allies | 73 | 14.98% | 16.86% | 10.12% / 1.10% | 24.2% |
+| Full recorded game state | 147 | **16.86%** | **17.49%** | 9.65% / 1.18% | **44.9%** |
+
+The strongest 8×8 simple rule in this experiment, a train-only role/phase prior, gets **15.29%**. The calibrated full model's gain is **+2.20 percentage points**, but the match-bootstrap 95% interval is **[−0.16, +4.56]** points. Its raw gain over the Faker-only ablation is **+1.73 points** [**+0.16, +3.50**] on the same validation matches. These are exploratory intervals: model epoch, context variant, and prior strength were all chosen using that very validation split, so even a positive raw interval is not independent evidence that opponent context helps on future games. The full input also includes global gold/XP proxies and recorded positions that Faker may not have seen; the ablation measures predictive information in the **recorded state**, not his vision or a causal teammate/opponent effect. Adding allies alone did not help the raw 8×8 score.
+
+The full model's five-class decision accuracy is **68.6%**, below **70.0%** from always saying “other move,” despite macro F1 rising to **44.9%** from the majority rule's **16.5%**. The rare return-to-base class has F1 **5.8%** on just **50 validation examples**. This model begins to distinguish different kinds of move, but cannot be described as a dependable reset predictor. Accuracy drops sharply across phases: **29.8%** early, **13.1%** middle, **7.5%** late at 8×8. The old frozen model's 8×8 validation point was **17.33%**; the new calibrated point is only **0.16 points** higher, with multiple selection steps and no independent comparison. Neither result is a confirmed improvement in play.
+
+The complete private per-match report and checkpoints remain under ignored `artifacts/hierarchical/` and `models/hierarchical/`. The [public aggregate summary](docs/data/hierarchical_summary.json) has no match IDs or raw timeline data. Reproduce the pilot and full validation run with `.venv/bin/python -m shadowfaker.hierarchical --pilot-only --epochs 2` and `.venv/bin/python -m shadowfaker.hierarchical --epochs 25`; regenerate this figure from the public summary with `.venv/bin/python scripts/render_hierarchical.py --from-summary`. The existing M0 checkpoint keeps SHA-256 `869c468880650a556ad4f31d1297daba410e842fb06ff38bc6b80e9e81c780f7`. The M3 full-context development checkpoint has local SHA-256 `39abb02c5791531beff5b12bd6a0d82137575061a0e57c885af3b81bf93e9d05` and is **not** substituted into [M0's prospective protocol](BENCHMARK_PROTOCOL.md).
 
 ## A third dimension: how concentrated are the next moves?
 

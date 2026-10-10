@@ -10,6 +10,12 @@ The longer-term goal is a **Shadow Plus** policy that could improve on this beha
 
 **Measured status:** 465 usable ranked matches and 12,510 observations were collected from the available 470 match IDs. The selected model predicts the exact next 16×16 region in 11.28% of held-out test observations, versus 11.61% for a train-only role/phase prior. The requested clear exact-region baseline win has **not** been demonstrated. An exploratory pooling of predictions into 8×8 and 4×4 macro regions shows a positive signal that requires a fresh confirmatory test. Purchases and skill upgrades exceed their no-event baselines after validation calibration. Exact figures and limits are in [RESULTS.md](RESULTS.md).
 
+### New: predicting the kind of move
+
+![Three same-capacity models with Faker-only, team and full recorded context](docs/figures/hierarchical_ablation.png)
+
+A separate **development-only** policy predicts a coherent broad-to-fine destination and whether the account stays nearby, returns to base, approaches Dragon/Baron, or makes another observed move. The complete recorded context reaches **17.49%** next-region accuracy at 8×8 versus a **15.29%** simple role/phase rule on 46 validation games. The match-level interval for the gain still includes zero, and the same validation set chose the model and calibration. Its five-class macro F1 is **44.9%** versus **16.5%** for always choosing the common class, but reset detection remains weak. These are movement proxies around the target account, not evidence of its actual vision, intent, influence or better play. [See the full ablation and limitations](RESULTS.md#new-development-experiment--a-decision-shaped-shadow-2026-10-10).
+
 ### A higher resolution, but harder question
 
 ![Observed and predicted next locations in a 64×64 historical map](docs/figures/grid64_observed_vs_predicted.png)

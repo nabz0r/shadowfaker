@@ -8,6 +8,12 @@ La [documentation anglaise](README.md) est la version internationale de référe
 
 Pipeline de recherche local visant à modéliser **les décisions macro de Faker à moins d'une minute** à partir du compte Riot ID « Hide on bush#KR1 ». **Aujourd'hui, les données Riot disponibles ici sont échantillonnées à environ 60 secondes : le modèle validé prédit donc la minute suivante, pas encore une décision sous la minute.** Atteindre cette résolution demandera des replays ou vidéos alignés, des labels plus fréquents et un nouveau benchmark. Les actions cibles appartiennent uniquement au joueur de ce PUUID ; les neuf autres joueurs fournissent un contexte de partie. Le code récupère des parties ranked solo KR (queue 420), transforme les timelines en observations causales, entraîne un petit transformer multi-têtes et compare ses prédictions à quatre baselines régionales. Le clone fidèle est le premier étage d'un objectif plus ambitieux : rechercher une politique meilleure en jeu, selon les étapes et critères de [SHADOW_PLUS.md](SHADOW_PLUS.md). **L'identité réelle du joueur ne peut pas être établie par l'API seule.**
 
+### Nouveau laboratoire de décision
+
+![Ablation du modèle hiérarchique : Faker seul, alliés et état enregistré complet](docs/figures/hierarchical_ablation.png)
+
+Un modèle séparé prédit à la fois la destination `8×8 → 16×16 → 64×64` et cinq **types de déplacement observables** : rester proche, retour base, approche Dragon/Baron, autre. Sur **46 parties de validation**, l'état complet atteint **17,49 %** de cases 8×8 exactes contre **15,29 %** pour la meilleure règle simple. L'intervalle par partie du gain contient encore zéro ; choix d'époque, variante et calibrage proviennent de cette même validation. Le F1 macro des cinq types vaut **44,9 %** contre **16,5 %** pour la classe majoritaire, mais le retour base reste très mal reconnu. Les 147 entrées enregistrées comprennent des informations globales que le joueur ne voyait peut-être pas. Ce résultat décrit une capacité prédictive exploratoire, ni sa vision réelle ni une amélioration de ses chances de gagner. [Détails et limites](RESULTS.md#new-development-experiment--a-decision-shaped-shadow-2026-10-10).
+
 ## Ce qui est mesuré aujourd'hui
 
 ### Atlas 64×64 et écosystème des dix joueurs

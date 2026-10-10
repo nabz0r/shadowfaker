@@ -17,6 +17,7 @@ from shadowfaker.demo import export_trace
 from shadowfaker.events64 import aggregate
 from shadowfaker.finegrid import ROOT64, MODELS64, ARTIFACTS64
 from shadowfaker.finegrid import prepare as prepare64, train as train64, evaluate as evaluate64
+from shadowfaker.hierarchical import run as run_hierarchical
 from shadowfaker.interaction_core import ROOT as INTERACTION
 from shadowfaker.interaction_core import prepare as prepare_interaction
 from shadowfaker.pressure import summarize as summarize_pressure
@@ -105,6 +106,13 @@ def main() -> None:
     score = evaluate_interaction(processed=INTERACTION,models=CONFIG.root/"models"/"interaction",
                                   artifacts=CONFIG.root/"artifacts"/"interaction",split="val")
     stage(f"Interaction candidate validation exact16={score['model_region_top1']:.4f}; test intentionally unscored.")
+
+    hierarchy_pilot = run_hierarchical(pilot=True, epochs=2)
+    stage(f"Hierarchical pilot: {hierarchy_pilot['train_matches']} train + {hierarchy_pilot['val_matches']} val games; validation only.")
+    hierarchy = run_hierarchical(epochs=args.epochs)
+    selected = hierarchy["selected_variant"]
+    stage(f"Hierarchical ablations: selected {selected} on validation 8x8={hierarchy['variants'][selected]['top1_8']:.4f}; historical test unscored.")
+    command(sys.executable, CONFIG.root / "scripts" / "render_hierarchical.py")
 
     export_trace(max_frames=30)
     command(sys.executable, CONFIG.root / "scripts" / "render_atlas64.py")

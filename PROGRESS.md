@@ -264,3 +264,38 @@
 ## Vérification prospective — 2026-10-10
 
 - [x] Nouvel instantané Riot `20261010` sur le même PUUID, queue 420 et région `asia` : cinq pages d'IDs retournent **100 + 100 + 100 + 100 + 70 = 470 IDs uniques** ; les 465 parties utilisables restent dans le cache. **0/100** partie strictement postérieure au cutoff gelé. Aucun score prospectif calculé et aucun nouveau label d'entraînement créé. La clé Riot a fonctionné pour cet appel ; prochain rafraîchissement selon disponibilité des parties et validité de la clé.
+
+## M3 hiérarchique — 2026-10-10
+
+- [x] Architecture, masques d'ablation et cibles macro spécifiés dans `PLAN.md` avant entraînement. Tête hiérarchique `8×8 → 16×16 → 64×64` à probabilités exactement cohérentes, cinq classes observables et huit tags masqués ; trois variantes de **même capacité, 732 782 paramètres** (Faker 24 canaux, +alliés 73, état complet 147). Pilote **cinq parties réelles** : 3 train/2 val, 71/54 paires, deux époques des trois variantes, alignement des labels sans erreur. Mini-benchmark CPU **0,0298 s** contre MPS **3,7706 s** sur le même sous-ensemble ; CPU retenu. Le score pilote est trop petit pour conclure. Trois tests ciblés passent : masques emboîtés, priorité/absence de position, normalisation et agrégation exacte des probabilités. Test ancien réservé ; aucune promotion M0 automatique.
+- [x] Corpus M3 : 373 parties train (10 038 paires) et 46 validation (1 275), époques retenues 10/4/17 pour Faker seul/alliés/état complet. CPU choisi après mini-benchmark complet **0,0684 s** contre MPS **0,6053 s**. Lecture par lots groupés par partie : une époque environ 3 s au lieu de 10,6 s avec décompression aléatoire. Trois checkpoints locaux réutilisables ; aucune lecture du test ancien pour leur sélection.
+- [x] Ablation brute 8×8 : **15,14 % / 14,98 % / 16,86 %** ; ajout des alliés seuls insuffisant, état complet supérieur à Faker seul de **+1,73 point**, IC bootstrap apparié par partie **[+0,16 ; +3,50]** sur la validation adaptative. Après prior rôle/phase entraîné sur train, poids choisi sur cette même validation : **17,10 % / 16,86 % / 17,49 %**. Meilleure baseline simple **15,29 %** ; gain du modèle complet +2,20 points, intervalle **[−0,16 ; +4,56]** contenant zéro. Ancien modèle gelé **17,33 %** 8×8 sur validation ; différence de point de 0,16 seulement, sans nouvelle preuve. Toutes les statistiques restent développement exploratoire.
+- [x] Cinq classes de mouvement observables : F1 macro complet **44,9 %** contre règle majoritaire **16,5 %**, mais accuracy **68,6 %** contre **70,0 %** et retour base F1 **5,8 %** (50 exemples). Par phase, exact 8×8 **29,8 %** tôt / **13,1 %** milieu / **7,5 %** tard. Les entrées complètes incluent des informations globales possiblement invisibles à Faker ; aucune influence causale ni supériorité de jeu inférée.
+- [x] Figure d'ablation rouge/noir/or vérifiée visuellement, résumé public strictement agrégé `docs/data/hierarchical_summary.json`, README EN/FR, résultats, roadmap et écosystème mis à jour. Le générateur régénère la figure depuis les seuls agrégats publics. Checkpoint M0 inchangé SHA-256 `869c468880650a556ad4f31d1297daba410e842fb06ff38bc6b80e9e81c780f7`; checkpoint M3 complet local `39abb02c5791531beff5b12bd6a0d82137575061a0e57c885af3b81bf93e9d05`. Le test prospectif reste **0/100** nouvelles parties.
+- [x] Vérification M3 : **17 tests passent**, compilation Python, syntaxe JS, `git diff --check`, régénération depuis l'agrégat public et commande complète `scripts/run_next_level.py --epochs 25` réussissent. La commande réutilise les trois checkpoints M3, renouvelle la figure et termine sans erreur. Le protocole prospectif hors ligne répond `pending` **0/100** ; les deux copies du checkpoint M0 et le checkpoint M3 gardent leurs SHA-256 annoncés. Le code vérifie maintenant effectivement le hash M0 avant d'émettre son rapport M3.
+
+- [2026-10-10T11:25:35+00:00] Next-level five-game pilot reused from checkpoint.
+
+- [2026-10-10T11:25:38+00:00] 64x64 labels: 465 matches, 12510 pairs, 0 errors.
+
+- [2026-10-10T11:25:41+00:00] Event atlas: 465 ranked matches, 0 errors.
+
+- [2026-10-10T11:25:42+00:00] Warehouse: 12975 states, 12510 transitions, 353409 events.
+
+- [2026-10-10T11:25:42+00:00] Enemy pressure: 12975 positional frames.
+
+- [2026-10-10T11:26:24+00:00] Text: 930 EN/FR summaries, 0 errors.
+
+- [2026-10-10T11:26:24+00:00] Vectors: 12510 states; kNN val exact64=0.0094.
+
+- [2026-10-10T11:26:25+00:00] 64x64 historical test: 0.0109 exact, best baseline 0.0192; prospective claim pending.
+
+- [2026-10-10T11:26:25+00:00] Interaction training states: 12510 pairs, 0 errors.
+
+- [2026-10-10T11:26:25+00:00] Interaction candidate validation exact16=0.0871; test intentionally unscored.
+
+- [2026-10-10T11:26:27+00:00] Hierarchical pilot: 3 train + 2 val games; validation only.
+
+- [2026-10-10T11:26:29+00:00] Hierarchical ablations: selected full on validation 8x8=0.1749; historical test unscored.
+
+- [2026-10-10T11:26:31+00:00] Dashboard aggregates, replay and public figures refreshed. Open http://127.0.0.1:8008/ with serve_dashboard.py.
