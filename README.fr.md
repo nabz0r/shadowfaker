@@ -20,6 +20,7 @@ La page fonctionne désormais par **onglets dynamiques** : une vue à la fois, a
 | **Scores / Recherche / Preuves** | Baselines, échecs par classe et [prochains tests](NEXT_RESEARCH.md) |
 | **Stratégies / Challenge** | Hypothèses de composition et [quiz de la mémoire Faker](FAKER_MEMORY.md) |
 | **Stratégies / Challenge** | [Hypothèses et critères d'un jeu meilleur](SHADOW_PLUS.md) ; composition libre de cinq postes dans la simulation illustrative |
+| **Faker × équipe** | [Historique de jeu commun et matrices de ressources à 10→15 minutes](TEAM_MATRIX.md) |
 | **Finales BO5 / Corpus / Archives** | [Six finales sourcées, 25 manches](WORLD_FINALS.md), [matrice IoC](IOC_VISION.md) et fiches ranked privées |
 
 La barre d'onglets reste accessible sur mobile : [capture à 390 pixels](DESIGN.md#dynamic-chapter-tabs). La chronologie commune synchronise des vues de cohortes différentes ; elle n'invente pas de positions entre les frames Riot espacées d'environ une minute.
@@ -47,6 +48,14 @@ La barre d'onglets reste accessible sur mobile : [capture à 390 pixels](DESIGN.
 ![Onglet recherche et prochains tests mesurables](docs/figures/dashboard_research.png)
 
 ![Animation des six finales mondiales gagnées par Faker et T1](docs/figures/six_finals.gif)
+
+**Faker × équipe.** Un index professionnel séparé suit, avant chaque manche, les parties déjà jouées avec Doran, Oner et Keria. L'onglet permet de choisir l'année, un cumul ou une exposition décroissante sur 90 jours, la matrice de cojeu, l'évolution des écarts or/XP des cinq rôles de 10 à 15 minutes et une matrice 5×5 de corrélation de ces variations. Le miroir disponible contient 671 manches avec cinq lignes T1, dont 645 photos complètes ; son fichier 2026 s'arrête au 10 avril. Jouer ensemble ouvre des occasions de se connaître, mais **ne mesure ni confiance, ni communication, ni influence causale de Faker**. Ces résumés pro restent hors du modèle spatial ranked. [Méthode et provenance](TEAM_MATRIX.md).
+
+![Parties communes antérieures avec Faker et écarts d'or par rôle en 2025](docs/figures/team_matrix.png)
+
+![Onglet Faker × équipe : cojeu annuel et écarts de score des cinq rôles](docs/figures/dashboard_team_matrix.png)
+
+![Matrice interactive des co-mouvements entre rôles, unités et limites causales visibles](docs/figures/dashboard_team_correlation.png)
 
 [Direction visuelle et capture mobile](DESIGN.md) · [Sources des finales](WORLD_FINALS.md) · [Résultats chiffrés](RESULTS.md).
 
@@ -105,7 +114,7 @@ flowchart LR
 
 Le [panneau de recherche du site](#tableau-de-bord-visuel) montre **les neuf classes d'événements**, dont 3 934 wards posées sur 7 480 fenêtres de validation KR. Il charge uniquement [les agrégats publiés](docs/data/public_event_ablation.json). Aucun replay Faker assorti d'une partie n'a encore été acquis.
 
-Une commande relance cette extension après la préparation du pipeline local : `.venv/bin/python scripts/run_expansion.py`. Elle reprend les caches, teste cinq parties, entraîne les variantes et recrée le graphique agrégé.
+Une commande relance cette extension après la préparation du pipeline local : `.venv/bin/python scripts/run_expansion.py`. Elle reprend les caches, teste cinq parties, entraîne les variantes, construit la [matrice Faker × équipe](TEAM_MATRIX.md) séparée et recrée les graphiques agrégés.
 
 ### Nouveau laboratoire de décision
 

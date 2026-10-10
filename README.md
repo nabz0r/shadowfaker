@@ -19,6 +19,7 @@ The dashboard now opens **one dynamic tab at a time**. Its six gold stars refer 
 | **Evolution / Tempo / Pressure** | A local game clock, [team movement](#the-project-at-a-glance), a [selectable opponent zone](PRESSURE.md) and ten observed positions |
 | **Scores / Research / Evidence** | [Measured baselines](#what-we-score), failed rare-event classes and [research gates](NEXT_RESEARCH.md) |
 | **Strategies / Challenge** | [Hypotheses and the standard for stronger play](SHADOW_PLUS.md); compose five lanes or challenge the [Faker episode memory](FAKER_MEMORY.md) |
+| **Faker × team** | [Shared-game history and 10→15-minute resource matrices](TEAM_MATRIX.md) |
 | **Finals BO5 / Corpus / Archives** | [Six sourced Worlds finals and 25 games](WORLD_FINALS.md), [the IoC matrix](IOC_VISION.md), plus private ranked match cards |
 
 The horizontal tab strip stays available on mobile; [see the 390-pixel capture](DESIGN.md#dynamic-chapter-tabs). The shared clock changes the linked views according to their own cohorts; it does not add observations between one-minute Riot frames.
@@ -46,6 +47,14 @@ The horizontal tab strip stays available on mobile; [see the 390-pixel capture](
 ![Research evidence tab with the next measurement gates](docs/figures/dashboard_research.png)
 
 ![Animated tour through Faker and T1's six winning Worlds finals](docs/figures/six_finals.gif)
+
+**Faker × team.** A separate professional-match index now tracks Faker's previous shared games with Doran, Oner and Keria before each match. The interactive tab offers year, cumulative or 90-day decayed exposure, a shared-game matrix, five-role gold/XP scoreboard changes from minute 10 to 15, and a 5×5 correlation of those changes. In the available mirror, 671 games have five T1 player rows and 645 have complete snapshots; the 2026 CSV ends on 10 April. Exposure is a proxy for opportunities to learn each other's play, **not** measured trust, communication or Faker's causal influence. These pro summaries do not train the ranked spatial model. [Method, provenance and limits](TEAM_MATRIX.md).
+
+![Prior shared games with Faker and 2025 role gold differences](docs/figures/team_matrix.png)
+
+![Interactive Faker × team tab, with annual co-play and five-role scoreboard matrices](docs/figures/dashboard_team_matrix.png)
+
+![Interactive role co-movement matrix, with correlation units and causal limits](docs/figures/dashboard_team_correlation.png)
 
 [Open the visual design and mobile view](DESIGN.md) · [Read every final's provenance](WORLD_FINALS.md) · [Inspect exact model results](RESULTS.md).
 
@@ -85,7 +94,7 @@ The Challenge tab now lets a reader assign all five hypothetical players to any 
 
 The latest refresh still returns **465 usable KR ranked timelines**. A historically attributed EUW Worlds 2024 alias adds **31 ranked timelines**; a public, unverified and partly stale professional-data mirror adds **671 match summaries without trajectories**. The database now distinguishes these sources instead of treating all **1,167 game records** as equivalent. A second model predicts the **first macro event in the next 10 seconds** from the latest frame and past events: **73,482 KR windows**, plus **5,383 EUW training windows**. On 46 KR validation matches, its log loss is **1.3847** with EUW auxiliary training versus **1.4472** for a train-only phase rule. This is event prediction, not 10-second Faker position tracking; the original exact 512×512 position result remains unchanged. [Evidence, aliases, scientific basis and caveats](DATA_EXPANSION.md).
 
-Run the new expansion from a prepared local pipeline with one command: `.venv/bin/python scripts/run_expansion.py`. It caches Riot and CSV inputs, pilots five games first, trains both event variants and renders the aggregate figure. The pro CSV mirror is labelled separately and never enters the event model.
+Run the new expansion from a prepared local pipeline with one command: `.venv/bin/python scripts/run_expansion.py`. It caches Riot and CSV inputs, pilots five games first, trains both event variants, builds the separate [Faker/team matrix](TEAM_MATRIX.md) and renders aggregate figures. The pro CSV mirror never enters the event model.
 
 Next evidence gate: [matched replay alignment, rare-event detection and player-visible evaluation](NEXT_RESEARCH.md). The role-context ablation is complete.
 

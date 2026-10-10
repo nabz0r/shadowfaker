@@ -159,6 +159,10 @@ def main() -> None:
     stage("Dashboard aggregates, replay and public figures refreshed. Open http://127.0.0.1:8008/ with serve_dashboard.py.")
     command(sys.executable, CONFIG.root / "scripts" / "run_ioc_challenge.py", "--epochs", str(args.epochs))
     stage("Causal item IoC, played-patch catalogs, matched ablations and public IoC figure refreshed.")
+    if (CONFIG.processed / "pro_catalog.sqlite").is_file():
+        command(sys.executable, CONFIG.root / "scripts" / "build_pro_team_matrix.py")
+        command(sys.executable, CONFIG.root / "scripts" / "render_pro_team_matrix.py")
+        stage("Professional Faker/team co-play and 10/15-minute score aggregates refreshed from a separate cached corpus.")
 
 
 if __name__ == "__main__": main()

@@ -617,3 +617,11 @@
 - [2026-10-10T17:56:02+00:00] Faker memory: 10038 train and 1275 validation decisions; retrieval 8x8=0.1153, no promotion over baseline.
 
 - [2026-10-10T17:56:05+00:00] Public IoC figure, corpus inventory and local game replay refreshed.
+## M12 — Matrices d'équipe autour de Faker (2026-10-11)
+
+- [x] Plan M12 inscrit dans `PLAN.md` avant l'implémentation. LoL Esports affiche Doran, Oner, Faker et Keria sur la page T1 actuelle ; la source pro locale reste un miroir tiers non vérifié. Audit préalable : 671 manches Faker/T1 avec cinq lignes joueurs, 645 avec valeurs complètes à 10/15 minutes. Le champ `year` vaut 2026 dans 18 manches datées de décembre 2025 ; la chronologie sera fondée sur `date`, tout en conservant le tag saison.
+- [x] Pilote cinq manches : 5 jeux, 25 lignes joueurs, 20 historiques de paires ; index complet : 671 jeux, 3 355 lignes, 2 684 paires, 645 photos complètes 10/15 min. Cache basé sur SHA-256 CSV, contenu sélectionné du catalogue et version de schéma ; seconde exécution sans reconstruction. Un nom bot absent en 2023 reste `UNKNOWN`, sans faire perdre la manche. Dates source triées, historique strictement antérieur.
+- [x] Agrégat public par année, matrice de cojeu 4×4, exposition cumulée et demi-vie 90 jours, écarts or/XP des cinq rôles et corrélations 5×5 des variations d'or 10→15. En 2025 : 187 manches des quatre joueurs, r(Faker,bot)=+0,06, r(Faker,jungle)=+0,39 et r(bot,support)=+0,55 ; descriptif, sans interprétation causale.
+- [x] Onglet FR/EN testé réellement : année 2022 donne 144 manches et zéro Doran ; 2025 donne 187 et la mémoire 90 jours change la courbe ; matrice 5×5 visible, aucun log console erreur. Largeur mobile 390 px sans débordement de la grille. Capture d'onglet et figure scientifique ajoutées au README FR/EN. `TEAM_MATRIX.md`, RESULTS, CORPUS, ROADMAP et entrée des commandes à jour.
+- [x] Tests du code chronologique et des champs manquants ; 43 tests globaux passent, syntaxe JS, compilation Python, `git diff --check`, pilotage/reprise et audit JSON sans IDs de match. Sources pro privées ignorées par Git ; scores ranked inchangés.
+- [ ] Publication `main` et vérification de la référence distante.

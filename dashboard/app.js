@@ -182,6 +182,10 @@ Object.assign(copy.en,{event_validation_kicker:"AUDIT · RIOT JSON ↔ LOCAL IND
   event_validation_doc:"Method and decisions ↗",event_validation_exact:"exact indexed rows",
   event_validation_actor:"purchases / skills without player attribution",event_validation_neutral:"deaths without a player killer",
   event_validation_plates:"plates outside the main index"});
+Object.assign(copy.fr,{nav_team:"Faker × équipe",team_title:"La mémoire d'une équipe autour de Faker",team_domain:"Corpus pro séparé",team_intro:"Doran, Oner et Keria ne sont pas trois variables fixes. Leur expérience commune avec Faker change à chaque manche. Ici, la matrice mesure les parties jouées ensemble et les ressources visibles à 10 puis 15 minutes ; elle ne lit ni la voix ni les déplacements.",team_year:"Période",team_total:"Parties passées",team_recent:"Mémoire 90 j",team_doc:"Méthode & provenance ↗",team_games:"manches avec Faker et cinq rôles",team_snapshots:"états complets à 10/15 min",team_latest:"dernier match du miroir",team_matrix_kicker:"QUI A JOUÉ AVEC QUI ?",team_matrix_title:"Matrice des manches communes",team_matrix_note:"Une case = nombre de manches professionnelles dans la période choisie où les deux noms figurent dans les cinq lignes T1.",team_curve_kicker:"AVANT LA MANCHE, PAS APRÈS",team_curve_title:"L'expérience commune s'accumule",team_curve_note:"Cumul avant le dernier match de chaque mois. La courbe décroissante donne moins de poids aux parties anciennes (demi-vie 90 jours).",team_resources_kicker:"PHOTO DU SCORE À 10 → 15 MINUTES",team_resources_title:"Où l'avantage se déplace",team_resources_note:"Moyenne des écarts or/XP de chaque rôle face à son opposant. La variation indique le déplacement du score entre 10 et 15 minutes, pas un transfert prouvé entre coéquipiers.",team_interpret_title:"Ce que cette expérience ne mesure pas",team_interpret:"Jouer ensemble crée des occasions de se connaître ; le nombre de manches ne mesure pas l'entente, la communication, le leadership ou une influence causale de Faker. Les chiffres viennent d'un miroir public tiers, arrêté à la date affichée ci-dessus, et restent hors de l'entraînement solo queue.",team_all:"Toute l'histoire",team_gold10:"Or vs lane · 10 min",team_gold15:"Or vs lane · 15 min",team_swing:"Δ or 10→15",team_xp_swing:"Δ XP 10→15",team_roles:{top:"TOP",jng:"JUNGLE",mid:"FAKER · MID",bot:"BOT",sup:"SUPPORT"},team_count:n=>`${n} manches avec les sept valeurs à 10/15 minutes pour chaque joueur · moyenne descriptive, sans positions ni voix.`});
+Object.assign(copy.en,{nav_team:"Faker × team",team_title:"A team's memory around Faker",team_domain:"Separate pro corpus",team_intro:"Doran, Oner and Keria are not fixed variables. Their shared experience with Faker changes game by game. This matrix measures matches played together and resources visible at minutes 10 and 15; it sees neither voice nor movement.",team_year:"Period",team_total:"Prior games",team_recent:"90-day memory",team_doc:"Method & provenance ↗",team_games:"games with Faker and five roles",team_snapshots:"complete 10/15-minute states",team_latest:"last mirror game",team_matrix_kicker:"WHO PLAYED WITH WHOM?",team_matrix_title:"Shared-game matrix",team_matrix_note:"Each cell counts professional games in the selected period where both names appear among T1's five player rows.",team_curve_kicker:"BEFORE EACH GAME",team_curve_title:"Shared experience accumulates",team_curve_note:"History before the final game of each month. The decayed curve gives older games less weight (90-day half-life).",team_resources_kicker:"SCOREBOARD AT 10 → 15 MINUTES",team_resources_title:"Where the advantage shifts",team_resources_note:"Average gold/XP difference of each role versus its opponent. Change means scoreboard movement between minutes 10 and 15, not a proven transfer between teammates.",team_interpret_title:"What this experience cannot measure",team_interpret:"Playing together creates opportunities to know each other; game count does not measure trust, communication, leadership or Faker's causal influence. These figures come from a third-party public mirror ending on the date shown above and remain outside solo-queue training.",team_all:"All years",team_gold10:"Gold vs lane · 10 min",team_gold15:"Gold vs lane · 15 min",team_swing:"Δ gold 10→15",team_xp_swing:"Δ XP 10→15",team_roles:{top:"TOP",jng:"JUNGLE",mid:"FAKER · MID",bot:"BOT",sup:"SUPPORT"},team_count:n=>`${n} games with all seven 10/15-minute fields for each player · descriptive mean, no positions or voice.`});
+Object.assign(copy.fr,{team_correlation_kicker:"MOUVEMENTS ENTRE RÔLES",team_correlation_title:"Qui varie avec qui ?",team_correlation_note:"Corrélation des variations d'écart d'or 10→15 min, manche par manche. +1 = évoluent ensemble ; 0 = pas de lien linéaire ; −1 = évoluent en sens contraire. Ni direction ni causalité ne sont déduites.",team_correlation_limit:"Échantillon limité aux mêmes manches complètes que la matrice ci-dessus ; un état global favorable peut faire progresser plusieurs rôles ensemble.",team_corr_roles:{top:"TOP",jng:"JNG",mid:"FAKER",bot:"BOT",sup:"SUP"}});
+Object.assign(copy.en,{team_correlation_kicker:"HOW ROLES MOVE TOGETHER",team_correlation_title:"Which gaps move together?",team_correlation_note:"Correlation of the 10→15-minute gold-gap changes across games. +1 = move together; 0 = no linear association; −1 = move in opposite directions. Neither direction of influence nor causality follows.",team_correlation_limit:"Uses the same complete games as the scoreboard above; a favorable global game state may lift several roles together.",team_corr_roles:{top:"TOP",jng:"JNG",mid:"FAKER",bot:"BOT",sup:"SUP"}});
 Object.assign(copy.fr,{memory_title:"Un souvenir, une hypothèse, une réponse",memory_intro:"10 038 décisions de train alimentent une base locale de situations. Le challenger retrouve des cas proches, calibre ses choix sur des parties distinctes et prédit la prochaine région. Essayez vous-même sur des exemples de validation.",memory_doc:"Méthode et limites ↗",memory_retrieval:"mémoire · top-1 8×8",memory_baseline:"règle rôle/phase",memory_shadow:"Shadow IoC",memory_scores_limit:"Même validation réutilisée de 46 parties. La mémoire ne bat ni la règle ni Shadow ; aucune promotion du modèle. 512×512 désigne des cases de destination, pas une mesure à 512 Hz.",memory_you:"votre choix",memory_model:"mémoire",memory_actual:"observé",memory_instruction:"Cliquez une case : où Faker sera-t-il à la prochaine minute observée ?",memory_reveal:"Révéler",memory_next:"Cas suivant",memory_quiz_limit:"Ce quiz n'entraîne rien depuis le navigateur. La mémoire est calibrée sur le train ; les réponses de validation servent seulement à mesurer l'erreur.",memory_case:(n,total,row)=>`Cas ${n}/${total} · ${row.champion} · ${row.role} · minute ${row.minute}`,memory_feedback:(choice,pred,actual)=>`Votre case : ${choice ?? "—"} · Mémoire : ${pred} · Observé : ${actual}${choice===actual?" · juste !":""}`});
 Object.assign(copy.en,{memory_title:"A memory, a guess, an answer",memory_intro:"10,038 training decisions form a local case memory. The challenger retrieves similar situations, tunes its choices on separate training matches, then predicts the next region. Try held-out validation cases yourself.",memory_doc:"Method and limits ↗",memory_retrieval:"memory · top-1 8×8",memory_baseline:"role/phase rule",memory_shadow:"Shadow IoC",memory_scores_limit:"Same reused validation set of 46 matches. Retrieval trails both the rule and Shadow; no model promotion. 512×512 means destination cells, not 512 Hz observations.",memory_you:"your choice",memory_model:"memory",memory_actual:"observed",memory_instruction:"Click a cell: where will Faker be at the next observed minute?",memory_reveal:"Reveal",memory_next:"Next case",memory_quiz_limit:"The browser quiz does not train a model. Retrieval is calibrated within training matches; validation answers measure error only.",memory_case:(n,total,row)=>`Case ${n}/${total} · ${row.champion} · ${row.role} · minute ${row.minute}`,memory_feedback:(choice,pred,actual)=>`Your cell: ${choice ?? "—"} · Memory: ${pred} · Observed: ${actual}${choice===actual?" · correct!":""}`});
 
@@ -219,6 +223,9 @@ let memoryCases = [];
 let memoryCaseIndex = 0;
 let memoryChoice = null;
 let memoryRevealed = false;
+let teamData = null;
+let teamYear = "2025";
+let teamMode = "total";
 let iocSummary = null;
 let iocQuality = null;
 let gameFacts = [];
@@ -559,6 +566,7 @@ function translate() {
   if (worldFinals) renderFinals();
   if (corpusData) renderCorpus();
   if (eventValidation) renderEventValidation();
+  if (teamData) renderTeam();
   if (memorySummary) renderMemory();
   if (gameFacts.length) { renderGameCards(); renderGamePreview(); }
   if (trace) updateReplay();
@@ -721,6 +729,112 @@ function renderAtlas() {
   $("#atlas-total").textContent = total.toLocaleString(language);
   $("#atlas-unplaced").textContent = positions ? "—" : (local?.without_position ?? oldRecord?.without_position ?? 0).toLocaleString(language);
   $("#atlas-readout").textContent = copy[language].atlas_empty($("#atlas-layer").selectedOptions[0].textContent,phaseLabel(phase),cohort);
+}
+
+function renderTeam() {
+  if (!teamData) return;
+  if (teamYear !== "all" && !teamData.by_year[teamYear]) teamYear = teamData.years.at(-1);
+  const t = copy[language];
+  const locale = language === "fr" ? "fr-FR" : "en-US";
+  const yearSelect = $("#team-year");
+  yearSelect.replaceChildren();
+  for (const year of ["all", ...teamData.years]) {
+    const option = document.createElement("option");
+    option.value = year;
+    option.textContent = year === "all" ? t.team_all : year;
+    yearSelect.append(option);
+  }
+  yearSelect.value = teamYear;
+  $("#team-mode-total").classList.toggle("active", teamMode === "total");
+  $("#team-mode-recent").classList.toggle("active", teamMode === "recent");
+  const data = teamYear === "all" ? teamData.all : teamData.by_year[teamYear];
+  $("#team-games").textContent = data.games.toLocaleString(locale);
+  $("#team-complete").textContent = data.complete_10_15.toLocaleString(locale);
+  $("#team-last").textContent = teamData.last_date;
+  const names = teamData.focus;
+  const matrix = $("#team-pair-matrix");
+  matrix.replaceChildren();
+  const empty = document.createElement("span"); empty.className = "team-matrix-corner"; matrix.append(empty);
+  for (const name of names) {
+    const header = document.createElement("strong"); header.textContent = name; matrix.append(header);
+  }
+  const high = Math.max(1, data.games);
+  data.pair_matrix.forEach((row, i) => {
+    const label = document.createElement("strong"); label.textContent = names[i]; matrix.append(label);
+    row.forEach((value, j) => {
+      const cell = document.createElement("div");
+      cell.className = "team-matrix-cell";
+      cell.style.backgroundColor = value ? `rgba(255,85,119,${(.13 + .67 * value / high).toFixed(3)})` : "#18202b";
+      cell.textContent = value.toLocaleString(locale);
+      cell.title = `${names[i]} × ${names[j]} · ${value} ${language === "fr" ? "manches communes" : "shared games"}`;
+      matrix.append(cell);
+    });
+  });
+  const curve = $("#team-curve"); curve.replaceChildren();
+  const monthly = teamData.monthly_prior.filter(row => teamYear === "all" || row.month.startsWith(teamYear));
+  const roster = [{name:"Doran",color:"#ffd188"},{name:"Oner",color:"#76dce5"},{name:"Keria",color:"#ff79a3"}];
+  const field = teamMode === "total" ? "prior_games" : "effective90";
+  const values = roster.flatMap(person => monthly.map(row => row[person.name]?.[field] || 0));
+  const ceiling = Math.max(1, ...values);
+  const xAt = index => 55 + index / Math.max(1, monthly.length - 1) * 490;
+  const yAt = value => 274 - value / ceiling * 224;
+  for (let i = 0; i <= 4; i++) {
+    const yy = 274 - i * 56;
+    curve.append(svgNode("line", {x1:55,x2:545,y1:yy,y2:yy,stroke:"#694b59","stroke-width":1}));
+    const label = svgNode("text", {x:5,y:yy+4,fill:"#d5b8c2","font-size":12});
+    label.textContent = Math.round(ceiling * i / 4).toLocaleString(locale); curve.append(label);
+  }
+  for (const person of roster) {
+    const points = monthly.map((row,i)=>`${xAt(i)},${yAt(row[person.name]?.[field] || 0)}`).join(" ");
+    if (points) curve.append(svgNode("polyline",{points,fill:"none",stroke:person.color,"stroke-width":4,"stroke-linecap":"round","stroke-linejoin":"round"}));
+    const last = monthly.at(-1);
+    if (last) curve.append(svgNode("circle",{cx:xAt(monthly.length-1),cy:yAt(last[person.name]?.[field] || 0),r:6,fill:person.color,stroke:"#fff","stroke-width":2}));
+  }
+  for (const index of [...new Set([0,Math.floor((monthly.length-1)/2),monthly.length-1])]) {
+    if (monthly[index]) {
+      const label = svgNode("text",{x:xAt(index),y:305,fill:"#d5b8c2","font-size":11,"text-anchor":index===0?"start":index===monthly.length-1?"end":"middle"});
+      label.textContent = monthly[index].month; curve.append(label);
+    }
+  }
+  const legend = $("#team-curve-legend"); legend.replaceChildren();
+  for (const person of roster) {
+    const item = document.createElement("span"); item.style.color = person.color;
+    const last = monthly.at(-1)?.[person.name]?.[field] || 0;
+    item.textContent = `${person.name} · ${teamMode === "recent" ? last.toFixed(1) : last.toLocaleString(locale)}`;
+    legend.append(item);
+  }
+  const grid = $("#team-resource-grid"); grid.replaceChildren();
+  for (const label of ["",t.team_gold10,t.team_gold15,t.team_swing,t.team_xp_swing]) {
+    const head = document.createElement("strong"); head.className = "team-resource-head"; head.textContent = label; grid.append(head);
+  }
+  for (const role of teamData.roles) {
+    const head = document.createElement("strong"); head.className = role === "mid" ? "team-role faker" : "team-role"; head.textContent = t.team_roles[role]; grid.append(head);
+    for (const field of ["gold_diff10","gold_diff15","gold_swing10_15","xp_swing10_15"]) {
+      const value = data.roles[role][field];
+      const cell = document.createElement("span"); cell.className = "team-resource-value";
+      cell.textContent = value == null ? "—" : `${value > 0 ? "+" : ""}${Math.round(value).toLocaleString(locale)}`;
+      const alpha = value == null ? 0 : Math.min(.7, .12 + Math.abs(value) / 450);
+      cell.style.backgroundColor = value == null ? "#25212b" : value >= 0 ? `rgba(99,223,211,${alpha})` : `rgba(255,91,127,${alpha})`;
+      cell.title = `${t.team_roles[role]} · ${Math.round(value || 0)} · n=${data.roles[role].n}`;
+      grid.append(cell);
+    }
+  }
+  $("#team-resource-count").textContent = t.team_count(data.complete_10_15);
+  const corrGrid = $("#team-correlation-grid"); corrGrid.replaceChildren();
+  const corrNames = teamData.roles.map(role => t.team_corr_roles[role]);
+  const blank = document.createElement("span"); corrGrid.append(blank);
+  for (const name of corrNames) { const head = document.createElement("strong"); head.textContent = name; corrGrid.append(head); }
+  data.gold_swing_correlations.forEach((row, i) => {
+    const head = document.createElement("strong"); head.textContent = corrNames[i]; corrGrid.append(head);
+    row.forEach((value, j) => {
+      const cell = document.createElement("span"); cell.className = "team-matrix-cell";
+      cell.textContent = value == null ? "—" : `${value > 0 ? "+" : ""}${value.toFixed(2)}`;
+      const alpha = value == null ? 0 : .10 + Math.abs(value) * .67;
+      cell.style.backgroundColor = value == null ? "#25212b" : value >= 0 ? `rgba(93,220,212,${alpha.toFixed(3)})` : `rgba(255,91,127,${alpha.toFixed(3)})`;
+      cell.title = `${corrNames[i]} × ${corrNames[j]} · r=${value == null ? "—" : value.toFixed(3)} · n=${data.complete_10_15}`;
+      corrGrid.append(cell);
+    });
+  });
 }
 
 function renderMemory() {
@@ -1440,11 +1554,11 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
   let memoryPayload;
-  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload] = payloads;
+  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData] = payloads;
   memoryCases = memoryPayload?.examples || [];
   renderIocResult();
   if (summary && (atlas512 || grid64)) renderSurface();
@@ -1457,6 +1571,7 @@ async function start() {
   if (worldFinals) renderFinals();
   if (corpusData) renderCorpus();
   if (eventValidation) renderEventValidation();
+  if (teamData) renderTeam();
   if (memorySummary) renderMemory();
   showSharedMinute();
   await loadGameList();
@@ -1535,6 +1650,9 @@ $("#atlas-canvas").addEventListener("mousemove", (event) => {
 $("#atlas-canvas").addEventListener("mouseleave", () => { if (atlas512 || events64) $("#atlas-readout").textContent = copy[language].atlas_hover; });
 $("#challenge-response").addEventListener("input", () => { if (challengeData) renderChallenge(); });
 $("#challenge-sharing").addEventListener("input", () => { if (challengeData) renderChallenge(); });
+$("#team-year").addEventListener("change", event => { teamYear = event.target.value; renderTeam(); });
+$("#team-mode-total").addEventListener("click", () => { teamMode = "total"; renderTeam(); });
+$("#team-mode-recent").addEventListener("click", () => { teamMode = "recent"; renderTeam(); });
 $("#memory-reveal").addEventListener("click", () => { if (memoryCases.length) { memoryRevealed = true; renderMemory(); } });
 $("#memory-next").addEventListener("click", () => { if (memoryCases.length) { memoryCaseIndex = (memoryCaseIndex + 1) % memoryCases.length; memoryChoice = null; memoryRevealed = false; renderMemory(); } });
 $("#surface-actual").addEventListener("click", () => { surfaceMode = "actual"; if (summary) renderSurface(); });

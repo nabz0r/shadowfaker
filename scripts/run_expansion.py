@@ -16,7 +16,9 @@ from shadowfaker.alias_fetch import audit
 from shadowfaker.event_clock import build as build_events, build_alias
 from shadowfaker.event_model import run as train_events
 from shadowfaker.pro_catalog import import_csv
+from shadowfaker.pro_team_matrix import build as build_team, summarize as summarize_team
 from render_expansion import build as render
+from render_pro_team_matrix import main as render_team
 
 LOG = logging.getLogger("expansion")
 MIRROR = "https://raw.githubusercontent.com/twodotone/finalLOL/main/data/csv/"
@@ -57,7 +59,8 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO,format="%(asctime)s %(levelname)s %(message)s")
     steps = ["Riot KR refresh", "EUW/NA alias pilot", "EUW/NA alias full",
              "10s KR pilot", "10s KR full", "10s EUW pilot", "10s EUW full",
-             "Pro catalog", "Event model pilot", "KR model", "KR+EUW model", "Public aggregate figure"]
+             "Pro catalog", "Faker/team pilot", "Faker/team full and figure",
+             "Event model pilot", "KR model", "KR+EUW model", "Public aggregate figure"]
     with tqdm(total=len(steps),desc="Shadow Faker expansion",unit="phase") as progress:
         def step(name, function):
             progress.set_postfix_str(name)
@@ -83,10 +86,22 @@ def main() -> None:
                 import_csv(paths[:1],CONFIG.processed/"pro_catalog_pilot.sqlite",limit=5)
                 return import_csv(paths)
             step(steps[7],pro)
-        step(steps[8],lambda: train_events(pilot=True,epochs=4))
-        step(steps[9],train_events)
-        step(steps[10],lambda: train_events(with_euw=True))
-        step(steps[11],render)
+        def team_pilot():
+            result = build_team(db_path=CONFIG.root / "data" / "pilot_pro_team_matrix.sqlite", pilot=5)
+            if result["games"] != 5 or result["player_rows"] != 25:
+                raise RuntimeError(f"Team pilot failed: {result}")
+            return result
+        step(steps[8],team_pilot)
+        def team_full():
+            outcome = build_team()
+            summarize_team()
+            render_team()
+            return outcome
+        step(steps[9],team_full)
+        step(steps[10],lambda: train_events(pilot=True,epochs=4))
+        step(steps[11],train_events)
+        step(steps[12],lambda: train_events(with_euw=True))
+        step(steps[13],render)
 
 
 if __name__ == "__main__":
