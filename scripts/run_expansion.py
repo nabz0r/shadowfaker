@@ -17,8 +17,10 @@ from shadowfaker.event_clock import build as build_events, build_alias
 from shadowfaker.event_model import run as train_events
 from shadowfaker.pro_catalog import import_csv
 from shadowfaker.pro_team_matrix import build as build_team, summarize as summarize_team
+from shadowfaker.team_probe import pilot as pilot_team_probe, run as run_team_probe
 from render_expansion import build as render
 from render_pro_team_matrix import main as render_team
+from render_team_probe import main as render_team_probe
 
 LOG = logging.getLogger("expansion")
 MIRROR = "https://raw.githubusercontent.com/twodotone/finalLOL/main/data/csv/"
@@ -59,7 +61,7 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO,format="%(asctime)s %(levelname)s %(message)s")
     steps = ["Riot KR refresh", "EUW/NA alias pilot", "EUW/NA alias full",
              "10s KR pilot", "10s KR full", "10s EUW pilot", "10s EUW full",
-             "Pro catalog", "Faker/team pilot", "Faker/team full and figure",
+             "Pro catalog", "Faker/team pilot", "Faker/team full and figure", "Team-history probe pilot", "Team-history probe and figure",
              "Event model pilot", "KR model", "KR+EUW model", "Public aggregate figure"]
     with tqdm(total=len(steps),desc="Shadow Faker expansion",unit="phase") as progress:
         def step(name, function):
@@ -98,10 +100,16 @@ def main() -> None:
             render_team()
             return outcome
         step(steps[9],team_full)
-        step(steps[10],lambda: train_events(pilot=True,epochs=4))
-        step(steps[11],train_events)
-        step(steps[12],lambda: train_events(with_euw=True))
-        step(steps[13],render)
+        step(steps[10],pilot_team_probe)
+        def team_probe_full():
+            outcome = run_team_probe()
+            render_team_probe()
+            return outcome
+        step(steps[11],team_probe_full)
+        step(steps[12],lambda: train_events(pilot=True,epochs=4))
+        step(steps[13],train_events)
+        step(steps[14],lambda: train_events(with_euw=True))
+        step(steps[15],render)
 
 
 if __name__ == "__main__":

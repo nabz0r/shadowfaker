@@ -186,6 +186,8 @@ Object.assign(copy.fr,{nav_team:"Faker × équipe",team_title:"La mémoire d'une
 Object.assign(copy.en,{nav_team:"Faker × team",team_title:"A team's memory around Faker",team_domain:"Separate pro corpus",team_intro:"Doran, Oner and Keria are not fixed variables. Their shared experience with Faker changes game by game. This matrix measures matches played together and resources visible at minutes 10 and 15; it sees neither voice nor movement.",team_year:"Period",team_total:"Prior games",team_recent:"90-day memory",team_doc:"Method & provenance ↗",team_games:"games with Faker and five roles",team_snapshots:"complete 10/15-minute states",team_latest:"last mirror game",team_matrix_kicker:"WHO PLAYED WITH WHOM?",team_matrix_title:"Shared-game matrix",team_matrix_note:"Each cell counts professional games in the selected period where both names appear among T1's five player rows.",team_curve_kicker:"BEFORE EACH GAME",team_curve_title:"Shared experience accumulates",team_curve_note:"History before the final game of each month. The decayed curve gives older games less weight (90-day half-life).",team_resources_kicker:"SCOREBOARD AT 10 → 15 MINUTES",team_resources_title:"Where the advantage shifts",team_resources_note:"Average gold/XP difference of each role versus its opponent. Change means scoreboard movement between minutes 10 and 15, not a proven transfer between teammates.",team_interpret_title:"What this experience cannot measure",team_interpret:"Playing together creates opportunities to know each other; game count does not measure trust, communication, leadership or Faker's causal influence. These figures come from a third-party public mirror ending on the date shown above and remain outside solo-queue training.",team_all:"All years",team_gold10:"Gold vs lane · 10 min",team_gold15:"Gold vs lane · 15 min",team_swing:"Δ gold 10→15",team_xp_swing:"Δ XP 10→15",team_roles:{top:"TOP",jng:"JUNGLE",mid:"FAKER · MID",bot:"BOT",sup:"SUPPORT"},team_count:n=>`${n} games with all seven 10/15-minute fields for each player · descriptive mean, no positions or voice.`});
 Object.assign(copy.fr,{team_correlation_kicker:"MOUVEMENTS ENTRE RÔLES",team_correlation_title:"Qui varie avec qui ?",team_correlation_note:"Corrélation des variations d'écart d'or 10→15 min, manche par manche. +1 = évoluent ensemble ; 0 = pas de lien linéaire ; −1 = évoluent en sens contraire. Ni direction ni causalité ne sont déduites.",team_correlation_limit:"Échantillon limité aux mêmes manches complètes que la matrice ci-dessus ; un état global favorable peut faire progresser plusieurs rôles ensemble.",team_corr_roles:{top:"TOP",jng:"JNG",mid:"FAKER",bot:"BOT",sup:"SUP"}});
 Object.assign(copy.en,{team_correlation_kicker:"HOW ROLES MOVE TOGETHER",team_correlation_title:"Which gaps move together?",team_correlation_note:"Correlation of the 10→15-minute gold-gap changes across games. +1 = move together; 0 = no linear association; −1 = move in opposite directions. Neither direction of influence nor causality follows.",team_correlation_limit:"Uses the same complete games as the scoreboard above; a favorable global game state may lift several roles together.",team_corr_roles:{top:"TOP",jng:"JNG",mid:"FAKER",bot:"BOT",sup:"SUP"}});
+Object.assign(copy.fr,{probe_kicker:"CHALLENGE CHRONOLOGIQUE · 10 → 15 MIN",probe_title:"Est-ce que l'histoire commune aide vraiment ?",probe_intro:"On prédit l'écart d'or de Faker à 15 minutes à partir du score à 10 minutes. Trois méthodes affrontent les mêmes 72 manches test ; moins d'erreur est mieux.",probe_doc:"Protocole, chiffres et limites ↗",probe_methods:["Copier le score à 10 min","Contexte à 10 min","Contexte + parties communes"],probe_verdict:"Signal non confirmé : l'historique commun ne bat pas la simple copie du score à 10 minutes.",probe_detail:(d,lo,hi,n)=>`Gain de l'historique face au contexte : ${(-d).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})} or d'erreur en moins ; intervalle 95 % de ${lo.toLocaleString("fr-FR",{minimumFractionDigits:2})} à ${hi.toLocaleString("fr-FR",{minimumFractionDigits:2})} pour la différence historique − contexte (n = ${n} manches test). L'intervalle traverse zéro. Score pro omniscient, ni décision de Faker ni précision de Shadow.`});
+Object.assign(copy.en,{probe_kicker:"CHRONOLOGICAL CHALLENGE · 10 → 15 MIN",probe_title:"Does shared history actually help?",probe_intro:"We predict Faker's 15-minute gold gap from the 10-minute scoreboard. Three methods face the same 72 test games; lower error is better.",probe_doc:"Protocol, numbers and limits ↗",probe_methods:["Copy 10-minute score","10-minute context","Context + shared games"],probe_verdict:"Signal not confirmed: shared history does not beat simply copying the 10-minute score.",probe_detail:(d,lo,hi,n)=>`History versus context: ${(-d).toFixed(2)} less gold error; 95% interval ${lo.toFixed(2)} to ${hi.toFixed(2)} for history − context (n = ${n} test games). The interval crosses zero. Omniscient pro scoreboard, neither Faker's decisions nor Shadow accuracy.`});
 Object.assign(copy.fr,{memory_title:"Un souvenir, une hypothèse, une réponse",memory_intro:"10 038 décisions de train alimentent une base locale de situations. Le challenger retrouve des cas proches, calibre ses choix sur des parties distinctes et prédit la prochaine région. Essayez vous-même sur des exemples de validation.",memory_doc:"Méthode et limites ↗",memory_retrieval:"mémoire · top-1 8×8",memory_baseline:"règle rôle/phase",memory_shadow:"Shadow IoC",memory_scores_limit:"Même validation réutilisée de 46 parties. La mémoire ne bat ni la règle ni Shadow ; aucune promotion du modèle. 512×512 désigne des cases de destination, pas une mesure à 512 Hz.",memory_you:"votre choix",memory_model:"mémoire",memory_actual:"observé",memory_instruction:"Cliquez une case : où Faker sera-t-il à la prochaine minute observée ?",memory_reveal:"Révéler",memory_next:"Cas suivant",memory_quiz_limit:"Ce quiz n'entraîne rien depuis le navigateur. La mémoire est calibrée sur le train ; les réponses de validation servent seulement à mesurer l'erreur.",memory_case:(n,total,row)=>`Cas ${n}/${total} · ${row.champion} · ${row.role} · minute ${row.minute}`,memory_feedback:(choice,pred,actual)=>`Votre case : ${choice ?? "—"} · Mémoire : ${pred} · Observé : ${actual}${choice===actual?" · juste !":""}`});
 Object.assign(copy.en,{memory_title:"A memory, a guess, an answer",memory_intro:"10,038 training decisions form a local case memory. The challenger retrieves similar situations, tunes its choices on separate training matches, then predicts the next region. Try held-out validation cases yourself.",memory_doc:"Method and limits ↗",memory_retrieval:"memory · top-1 8×8",memory_baseline:"role/phase rule",memory_shadow:"Shadow IoC",memory_scores_limit:"Same reused validation set of 46 matches. Retrieval trails both the rule and Shadow; no model promotion. 512×512 means destination cells, not 512 Hz observations.",memory_you:"your choice",memory_model:"memory",memory_actual:"observed",memory_instruction:"Click a cell: where will Faker be at the next observed minute?",memory_reveal:"Reveal",memory_next:"Next case",memory_quiz_limit:"The browser quiz does not train a model. Retrieval is calibrated within training matches; validation answers measure error only.",memory_case:(n,total,row)=>`Case ${n}/${total} · ${row.champion} · ${row.role} · minute ${row.minute}`,memory_feedback:(choice,pred,actual)=>`Your cell: ${choice ?? "—"} · Memory: ${pred} · Observed: ${actual}${choice===actual?" · correct!":""}`});
 
@@ -224,6 +226,7 @@ let memoryCaseIndex = 0;
 let memoryChoice = null;
 let memoryRevealed = false;
 let teamData = null;
+let teamProbe = null;
 let teamYear = "2025";
 let teamMode = "total";
 let iocSummary = null;
@@ -567,6 +570,7 @@ function translate() {
   if (corpusData) renderCorpus();
   if (eventValidation) renderEventValidation();
   if (teamData) renderTeam();
+  if (teamProbe) renderTeamProbe();
   if (memorySummary) renderMemory();
   if (gameFacts.length) { renderGameCards(); renderGamePreview(); }
   if (trace) updateReplay();
@@ -835,6 +839,28 @@ function renderTeam() {
       corrGrid.append(cell);
     });
   });
+}
+
+function renderTeamProbe() {
+  if (!teamProbe) return;
+  const t = copy[language];
+  const endpoint = teamProbe.endpoints.faker_mid;
+  const items = ["persistence", "ten_minute_context", "context_plus_history"];
+  const colors = ["#8f92a5", "#71dae2", "#ff789d"];
+  const scores = items.map(key => endpoint.test[key].mae_gold);
+  const max = Math.max(...scores) * 1.06;
+  const bars = $("#team-probe-bars"); bars.replaceChildren();
+  items.forEach((key, index) => {
+    const row = document.createElement("div"); row.className = "team-probe-row";
+    const label = document.createElement("span"); label.textContent = t.probe_methods[index];
+    const track = document.createElement("div"); track.className = "team-probe-track";
+    const fill = document.createElement("i"); fill.style.width = `${100 * scores[index] / max}%`; fill.style.background = colors[index]; track.append(fill);
+    const value = document.createElement("strong"); value.textContent = `${scores[index].toLocaleString(language === "fr" ? "fr-FR" : "en-US",{minimumFractionDigits:2})} g`;
+    row.append(label, track, value); bars.append(row);
+  });
+  $("#team-probe-result").textContent = t.probe_verdict;
+  const [low, high] = endpoint.paired_test_delta_ci95_day_bootstrap_gold;
+  $("#team-probe-detail").textContent = t.probe_detail(endpoint.paired_test_delta_history_minus_context_mae_gold, low, high, teamProbe.split.games.test);
 }
 
 function renderMemory() {
@@ -1554,11 +1580,11 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json"), fetch("/team-probe.json")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
   let memoryPayload;
-  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData] = payloads;
+  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData, teamProbe] = payloads;
   memoryCases = memoryPayload?.examples || [];
   renderIocResult();
   if (summary && (atlas512 || grid64)) renderSurface();
@@ -1572,6 +1598,7 @@ async function start() {
   if (corpusData) renderCorpus();
   if (eventValidation) renderEventValidation();
   if (teamData) renderTeam();
+  if (teamProbe) renderTeamProbe();
   if (memorySummary) renderMemory();
   showSharedMinute();
   await loadGameList();

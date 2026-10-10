@@ -1,5 +1,7 @@
 # Faker × équipe — mémoire de jeu mesurée
 
+**Épreuve prédictive suivante :** l'[ablation chronologique de l'historique commun](TEAM_PROBE.md) sur 645 manches à score complet ne confirme pas de gain pour le score de Faker mid à 15 minutes ; la copie du score à 10 minutes reste meilleure. Les matrices ci-dessous demeurent descriptives.
+
 ![Historique des matchs communs et écarts d'or par rôle](docs/figures/team_matrix.png)
 
 ## La question

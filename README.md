@@ -48,7 +48,13 @@ The horizontal tab strip stays available on mobile; [see the 390-pixel capture](
 
 ![Animated tour through Faker and T1's six winning Worlds finals](docs/figures/six_finals.gif)
 
-**Faker × team.** A separate professional-match index now tracks Faker's previous shared games with Doran, Oner and Keria before each match. The interactive tab offers year, cumulative or 90-day decayed exposure, a shared-game matrix, five-role gold/XP scoreboard changes from minute 10 to 15, and a 5×5 correlation of those changes. In the available mirror, 671 games have five T1 player rows and 645 have complete snapshots; the 2026 CSV ends on 10 April. Exposure is a proxy for opportunities to learn each other's play, **not** measured trust, communication or Faker's causal influence. These pro summaries do not train the ranked spatial model. [Method, provenance and limits](TEAM_MATRIX.md).
+**Faker × team.** A separate professional-match index now tracks Faker's previous shared games with Doran, Oner and Keria before each match. The interactive tab offers year, cumulative or 90-day decayed exposure, a shared-game matrix, five-role gold/XP scoreboard changes from minute 10 to 15, and a 5×5 correlation of those changes. In the available mirror, 671 games have five T1 player rows and 645 have complete snapshots; the 2026 CSV ends on 10 April. Exposure is a proxy for opportunities to learn each other's play, **not** measured trust, communication or Faker's causal influence. These pro summaries do not train the ranked spatial model. [Method and provenance](TEAM_MATRIX.md).
+
+**Does prior co-play help predict a later scoreboard?** A chronological 534/39/72-game train/validation/test experiment predicts Faker's 15-minute mid gold gap from 10-minute context. On the 72 test games, copying the 10-minute gap has **412.64 gold** mean absolute error, a context ridge has **442.17**, and context plus prior shared games has **441.88**. The history difference from context is only **−0.29 gold**, 95% day-bootstrap interval **[−2.89, +2.10]**. The signal is unconfirmed and the persistence baseline wins. This is a separate professional scoreboard task, **not a gain in Shadow's movement accuracy**. [Full protocol and limits](TEAM_PROBE.md).
+
+![Chronological professional scoreboard backtest: history versus context and persistence](docs/figures/team_history_probe.png)
+
+![Live Faker × team challenge showing the chronological backtest and its limits](docs/figures/dashboard_team_probe.png)
 
 ![Prior shared games with Faker and 2025 role gold differences](docs/figures/team_matrix.png)
 

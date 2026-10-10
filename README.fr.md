@@ -51,6 +51,12 @@ La barre d'onglets reste accessible sur mobile : [capture à 390 pixels](DESIGN.
 
 **Faker × équipe.** Un index professionnel séparé suit, avant chaque manche, les parties déjà jouées avec Doran, Oner et Keria. L'onglet permet de choisir l'année, un cumul ou une exposition décroissante sur 90 jours, la matrice de cojeu, l'évolution des écarts or/XP des cinq rôles de 10 à 15 minutes et une matrice 5×5 de corrélation de ces variations. Le miroir disponible contient 671 manches avec cinq lignes T1, dont 645 photos complètes ; son fichier 2026 s'arrête au 10 avril. Jouer ensemble ouvre des occasions de se connaître, mais **ne mesure ni confiance, ni communication, ni influence causale de Faker**. Ces résumés pro restent hors du modèle spatial ranked. [Méthode et provenance](TEAM_MATRIX.md).
 
+**Le passé commun aide-t-il à prédire un score ultérieur ?** Une épreuve chronologique sur 534/39/72 manches train/validation/test prédit l'écart d'or de Faker mid à 15 minutes depuis le contexte à 10 minutes. Sur les 72 manches test, copier le score de 10 minutes donne **412,64 or** d'erreur absolue moyenne, le modèle de contexte **442,17**, et le contexte plus historique **441,88**. La différence liée à l'historique n'est que **−0,29 or**, intervalle 95 % **[−2,89 ; +2,10]**. Le signal n'est pas confirmé et la baseline de copie gagne. Cette épreuve de score pro **n'améliore pas la prédiction de mouvement de Shadow**. [Protocole et limites](TEAM_PROBE.md).
+
+![Épreuve chronologique de score pro : historique commun face au contexte et à la copie](docs/figures/team_history_probe.png)
+
+![Onglet Faker × équipe avec épreuve chronologique et limites visibles](docs/figures/dashboard_team_probe.png)
+
 ![Parties communes antérieures avec Faker et écarts d'or par rôle en 2025](docs/figures/team_matrix.png)
 
 ![Onglet Faker × équipe : cojeu annuel et écarts de score des cinq rôles](docs/figures/dashboard_team_matrix.png)

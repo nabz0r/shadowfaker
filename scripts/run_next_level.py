@@ -163,6 +163,9 @@ def main() -> None:
         command(sys.executable, CONFIG.root / "scripts" / "build_pro_team_matrix.py")
         command(sys.executable, CONFIG.root / "scripts" / "render_pro_team_matrix.py")
         stage("Professional Faker/team co-play and 10/15-minute score aggregates refreshed from a separate cached corpus.")
+        command(sys.executable, CONFIG.root / "scripts" / "run_team_probe.py", "--pilot-only")
+        command(sys.executable, CONFIG.root / "scripts" / "run_team_probe.py")
+        stage("Chronological professional team-history backtest and aggregate figure refreshed.")
 
 
 if __name__ == "__main__": main()

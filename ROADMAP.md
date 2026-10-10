@@ -1,6 +1,6 @@
 # Shadow Faker: next-level roadmap
 
-Updated 2026-10-10. This roadmap preserves the original objective: model **Faker's macro decisions** and eventually test whether a policy can improve team outcomes. The 465-match development corpus has already influenced model and metric choices. Its test split must never be presented as a fresh confirmation again.
+Updated 2026-10-11. This roadmap preserves the original objective: model **Faker's macro decisions** and eventually test whether a policy can improve team outcomes. The 465-match development corpus has already influenced model and metric choices. Its test split must never be presented as a fresh confirmation again.
 
 ## Next evidence gate: trainable Faker memory
 
@@ -120,9 +120,9 @@ Future high-elo pretraining, professional match annotation, video transcription 
 
 See [DATA_EXPANSION.md](DATA_EXPANSION.md) for the source table, 10-second causal target, validation chart and reproducibility command. The event model has **73,482 KR** and **5,383 attributed EUW** ten-second windows, versus **12,510 KR minute-to-minute spatial targets**. On the development KR validation set, KR+EUW reaches **1.3847 log loss** versus **1.4472** for a train-only phase-frequency rule. The 671 professional records contribute **metadata only**. No new exact spatial labels were created by interpolation.
 
-### Next: test whether team history adds useful context
+### M13: team-history scoreboard probe — completed, no confirmed gain
 
-The [Faker/team warehouse](TEAM_MATRIX.md) now indexes Doran, Oner and Keria by match date, prior shared games and 10/15-minute resource snapshots. This is a **descriptive step**, not a predictor gain. Next, obtain authorized, aligned pro replays with player-visible context; build a past-only roster-history feature, split by series and chronological match, and compare with an otherwise identical model that omits it. Report calibration, held-out log loss and rare-event recall alongside any accuracy. The current mirror cannot reveal voice, clicks, positions or who drew opponent pressure, so its match-end fields cannot be used as time-10 inputs.
+The [Faker/team warehouse](TEAM_MATRIX.md) indexes Doran, Oner and Keria by match date and prior shared games. The [chronological M13 probe](TEAM_PROBE.md) tested its incremental value for a **professional scoreboard target**, with 534/39/72 train/validation/test games. Adding prior co-play changes Faker mid's test error by **−0.29 gold [−2.89, +2.10]** versus 10-minute context; copying the 10-minute score remains stronger. This does **not** confirm useful added signal and does not affect the ranked spatial model. Next, obtain authorized, aligned pro replays with player-visible context, freeze a new Faker action target, split by series and date, and compare with an otherwise identical model that omits past-only history. The current mirror cannot reveal voice, clicks, positions or who drew opponent pressure.
 
 The next gates are (1) a provider-original professional feed or legally sourced, time-aligned replay with exact positions and visibility; (2) a fresh event-model test cohort frozen before collection; (3) rare-event precision/recall and phase-slice analysis after the completed equal-capacity role-distance ablation; (4) a [When Agents Rule-inspired](https://github.com/asp67/when-agents-rule) challenge protocol with identical scenarios, explicit action budget, latency, legal-action validator and JSONL transcript. A scenario harness must remain labelled synthetic until calibrated against played League matches. Multi-region account attribution must be refreshed when an alias changes hands; PUUID equality and dates are logged locally, and an external source is still needed to link a person to an account.
 

@@ -27,6 +27,8 @@ flowchart LR
 | Professional mirror | 671 | Final summaries, unverified | Find VOD leads, never infer a trajectory |
 
 The professional mirror now also feeds a **separate Faker/team warehouse**: 671 Faker/T1/mid games × five roles = 3,355 player rows, 645 games with complete 10/15-minute scoreboard snapshots and 2,684 prior co-play records. See [TEAM_MATRIX.md](TEAM_MATRIX.md) for the time rule, visible aggregate and source limits. The 2026 source ends on 10 April; these records provide no observed player positions and are never joined to ranked training states.
+
+The [M13 chronological scoreboard probe](TEAM_PROBE.md) uses only the 645 complete professional games, with 534 train, 39 validation and 72 held-out test games. Its detailed matrix and match IDs stay local; the repository carries only aggregate metrics and a figure. It finds no confirmed gain from prior co-play for the Faker-mid gold-gap target and creates **zero new ranked movement labels**.
 | Winning Worlds final games | 25 | Sourced series cards | Historical case studies; no movement labels |
 
 The state warehouse holds **12,975 frames**, **129,750 player observations**, **12,510 adjacent-frame transitions** and **353,409 typed events**. Only **33,329 events (9.4%)** have a recorded coordinate. Many purchases, skill points and wards have none; a positioned kill may identify the victim's location. The 320,080 unpositioned events remain useful as time/type context but cannot be drawn as spatial observations. See [the aggregate inventory](docs/data/public_corpus_inventory.json) for category counts and domains.
