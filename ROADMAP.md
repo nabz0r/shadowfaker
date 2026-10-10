@@ -46,6 +46,17 @@ The two paths protect the evidence: new model ideas may use **development** matc
 
 M0 is frozen locally with 465 source matches, a cutoff of **2026-10-01 13:22:43 UTC**, and a 100-match minimum. M1's first live named snapshot (`20261009-freeze1`) returned the same 470 IDs and **0 new usable matches**; the prospective scorer correctly remains `pending`. M2's observable movement-tag parser ran on five games and then all 465, yielding eight labels and validity masks without parse errors. These tags are geometry, not verified intent or causal help. An M3 auxiliary 8×8-loss variant was trained on the full development set: validation 8×8 was **17.10%**, below the frozen candidate's **17.33%**, so it was not promoted or evaluated on the old test. A dedicated hierarchical model and a fresh prospective score (M3–M4) have not yet been produced. No raw Riot JSON, keys, models or prospective match files are committed to Git.
 
+The second live snapshot (`20261010`) again returned **470 unique ranked-solo IDs across five pages, 465 usable cached games and 0/100 genuinely new matches**. The key worked; this is a data-availability constraint, not a failed API call. The development track can continue on training/validation while the frozen prospective test remains untouched.
+
+### Immediate research sequence after the second snapshot
+
+1. **Make the target decision-shaped.** Keep exact 16×16 and 64×64 scores visible, but train a hierarchical coarse-to-fine location head and an explicit *move/stay/reset/objective-side* action head on the existing training matches. Each label must be reproducible from the observed transition and each feature available at `t`. Fit class balance and all thresholds on training/validation only.
+2. **Test whether context adds information.** Compare identical-capacity models with Faker-only state, then ally state, then opponent/objective state. Report gain by phase, champion and match-level bootstrap on validation. This isolates whether the ten-player ecosystem actually helps rather than merely making a richer picture.
+3. **Expand with provenance, not duplicates.** Keep polling verified new queue-420 games for the frozen prospective lockbox. For additional development data, build a separately identified high-elo/professional source with patch, player, perspective, rights and match alignment. Pretrain there, fine-tune on Faker ranked, and evaluate cross-domain shift before claiming transfer.
+4. **Only then address sub-minute prediction.** Source lawful replay/player-view evidence with precise timestamps and visibility provenance; align it to match events and quantify annotation error. Interpolating one-minute Riot positions is not a substitute.
+
+The next model is a **development candidate**; it cannot replace the M0 frozen checkpoint in the existing prospective protocol. Its own later-game confirmation requires a new untouched lockbox. No claim of stronger play follows from offline imitation accuracy.
+
 The sub-minute goal is a separate data milestone: align lawful replay/POV material, verify timestamps and perspective, create higher-frequency causal labels, and define a new later-game benchmark. The current API timeline and dashboard replay advance about once per minute; rendering more frames would not create new evidence.
 
 ## Reproduce the current stage
