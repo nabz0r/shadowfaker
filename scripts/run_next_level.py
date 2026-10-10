@@ -18,6 +18,7 @@ from shadowfaker.events64 import aggregate
 from shadowfaker.finegrid import ROOT64, MODELS64, ARTIFACTS64
 from shadowfaker.finegrid import prepare as prepare64, train as train64, evaluate as evaluate64
 from shadowfaker.hierarchical import run as run_hierarchical
+from shadowfaker.transition_probe import run as run_transition_probe
 from shadowfaker.interaction_core import ROOT as INTERACTION
 from shadowfaker.interaction_core import prepare as prepare_interaction
 from shadowfaker.pressure import summarize as summarize_pressure
@@ -112,7 +113,17 @@ def main() -> None:
     hierarchy = run_hierarchical(epochs=args.epochs)
     selected = hierarchy["selected_variant"]
     stage(f"Hierarchical ablations: selected {selected} on validation 8x8={hierarchy['variants'][selected]['top1_8']:.4f}; historical test unscored.")
+    phase_pilot = run_hierarchical(pilot=True, epochs=2, variants=("full",), phase_gate=True)
+    stage(f"Phase-expert pilot: {phase_pilot['train_matches']} train + {phase_pilot['val_matches']} val games; validation only.")
+    phase_expert = run_hierarchical(epochs=args.epochs, variants=("full",), phase_gate=True)
+    stage(f"Phase-expert candidate: validation 8x8={phase_expert['variants']['full']['top1_8']:.4f}; historical test unscored.")
     command(sys.executable, CONFIG.root / "scripts" / "render_hierarchical.py")
+    command(sys.executable, CONFIG.root / "scripts" / "export_feature_visibility.py")
+    geometry_pilot = run_transition_probe(pilot=True)
+    stage(f"Transition geometry pilot: {geometry_pilot['train_matches']} train + {geometry_pilot['val_matches']} val games; alignment checked.")
+    geometry = run_transition_probe()
+    stage(f"Transition geometry: {geometry['validation']['top1']:.4f} validation top-1; {geometry['alignment']['val']['current_vs_previous64_mismatches']} alignment mismatches.")
+    command(sys.executable, CONFIG.root / "scripts" / "render_predictability.py")
 
     export_trace(max_frames=30)
     command(sys.executable, CONFIG.root / "scripts" / "render_atlas64.py")

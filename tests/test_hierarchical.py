@@ -20,6 +20,18 @@ def test_context_masks_are_nested_and_do_not_smuggle_enemy_or_objectives():
         assert ally[names.index(name)] == 0 and full[names.index(name)] == 1
 
 
+def test_visibility_proxy_keeps_map_context_without_hidden_global_resources():
+    names = FEATURE_NAMES + NAMES
+    mask = feature_mask(names, "visible_proxy")
+    for name in ("own_gold", "p1_x", "p5_x", "p5_visible", "dragon_alive",
+                 "enemy_within_2500", "ally_jungle_distance"):
+        assert mask[names.index(name)] == 1
+    for name in ("team_gold", "team_xp", "enemy_gold", "enemy_xp", "gold_diff",
+                 "xp_diff", "gold_diff_delta", "xp_diff_delta", "p1_gold", "p5_gold", "p5_xp", "p5_level",
+                 "nearby_enemy_gold", "nearest_visible_enemy_level_gap"):
+        assert mask[names.index(name)] == 0
+
+
 def test_observed_decision_priority_and_missing_current_position():
     x = np.zeros((5, 8, 147), np.float32)
     x[:, -1, 17:19] = [.5, .5]
@@ -63,6 +75,20 @@ def test_train_prior_shift_preserves_fine_grid_probability_masses():
     pooled8 = adjusted16.reshape(2, 8, 2, 8, 2).logsumexp(-1).logsumexp(2).reshape(2, 64)
     assert torch.allclose(pooled16, adjusted16, atol=1e-5)
     assert torch.allclose(pooled8, adjusted8, atol=1e-5)
+
+
+def test_phase_expert_adds_only_a_small_normalized_macro_head():
+    base = HierarchicalPolicy(147, width=32, layers=1)
+    expert = HierarchicalPolicy(147, width=32, layers=1, phase_gate=True)
+    extra = sum(p.numel() for p in expert.parameters()) - sum(p.numel() for p in base.parameters())
+    assert extra == 3 * 64 * (32 + 1)
+    x = torch.zeros(3, 8, 147)
+    x[:, -1, 0] = torch.tensor([5, 15, 25]) / 50
+    with torch.no_grad():
+        log8, log16, log64, _, _ = expert(x, torch.tensor([1, 1, 1]))
+    assert torch.allclose(log8.exp().sum(-1), torch.ones(3), atol=1e-5)
+    assert torch.allclose(log16.exp().sum(-1), torch.ones(3), atol=1e-5)
+    assert torch.allclose(log64.exp().sum(-1), torch.ones(3), atol=1e-5)
 
 
 def test_match_sampler_visits_each_row_once_with_reproducible_shuffle():

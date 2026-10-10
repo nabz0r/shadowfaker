@@ -1,0 +1,1336 @@
+{
+  "schema_version": 1,
+  "source_view": "x: heuristic last-seen enemy position, not x_oracle or actual player POV",
+  "note": "Full retains all x channels, including true timeline resource fields. Visible proxy removes selected global resource channels but is not verified fog of war.",
+  "counts": {
+    "faker": 24,
+    "allies": 73,
+    "visible_proxy": 109,
+    "full": 147
+  },
+  "features": [
+    {
+      "name": "minute",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "own_gold",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "own_level",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "own_xp",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "own_cs",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "team_gold",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "enemy_gold",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "gold_diff",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "own_kills",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "own_deaths",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "dragon_alive",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "baron_alive",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "herald_alive",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_kills",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_dragons",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_towers",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_purchases",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p0_x",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p0_y",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p0_visible",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p0_age",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p0_role",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p0_level",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p0_xp",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p0_cs",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p0_gold",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p1_x",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p1_y",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p1_visible",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p1_age",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p1_role",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p1_level",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p1_xp",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p1_cs",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p1_gold",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p2_x",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p2_y",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p2_visible",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p2_age",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p2_role",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p2_level",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p2_xp",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p2_cs",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p2_gold",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p3_x",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p3_y",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p3_visible",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p3_age",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p3_role",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p3_level",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p3_xp",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p3_cs",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p3_gold",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p4_x",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p4_y",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p4_visible",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p4_age",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p4_role",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p4_level",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p4_xp",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p4_cs",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p4_gold",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p5_x",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p5_y",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p5_visible",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p5_age",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p5_role",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p5_level",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p5_xp",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p5_cs",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p5_gold",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p6_x",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p6_y",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p6_visible",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p6_age",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p6_role",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p6_level",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p6_xp",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p6_cs",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p6_gold",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p7_x",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p7_y",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p7_visible",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p7_age",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p7_role",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p7_level",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p7_xp",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p7_cs",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p7_gold",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p8_x",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p8_y",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p8_visible",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p8_age",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p8_role",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p8_level",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p8_xp",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p8_cs",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p8_gold",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p9_x",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p9_y",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p9_visible",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p9_age",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p9_role",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "p9_level",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p9_xp",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p9_cs",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "p9_gold",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "team_xp",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "enemy_xp",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "xp_diff",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_barons",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_heralds",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_ally_wards",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_ally_ward_kills",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_ally_kills",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_enemy_kills",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_jungle_kill_participation",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "recent_bot_kill_participation",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "gold_diff_delta",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "xp_diff_delta",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "faker_role",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "team_side",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "own_current_gold",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "own_at_base",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "own_recent_deaths",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "own_level_delta",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "own_gold_delta",
+      "included": {
+        "faker": true,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "ally_jungle_distance",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "ally_bot_distance",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "ally_support_distance",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "ally_mid_distance",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "ally_top_distance",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "dragon_distance",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "baron_distance",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "visible_enemy_count",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "enemy_within_2500",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "enemy_within_5000",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "enemy_moves_toward_prior_faker",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "allies_within_2500",
+      "included": {
+        "faker": false,
+        "allies": true,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "nearby_enemy_gold",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "nearest_visible_enemy_distance",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "nearest_visible_enemy_level_gap",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": false,
+        "full": true
+      }
+    },
+    {
+      "name": "visible_enemy_jungle_to_dragon",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "visible_enemy_jungle_to_baron",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "enemy_dragon_presence",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "enemy_baron_presence",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    },
+    {
+      "name": "jungler_cover_under_pressure",
+      "included": {
+        "faker": false,
+        "allies": false,
+        "visible_proxy": true,
+        "full": true
+      }
+    }
+  ]
+}

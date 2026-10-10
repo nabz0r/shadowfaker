@@ -275,6 +275,19 @@
 - [x] Vérification M3 : **17 tests passent**, compilation Python, syntaxe JS, `git diff --check`, régénération depuis l'agrégat public et commande complète `scripts/run_next_level.py --epochs 25` réussissent. La commande réutilise les trois checkpoints M3, renouvelle la figure et termine sans erreur. Le protocole prospectif hors ligne répond `pending` **0/100** ; les deux copies du checkpoint M0 et le checkpoint M3 gardent leurs SHA-256 annoncés. Le code vérifie maintenant effectivement le hash M0 avant d'émettre son rapport M3.
 - [x] Publication M3 sur GitHub `nabz0r/shadowfaker` **`main`** : commit de livraison `771bbc26c009d992da05778c270a6e471a026c24`, arbre `7f62a8693124975f172da7d8106ad0153247c019`. Les 13 blobs ont été comparés aux SHA Git locaux avant publication ; ref distant et arbre après récupération vérifiés identiques. Le JSON public est agrégé ; JSON Riot, .env, traces par partie et poids restent ignorés. Cette entrée est consignée dans un commit documentaire de suivi.
 
+## M3b : diagnostic de prédictibilité et visibilité — 2026-10-10
+
+- [x] Plan écrit avant les nouveaux calculs dans `PLAN.md` : audit d'alignement, référence de transition conditionnelle, masque de visibilité conservateur, comparaison par match sur validation de développement. Objectif 90 % maintenu comme question de recherche mesurable, sans changer silencieusement la cible 8×8 de la minute suivante.
+- [x] Audit de géométrie : recalcul indépendant de la case 64×64 actuelle depuis `x`, comparé au label de case précédente ; **0 mismatch sur 10 038 paires train + 1 275 validation**, aucune position actuelle manquante. Aucune lecture du test pour sélectionner une règle. Référence de transition lissée choisie sur **75 matches internes au train** (298 fit/75 sélection), puis réajustée sur les 373 train : case actuelle + direction passée, lissage 64 ; **17,98 %** top-1 sur sélection interne, **15,69 %** top-1 et **39,76 %** top-5 sur validation historique. Copie de position : 10,98 % ; extrapolation 0,5× : 7,53 % ; 1× : 5,02 %. Pilote cinq parties (4 train/1 validation) vérifié. Pas d'amélioration sur M3.
+- [x] Quatrième variante de même capacité 732 782 paramètres : **109 canaux** de visibilité approchée, contre 24 Faker seul, 73 Faker+alliés et 147 `x` proxy + champs globaux. Pilote cinq parties vérifié, puis entraînement complet et sélection uniquement sur validation. Le proxy atteint **16,71 % brut / 16,86 % calibré** en 8×8 et F1 macro décision **42,5 %** ; les 147 canaux atteignent **16,86 % / 17,49 %**, F1 macro **44,9 %**. Différence calibrée **+0,63 point**, IC bootstrap apparié **[−0,73 ; +1,90]** ; aucun gain fiable des champs globaux. Correction explicite du vocabulaire : toutes les variantes utilisent **`x`, jamais `x_oracle`** ; les positions ennemies demeurent des dernières vues heuristiques. Le modèle gelé M0 n'a pas changé.
+- [x] Diagnostic « 90 % » sans artifice : modèle 147 canaux exact top-1 **17,49 %**, top-5 **42,98 %**, top-20 **71,22 %** ; top-41 atteint **90,12 % de couverture** en nommant **41/64 cases, soit 64,1 % de la carte**. Précision exacte tardive **7,5 %** après minute 20 ; le proxy 109 canaux est similaire. Figure rouge/noir/or `predictability_gap.png`, matrice publique des 147 champs et `VISIBILITY.md` créés ; les résumés publics n'exposent aucune trace de partie.
+
+## M3c : tête spatiale par phase — 2026-10-10
+
+- [x] Plan et risque de surapprentissage inscrits dans `PLAN.md` avant entraînement. Pilote cinq parties (3 train/2 validation) réussi, puis un unique modèle à encodeur partagé avec résidu 8×8 par phase ; sélection sur moyenne des trois phases en validation, sans ancien test. Capacité **751 406 paramètres**, contre 732 782 pour le modèle standard ; checkpoint séparé et local.
+- [x] Époque 21 retenue sur validation : expert de phase **16,39 %** exact 8×8 global, **29,78 % / 11,29 % / 5,91 %** début/milieu/fin, contre **17,49 %** global et **29,78 % / 13,09 % / 7,53 %** pour le standard. Écart apparié −1,10 point, IC bootstrap 95 % **[−2,49 ; +0,38]**. L'expert n'améliore ni la fin de partie ni le global ; **non promu, test historique non consulté**. F1 macro des cinq types : 44,94 % contre 44,92 %, différence négligeable. Le modèle standard garde son rôle de meilleur candidat M3 de développement.
+- [x] QA et reproduction : **22 tests pytest passent**, compilation Python, syntaxe JS, `git diff --check`, génération et relecture des figures à partir des seuls agrégats publics, vérification d'absence d'ID de match dans `public_predictability.json`. La commande unique `scripts/run_next_level.py --epochs 25` est relancée entièrement depuis les caches ; elle réutilise les checkpoints, régénère la matrice de visibilité et les deux figures, termine sans erreur. Protocole futur M0 toujours `pending` **0/100** ; SHA-256 M0 original/copie identiques `869c468880650a556ad4f31d1297daba410e842fb06ff38bc6b80e9e81c780f7`. Checkpoint M3 standard `39abb02c5791531beff5b12bd6a0d82137575061a0e57c885af3b81bf93e9d05`, expert de phase `a22a2e6282f4571b4bd5019fadbba0ab2bb8abb68764ad732e1604f957941c34`. Poids et traces restent ignorés.
+
 - [2026-10-10T11:25:35+00:00] Next-level five-game pilot reused from checkpoint.
 
 - [2026-10-10T11:25:38+00:00] 64x64 labels: 465 matches, 12510 pairs, 0 errors.
@@ -300,3 +313,67 @@
 - [2026-10-10T11:26:29+00:00] Hierarchical ablations: selected full on validation 8x8=0.1749; historical test unscored.
 
 - [2026-10-10T11:26:31+00:00] Dashboard aggregates, replay and public figures refreshed. Open http://127.0.0.1:8008/ with serve_dashboard.py.
+
+- [2026-10-10T13:12:47+00:00] Next-level five-game pilot reused from checkpoint.
+
+- [2026-10-10T13:12:50+00:00] 64x64 labels: 465 matches, 12510 pairs, 0 errors.
+
+- [2026-10-10T13:12:53+00:00] Event atlas: 465 ranked matches, 0 errors.
+
+- [2026-10-10T13:12:53+00:00] Warehouse: 12975 states, 12510 transitions, 353409 events.
+
+- [2026-10-10T13:12:54+00:00] Enemy pressure: 12975 positional frames.
+
+- [2026-10-10T13:13:34+00:00] Text: 930 EN/FR summaries, 0 errors.
+
+- [2026-10-10T13:13:35+00:00] Vectors: 12510 states; kNN val exact64=0.0094.
+
+- [2026-10-10T13:13:35+00:00] 64x64 historical test: 0.0109 exact, best baseline 0.0192; prospective claim pending.
+
+- [2026-10-10T13:13:36+00:00] Interaction training states: 12510 pairs, 0 errors.
+
+- [2026-10-10T13:13:36+00:00] Interaction candidate validation exact16=0.0871; test intentionally unscored.
+
+- [2026-10-10T13:13:37+00:00] Hierarchical pilot: 3 train + 2 val games; validation only.
+
+- [2026-10-10T13:13:40+00:00] Hierarchical ablations: selected full on validation 8x8=0.1749; historical test unscored.
+
+- [2026-10-10T13:13:42+00:00] Transition geometry pilot: 4 train + 1 val games; alignment checked.
+
+- [2026-10-10T13:13:42+00:00] Transition geometry: 0.1569 validation top-1; 0 alignment mismatches.
+
+- [2026-10-10T13:13:44+00:00] Dashboard aggregates, replay and public figures refreshed. Open http://127.0.0.1:8008/ with serve_dashboard.py.
+
+- [2026-10-10T13:19:39+00:00] Next-level five-game pilot reused from checkpoint.
+
+- [2026-10-10T13:19:42+00:00] 64x64 labels: 465 matches, 12510 pairs, 0 errors.
+
+- [2026-10-10T13:19:45+00:00] Event atlas: 465 ranked matches, 0 errors.
+
+- [2026-10-10T13:19:45+00:00] Warehouse: 12975 states, 12510 transitions, 353409 events.
+
+- [2026-10-10T13:19:46+00:00] Enemy pressure: 12975 positional frames.
+
+- [2026-10-10T13:20:27+00:00] Text: 930 EN/FR summaries, 0 errors.
+
+- [2026-10-10T13:20:27+00:00] Vectors: 12510 states; kNN val exact64=0.0094.
+
+- [2026-10-10T13:20:28+00:00] 64x64 historical test: 0.0109 exact, best baseline 0.0192; prospective claim pending.
+
+- [2026-10-10T13:20:28+00:00] Interaction training states: 12510 pairs, 0 errors.
+
+- [2026-10-10T13:20:29+00:00] Interaction candidate validation exact16=0.0871; test intentionally unscored.
+
+- [2026-10-10T13:20:30+00:00] Hierarchical pilot: 3 train + 2 val games; validation only.
+
+- [2026-10-10T13:20:33+00:00] Hierarchical ablations: selected full on validation 8x8=0.1749; historical test unscored.
+
+- [2026-10-10T13:20:33+00:00] Phase-expert pilot: 3 train + 2 val games; validation only.
+
+- [2026-10-10T13:20:34+00:00] Phase-expert candidate: validation 8x8=0.1639; historical test unscored.
+
+- [2026-10-10T13:20:35+00:00] Transition geometry pilot: 4 train + 1 val games; alignment checked.
+
+- [2026-10-10T13:20:36+00:00] Transition geometry: 0.1569 validation top-1; 0 alignment mismatches.
+
+- [2026-10-10T13:20:38+00:00] Dashboard aggregates, replay and public figures refreshed. Open http://127.0.0.1:8008/ with serve_dashboard.py.

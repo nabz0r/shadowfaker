@@ -10,9 +10,15 @@ Pipeline de recherche local visant à modéliser **les décisions macro de Faker
 
 ### Nouveau laboratoire de décision
 
-![Ablation du modèle hiérarchique : Faker seul, alliés et état enregistré complet](docs/figures/hierarchical_ablation.png)
+![Ablation du modèle hiérarchique : Faker seul, alliés, visibilité approchée et champs globaux](docs/figures/hierarchical_ablation.png)
 
-Un modèle séparé prédit à la fois la destination `8×8 → 16×16 → 64×64` et cinq **types de déplacement observables** : rester proche, retour base, approche Dragon/Baron, autre. Sur **46 parties de validation**, l'état complet atteint **17,49 %** de cases 8×8 exactes contre **15,29 %** pour la meilleure règle simple. L'intervalle par partie du gain contient encore zéro ; choix d'époque, variante et calibrage proviennent de cette même validation. Le F1 macro des cinq types vaut **44,9 %** contre **16,5 %** pour la classe majoritaire, mais le retour base reste très mal reconnu. Les 147 entrées enregistrées comprennent des informations globales que le joueur ne voyait peut-être pas. Ce résultat décrit une capacité prédictive exploratoire, ni sa vision réelle ni une amélioration de ses chances de gagner. [Détails et limites](RESULTS.md#new-development-experiment--a-decision-shaped-shadow-2026-10-10).
+Un modèle séparé prédit à la fois la destination `8×8 → 16×16 → 64×64` et cinq **types de déplacement observables** : rester proche, retour base, approche Dragon/Baron, autre. Sur **46 parties de validation**, le proxy avec champs globaux atteint **17,49 %** de cases 8×8 exactes contre **15,29 %** pour la meilleure règle simple. Sans les ressources globales, il atteint **16,86 %** ; l'écart apparié ne permet pas de conclure. L'intervalle par partie du gain contre la règle simple contient aussi zéro ; choix d'époque, variante et calibrage proviennent de cette même validation. Le F1 macro des cinq types vaut **44,9 %** contre **16,5 %** pour la classe majoritaire, mais le retour base reste très mal reconnu. Les positions ennemies des deux variantes sont un **proxy de dernière position vue**, pas la vision réelle de Faker ni l'oracle complet. [Détails et limites](RESULTS.md#new-development-experiment--a-decision-shaped-shadow-2026-10-10).
+
+![Nombre de cases nécessaires pour couvrir 90 % des destinations et écart entre phases](docs/figures/predictability_gap.png)
+
+La prédiction de la prochaine **case unique** sur 64 est exacte à **17,49 %**. Sur cette validation déjà utilisée, proposer **41 cases sur 64** couvre **90,12 %** des arrivées, soit **64,1 % de la carte** : ce n'est pas 90 % de précision exacte. Après la minute 20, l'exactitude 8×8 tombe à **7,5 %**. L'audit géométrique ne trouve aucun décalage de case entre position actuelle et label précédent sur train/validation. [Audit complet de visibilité et de prédictibilité](VISIBILITY.md).
+
+Un modèle avec trois têtes spécialisées début/milieu/fin a aussi été entraîné. Il tombe à **16,39 %** globalement et **5,91 %** en fin de partie, contre **17,49 %** et **7,53 %** pour le modèle plus simple. Cette expérience négative est conservée ; les prochaines étapes portent sur la qualité des observations et des parties futures.
 
 ## Ce qui est mesuré aujourd'hui
 
@@ -68,7 +74,7 @@ Pour explorer des idées vraiment nouvelles, on mesure aussi ce que les données
 
 Le [laboratoire de stratégies](GAME_THEORY_LAB.md) transforme l'idée « cinq bot » en hypothèse à évaluer face aux ressources abandonnées ailleurs et aux réponses adverses. Ces parties classées ne permettent pas de conclure qu'une telle stratégie gagnerait aux Worlds. [RESULTS.md](RESULTS.md) raconte les graphiques pas à pas.
 
-Les graphiques et bannières proviennent de [résultats agrégés publics](docs/data/public_summary.json), sans JSON Riot brut. Les régénérer avec `.venv/bin/python scripts/render_results.py --from-summary`. Voir [RESULTS.md](RESULTS.md) pour les intervalles et [ROADMAP.md](ROADMAP.md) pour la suite.
+Les graphiques et bannières proviennent de [résultats agrégés publics](docs/data/public_summary.json), sans JSON Riot brut. Régénérer les premiers visuels avec `.venv/bin/python scripts/render_results.py --from-summary`, l'ablation avec `.venv/bin/python scripts/render_hierarchical.py --from-summary` et l'audit de couverture avec `.venv/bin/python scripts/render_predictability.py --from-summary`. Voir [RESULTS.md](RESULTS.md) pour les intervalles et [ROADMAP.md](ROADMAP.md) pour la suite.
 
 ## Tableau de bord visuel
 

@@ -29,7 +29,7 @@ def public_summary(report: dict) -> dict:
         "paired_context_deltas": report["paired_context_deltas"],
         "variants": {name: {key: row[key] for key in (
             "active_features", "parameters", "selected_epoch", "checkpoint_sha256",
-            "raw_top1_8", "top1_8",
+            "raw_top1_8", "top1_8", "topk8",
             "top1_16", "top1_64", "prior_alpha", "gain_vs_best_pp", "gain_bootstrap95_pp",
             "decision_accuracy", "decision_most_frequent_baseline", "decision_macro_f1",
             "decision_majority_macro_f1")}
@@ -41,7 +41,7 @@ def public_summary(report: dict) -> dict:
 def render(summary: dict, path: Path = FIGURE) -> None:
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 10,
                          "axes.spines.top": False, "axes.spines.right": False})
-    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(12.8, 5.2), facecolor="#0b0b0f")
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(13.8, 5.2), facecolor="#0b0b0f")
     for panel in (ax, ax2):
         panel.set_facecolor("#14141b")
         panel.tick_params(colors="#e8e5e0")
@@ -49,10 +49,11 @@ def render(summary: dict, path: Path = FIGURE) -> None:
         panel.spines["bottom"].set_color("#66606a")
         panel.grid(axis="y", color="#534b52", alpha=.35)
         panel.set_axisbelow(True)
-    names = ("faker", "allies", "full")
+    names = ("faker", "allies", "visible_proxy", "full")
     variants = summary["variants"]
-    positions = np.arange(3)
-    colors = ("#a7a7b2", "#d7a44c", "#ed284f")
+    positions = np.arange(4)
+    labels = ("Faker only", "+ team", "Vision proxy", "Proxy + globals")
+    colors = ("#a7a7b2", "#d7a44c", "#70c5c3", "#ed284f")
     raw = np.array([100 * variants[name]["raw_top1_8"] for name in names])
     calibrated = np.array([100 * variants[name]["top1_8"] for name in names])
     ax.bar(positions - .17, raw, .30, color="#66616e", label="Raw model")
@@ -62,7 +63,7 @@ def render(summary: dict, path: Path = FIGURE) -> None:
     baseline = 100 * max(summary["baseline8"].values())
     ax.axhline(baseline, color="#f2db8b", ls="--", lw=1.5,
                label=f"Best simple rule  {baseline:.2f}%")
-    ax.set_xticks(positions, ("Faker only", "+ team", "+ opponents / map"), color="white")
+    ax.set_xticks(positions, labels, color="white")
     ax.set_ylim(0, 24)
     ax.set_ylabel("8×8 next-region top-1  ·  %", color="white")
     ax.set_title("Where does Faker go next?", color="white", fontsize=14, weight="bold", loc="left", pad=16)
@@ -75,7 +76,7 @@ def render(summary: dict, path: Path = FIGURE) -> None:
     majority = 100 * variants["full"]["decision_majority_macro_f1"]
     ax2.axhline(majority, color="#f2db8b", ls="--", lw=1.5,
                 label=f"Most common decision  {majority:.1f}%")
-    ax2.set_xticks(positions, ("Faker only", "+ team", "+ opponents / map"), color="white")
+    ax2.set_xticks(positions, labels, color="white")
     ax2.set_ylim(0, 60)
     ax2.set_ylabel("Five observed decision types  ·  macro F1 %", color="white")
     ax2.set_title("What kind of move?", color="white", fontsize=14, weight="bold", loc="left", pad=16)
@@ -83,7 +84,7 @@ def render(summary: dict, path: Path = FIGURE) -> None:
     fig.text(.03, .945, "SHADOW FAKER  /  DEVELOPMENT LAB", color="#ed284f", weight="bold", fontsize=9)
     fig.text(.03, .035,
              f"{summary['val_matches']} validation games · {summary['val_samples']:,} minute pairs · "
-             "same split tunes checkpoint, variant and calibration · no future-game confirmation",
+             "same split tunes checkpoint, variant and calibration · proxy is not Faker POV · no future-game confirmation",
              color="#c5bbc3", fontsize=9)
     fig.subplots_adjust(left=.065, right=.975, top=.85, bottom=.17, wspace=.26)
     path.parent.mkdir(parents=True, exist_ok=True)

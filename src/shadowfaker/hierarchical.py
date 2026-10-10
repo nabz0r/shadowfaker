@@ -32,7 +32,7 @@ TAGS = CONFIG.processed / "macro_actions"
 MODELS = CONFIG.models / "hierarchical"
 ARTIFACTS = CONFIG.artifacts / "hierarchical"
 DECISIONS = ("hold", "reset_base", "dragon_side", "baron_side", "other_move")
-VARIANTS = ("faker", "allies", "full")
+VARIANTS = ("faker", "allies", "visible_proxy", "full")
 
 
 def feature_mask(names: list[str], variant: str) -> np.ndarray:
@@ -48,12 +48,36 @@ def feature_mask(names: list[str], variant: str) -> np.ndarray:
     ally = {"team_gold", "team_xp", "recent_ally_wards", "recent_ally_ward_kills",
             "recent_ally_kills", "recent_jungle_kill_participation",
             "recent_bot_kill_participation", "allies_within_2500"}
+    proxy_public = {"dragon_alive", "baron_alive", "herald_alive", "recent_kills",
+                    "recent_dragons", "recent_towers", "recent_barons", "recent_heralds",
+                    "recent_ally_wards", "recent_ally_ward_kills", "recent_ally_kills",
+                    "recent_enemy_kills", "recent_jungle_kill_participation",
+                    "recent_bot_kill_participation",
+                    "ally_jungle_distance", "ally_bot_distance", "ally_support_distance",
+                    "ally_mid_distance", "ally_top_distance", "dragon_distance",
+                    "baron_distance", "allies_within_2500", "visible_enemy_count",
+                    "enemy_within_2500", "enemy_within_5000", "enemy_moves_toward_prior_faker",
+                    "nearest_visible_enemy_distance", "visible_enemy_jungle_to_dragon",
+                    "visible_enemy_jungle_to_baron", "enemy_dragon_presence",
+                    "enemy_baron_presence", "jungler_cover_under_pressure"}
+    # The last-seen enemy positions in x are a proximity-based visibility proxy,
+    # not real fog-of-war. Exact enemy gold/XP/CS and global totals stay masked.
     result = []
     for name in names:
         allowed = name in own or name.startswith("p0_")
         if variant == "allies":
             allowed = (allowed or name in ally or name.startswith(tuple(f"p{i}_" for i in range(1, 5)))
                        or name.startswith("ally_") and name.endswith("_distance"))
+        elif variant == "visible_proxy":
+            allowed = allowed or name in proxy_public
+            for index in range(1, 10):
+                prefix = f"p{index}_"
+                if name.startswith(prefix):
+                    field = name[len(prefix):]
+                    fields = {"x", "y", "visible", "age", "role", "level", "cs"} if index < 5 else {
+                        "x", "y", "visible", "age", "role"}
+                    allowed = allowed or field in fields
+                    break
         result.append(float(allowed))
     return np.asarray(result, np.float32)
 
@@ -151,7 +175,8 @@ class MatchBatchSampler:
 
 
 class HierarchicalPolicy(nn.Module):
-    def __init__(self, feature_dim: int, width: int = 96, layers: int = 2):
+    def __init__(self, feature_dim: int, width: int = 96, layers: int = 2,
+                 phase_gate: bool = False):
         super().__init__()
         self.numeric = nn.Linear(feature_dim, width)
         self.champion = nn.Embedding(1000, width)
@@ -161,6 +186,7 @@ class HierarchicalPolicy(nn.Module):
         self.encoder = nn.TransformerEncoder(block, layers)
         self.norm = nn.LayerNorm(width)
         self.coarse = nn.Linear(width, 64)
+        self.phase_coarse = nn.Linear(width, 3 * 64) if phase_gate else None
         self.mid = nn.Linear(width, 64 * 4)
         self.fine = nn.Linear(width, 256 * 16)
         self.decision = nn.Linear(width, len(DECISIONS))
@@ -177,6 +203,11 @@ class HierarchicalPolicy(nn.Module):
         current = x[:, -1, 17:19]
         distance = ((current[:, None] - self.centers8[None]) ** 2).sum(-1)
         coarse = self.coarse(h) - F.softplus(self.proximity_scale) * 8 * distance
+        if self.phase_coarse is not None:
+            minute = x[:, -1, 0] * 50
+            phase = (minute >= 10).long() + (minute >= 20).long()
+            residual = self.phase_coarse(h).reshape(-1, 3, 64)
+            coarse = coarse + residual[torch.arange(len(x), device=x.device), phase]
         log8 = F.log_softmax(coarse, -1).reshape(-1, 8, 8)
         local16 = F.log_softmax(self.mid(h).reshape(-1, 8, 8, 4), -1).reshape(-1, 8, 8, 2, 2)
         log16 = (log8[..., None, None] + local16).permute(0, 1, 3, 2, 4).reshape(-1, 16, 16)
@@ -236,6 +267,8 @@ def batch_loss(outputs, batch, weights: dict[str, torch.Tensor]) -> torch.Tensor
 def epoch(model, loader, optimizer, device: str, weights: dict, *, train: bool) -> dict:
     model.train(train)
     total_loss = hits8 = hits16 = samples = 0
+    phase_hits = np.zeros(3, np.int64)
+    phase_counts = np.zeros(3, np.int64)
     for batch in loader:
         batch = tuple(v.to(device) for v in batch)
         with torch.set_grad_enabled(train):
@@ -250,15 +283,24 @@ def epoch(model, loader, optimizer, device: str, weights: dict, *, train: bool) 
         total_loss += float(loss.detach()) * n
         hits8 += int((outputs[0].argmax(-1) == coarse_labels(batch[2], 8)).sum())
         hits16 += int((outputs[1].argmax(-1) == coarse_labels(batch[2], 16)).sum())
+        phase = (batch[6] >= 10).long() + (batch[6] >= 20).long()
+        correct8 = outputs[0].argmax(-1) == coarse_labels(batch[2], 8)
+        for p in range(3):
+            selected = phase == p
+            phase_counts[p] += int(selected.sum())
+            phase_hits[p] += int(correct8[selected].sum())
     return {"loss": total_loss / samples, "top1_8": hits8 / samples,
-            "top1_16": hits16 / samples, "samples": samples}
+            "top1_16": hits16 / samples, "samples": samples,
+            "macro_phase_top1": float(np.mean(phase_hits[phase_counts > 0] /
+                                               phase_counts[phase_counts > 0]))}
 
 
-def probe_device(dataset: Dataset, feature_dim: int, weights: dict, batch_size: int) -> dict:
+def probe_device(dataset: Dataset, feature_dim: int, weights: dict, batch_size: int,
+                 phase_gate: bool = False) -> dict:
     times = {}
     for device in (["cpu", "mps"] if torch.backends.mps.is_available() else ["cpu"]):
         seed_all(CONFIG.seed)
-        model = HierarchicalPolicy(feature_dim).to(device)
+        model = HierarchicalPolicy(feature_dim, phase_gate=phase_gate).to(device)
         optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4)
         loader = DataLoader(Subset(dataset, range(min(len(dataset), 128))), batch_size=batch_size)
         local_weights = {key: value.to(device) for key, value in weights.items()}
@@ -322,6 +364,7 @@ def score(model: HierarchicalPolicy, dataset: DecisionDataset, stats: dict,
     truth64, pred8, pred16, pred64, true_decision, pred_decision = [], [], [], [], [], []
     minutes, champions, previous, roles = [], [], [], []
     tag_true, tag_pred, tag_valid = [], [], []
+    topk8_hits = {k: 0 for k in (1, 5, 10, 20, 32, 40, 41, 42, 43, 44, 48, 64)}
     role_index = names.index("faker_role")
     table = prior_table(stats)
     with torch.no_grad():
@@ -333,6 +376,10 @@ def score(model: HierarchicalPolicy, dataset: DecisionDataset, stats: dict,
                 phase = (minute >= 10).long() + (minute >= 20).long()
                 log8, log16, log64 = adjusted_hierarchy(log8, log16, log64,
                                                           table[role, phase], prior_alpha)
+            truth8 = coarse_labels(y64, 8)
+            ordering8 = log8.argsort(-1, descending=True)
+            for k in topk8_hits:
+                topk8_hits[k] += int((ordering8[:, :k] == truth8[:, None]).any(-1).sum())
             truth64.extend(y64.tolist())
             pred8.extend(log8.argmax(-1).tolist())
             pred16.extend(log16.argmax(-1).tolist())
@@ -410,6 +457,7 @@ def score(model: HierarchicalPolicy, dataset: DecisionDataset, stats: dict,
             "prior_alpha": prior_alpha, "by_match8": by_match8,
             "top1_8": exact8, "top1_16": float(np.mean(y16 == p16)),
             "top1_64": float(np.mean(y64 == p64)), "baselines8": baselines,
+            "topk8": {str(k): hits / len(y8) for k, hits in topk8_hits.items()},
             "gain_vs_best_pp": 100 * (exact8 - max(baselines.values())),
             "gain_bootstrap95_pp": np.quantile(gains, [.025, .975]).tolist(),
             "decision_accuracy": float(np.mean(dtrue[dvalid] == dpred[dvalid])) if dvalid.any() else None,
@@ -427,7 +475,7 @@ def score(model: HierarchicalPolicy, dataset: DecisionDataset, stats: dict,
 
 def run(*, pilot: bool = False, epochs: int = 25, batch_size: int = 128,
         patience: int = 5, width: int = 96, layers: int = 2,
-        variants: tuple[str, ...] = VARIANTS) -> dict:
+        variants: tuple[str, ...] = VARIANTS, phase_gate: bool = False) -> dict:
     meta = read_json(SOURCE / "meta.json")
     if not meta:
         raise FileNotFoundError("Build interaction features first")
@@ -437,25 +485,29 @@ def run(*, pilot: bool = False, epochs: int = 25, batch_size: int = 128,
     ids_val = meta["splits"]["val"][:2] if pilot else meta["splits"]["val"]
     if set(ids_train) & set(ids_val) or set(ids_train + ids_val) & set(meta["splits"]["test"]):
         raise ValueError("Training/validation/test match overlap")
-    output_models = MODELS.parent / "hierarchical-pilot" if pilot else MODELS
-    output_artifacts = ARTIFACTS.parent / "hierarchical-pilot" if pilot else ARTIFACTS
+    output_models = MODELS.parent / ("hierarchical-phase-pilot" if pilot else "hierarchical-phase") \
+        if phase_gate else (MODELS.parent / "hierarchical-pilot" if pilot else MODELS)
+    output_artifacts = ARTIFACTS.parent / ("hierarchical-phase-pilot" if pilot else "hierarchical-phase") \
+        if phase_gate else (ARTIFACTS.parent / "hierarchical-pilot" if pilot else ARTIFACTS)
     output_models.mkdir(parents=True, exist_ok=True)
     output_artifacts.mkdir(parents=True, exist_ok=True)
     stats = train_statistics(ids_train, meta["counts"], meta["feature_names"])
     weights_cpu = {"decision": torch.from_numpy(stats["decision_weight"]),
                    "tags": torch.from_numpy(stats["tag_pos_weight"])}
     probe = DecisionDataset(ids_train, meta["counts"], feature_mask(meta["feature_names"], "full"))
-    times = probe_device(probe, meta["feature_dim"], weights_cpu, batch_size)
+    times = probe_device(probe, meta["feature_dim"], weights_cpu, batch_size, phase_gate)
     device = min(times, key=times.get)
     results = {}
     for variant in variants:
         mask = feature_mask(meta["feature_names"], variant)
         train_set = DecisionDataset(ids_train, meta["counts"], mask)
         val_set = DecisionDataset(ids_val, meta["counts"], mask)
-        signature = hashlib.sha256(json.dumps({"train": ids_train, "val": ids_val,
+        signature_data = {"train": ids_train, "val": ids_val,
             "counts": meta["counts"], "schema": meta["schema_version"], "variant": variant,
             "mask": mask.tolist(), "epochs": epochs, "width": width, "layers": layers,
-            "lr": 3e-4, "loss": [1, .5, .2, .25, .08]}, sort_keys=True).encode()).hexdigest()
+            "lr": 3e-4, "loss": [1, .5, .2, .25, .08]}
+        if phase_gate: signature_data["phase_gate"] = True
+        signature = hashlib.sha256(json.dumps(signature_data, sort_keys=True).encode()).hexdigest()
         checkpoint = output_models / f"{variant}.pt"
         training_path = output_models / f"{variant}_training.json"
         saved = torch.load(checkpoint, map_location="cpu", weights_only=False) if checkpoint.exists() else None
@@ -465,7 +517,7 @@ def run(*, pilot: bool = False, epochs: int = 25, batch_size: int = 128,
             print(f"{variant}: matched checkpoint reused", flush=True)
         else:
             seed_all(CONFIG.seed)
-            model = HierarchicalPolicy(meta["feature_dim"], width, layers).to(device)
+            model = HierarchicalPolicy(meta["feature_dim"], width, layers, phase_gate).to(device)
             parameters = sum(p.numel() for p in model.parameters())
             if parameters >= 5_000_000: raise ValueError("Policy exceeds 5M parameters")
             optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4, weight_decay=.01)
@@ -473,30 +525,37 @@ def run(*, pilot: bool = False, epochs: int = 25, batch_size: int = 128,
             train_loader = DataLoader(train_set, batch_sampler=MatchBatchSampler(train_set, batch_size))
             val_loader = DataLoader(val_set, batch_size=batch_size)
             history = []
-            best8, best_loss, stale = -1.0, float("inf"), 0
+            best_score, best_loss, stale = -1.0, float("inf"), 0
+            selection_metric = "macro_phase_top1" if phase_gate else "top1_8"
             for number in tqdm(range(1, epochs + 1), desc=f"{variant} {device}", unit="epoch"):
                 training = epoch(model, train_loader, optimizer, device, weights, train=True)
                 validation = epoch(model, val_loader, None, device, weights, train=False)
                 history.append({"epoch": number, "train": training, "val": validation})
-                better = (validation["top1_8"] > best8 + 1e-9 or
-                          abs(validation["top1_8"] - best8) < 1e-9 and validation["loss"] < best_loss - 1e-4)
+                current_score = validation[selection_metric]
+                better = (current_score > best_score + 1e-9 or
+                          abs(current_score - best_score) < 1e-9 and validation["loss"] < best_loss - 1e-4)
                 if better:
-                    best8, best_loss, stale = validation["top1_8"], validation["loss"], 0
+                    best_score, best_loss, stale = current_score, validation["loss"], 0
                     temporary = checkpoint.with_suffix(".tmp")
                     torch.save({"state_dict": {k:v.detach().cpu().clone() for k,v in model.state_dict().items()},
                                 "signature": signature, "variant": variant, "width": width, "layers": layers,
-                                "parameters": parameters, "epoch": number, "selected_val8": best8}, temporary)
+                                "parameters": parameters, "epoch": number,
+                                "selected_val8": validation["top1_8"],
+                                "selection_metric": selection_metric,
+                                "selected_metric": best_score, "phase_gate": phase_gate}, temporary)
                     os.replace(temporary, checkpoint)
                 else:
                     stale += 1
                     if stale >= patience: break
             atomic_json(training_path, {"variant": variant, "signature": signature, "status": "complete",
                 "device": device, "benchmark_seconds": times, "parameters": parameters,
-                "selected_val8": best8, "selected_epoch": torch.load(checkpoint, map_location="cpu", weights_only=False)["epoch"],
+                "selected_metric": best_score, "selection_metric": selection_metric,
+                "selected_epoch": torch.load(checkpoint, map_location="cpu", weights_only=False)["epoch"],
                 "history": history, "train_matches": len(ids_train), "val_matches": len(ids_val),
                 "active_features": int(mask.sum()), "total_features": len(mask), "seed": CONFIG.seed})
             saved = torch.load(checkpoint, map_location="cpu", weights_only=False)
-        model = HierarchicalPolicy(meta["feature_dim"], saved["width"], saved["layers"])
+        model = HierarchicalPolicy(meta["feature_dim"], saved["width"], saved["layers"],
+                                   saved.get("phase_gate", False))
         model.load_state_dict(saved["state_dict"])
         sweep = choose_prior_alpha(model, val_set, stats, meta["feature_names"])
         raw = score(model, val_set, stats, meta["feature_names"])
@@ -511,10 +570,10 @@ def run(*, pilot: bool = False, epochs: int = 25, batch_size: int = 128,
         atomic_json(output_artifacts / f"validation_{variant}.json", result)
     winner = max(results, key=lambda name: (results[name]["top1_8"], results[name]["top1_16"],
                                             results[name]["top1_64"]))
-    rng = np.random.default_rng(CONFIG.seed)
     paired = {}
-    for context in ("allies", "full"):
+    for context in ("allies", "visible_proxy", "full"):
         if context not in results or "faker" not in results: continue
+        rng = np.random.default_rng(CONFIG.seed)
         mids = ids_val
         a, b = results[context]["raw_by_match8"], results["faker"]["raw_by_match8"]
         delta = 100 * (sum(a[mid]["correct"] for mid in mids) - sum(b[mid]["correct"] for mid in mids)) / sum(a[mid]["samples"] for mid in mids)
@@ -525,6 +584,19 @@ def run(*, pilot: bool = False, epochs: int = 25, batch_size: int = 128,
                          sum(a[mids[j]]["samples"] for j in pick))
         paired[context + "_minus_faker_raw_pp"] = {"delta": delta,
                                                    "bootstrap95": np.quantile(draws, [.025, .975]).tolist()}
+    if "full" in results and "visible_proxy" in results:
+        for label, key in (("raw", "raw_by_match8"), ("calibrated", "by_match8")):
+            rng = np.random.default_rng(CONFIG.seed)
+            a, b = results["full"][key], results["visible_proxy"][key]
+            delta = 100 * sum(a[mid]["correct"] - b[mid]["correct"] for mid in ids_val) / sum(
+                a[mid]["samples"] for mid in ids_val)
+            draws = []
+            for _ in range(1000):
+                pick = rng.integers(0, len(ids_val), len(ids_val))
+                draws.append(100 * sum(a[ids_val[j]]["correct"] - b[ids_val[j]]["correct"] for j in pick) /
+                             sum(a[ids_val[j]]["samples"] for j in pick))
+            paired[f"full_minus_visible_proxy_{label}_pp"] = {
+                "delta": delta, "bootstrap95": np.quantile(draws, [.025, .975]).tolist()}
     frozen_protocol = read_json(CONFIG.root / "data" / "prospective" / "protocol.json", {})
     frozen_expected = frozen_protocol.get("checkpoint_sha256")
     frozen_paths = (CONFIG.root / "data" / "prospective" / "frozen_checkpoint.pt",
@@ -533,13 +605,14 @@ def run(*, pilot: bool = False, epochs: int = 25, batch_size: int = 128,
                            for path in frozen_paths) if frozen_expected else None)
     if frozen_verified is False:
         raise RuntimeError("Frozen M0 checkpoint hash changed; refusing to publish M3 report")
-    report = {"status": "development_only", "pilot": pilot, "train_matches": len(ids_train),
+    report = {"status": "development_only", "pilot": pilot, "phase_gate": phase_gate,
+              "train_matches": len(ids_train),
               "val_matches": len(ids_val), "train_samples": sum(meta["counts"][mid] for mid in ids_train),
               "val_samples": sum(meta["counts"][mid] for mid in ids_val), "device": device,
               "device_probe_seconds": times, "selected_variant": winner,
               "selected_checkpoint_signature": results[winner]["checkpoint_signature"],
               "paired_context_deltas": paired,
-              "variants": {name: {key: result[key] for key in ("top1_8", "top1_16", "top1_64",
+              "variants": {name: {key: result[key] for key in ("top1_8", "top1_16", "top1_64", "topk8",
                            "raw_top1_8", "prior_alpha", "prior_sweep",
                            "gain_vs_best_pp", "gain_bootstrap95_pp", "decision_accuracy",
                            "decision_most_frequent_baseline", "decision_macro_f1",
@@ -558,10 +631,14 @@ def main() -> None:
     parser.add_argument("--pilot-only", action="store_true")
     parser.add_argument("--epochs", type=int, default=25)
     parser.add_argument("--batch-size", type=int, default=128)
-    parser.add_argument("--variants", nargs="+", choices=VARIANTS, default=list(VARIANTS))
+    parser.add_argument("--variants", nargs="+", choices=VARIANTS)
+    parser.add_argument("--phase-gate", action="store_true",
+                        help="Train separate 8x8 residual heads per game phase")
     args = parser.parse_args()
     report = run(pilot=args.pilot_only, epochs=args.epochs,
-                 batch_size=args.batch_size, variants=tuple(args.variants))
+                 batch_size=args.batch_size,
+                 variants=tuple(args.variants or (("full",) if args.phase_gate else VARIANTS)),
+                 phase_gate=args.phase_gate)
     print(json.dumps(report, indent=2))
 
 

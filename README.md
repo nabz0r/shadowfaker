@@ -12,9 +12,15 @@ The longer-term goal is a **Shadow Plus** policy that could improve on this beha
 
 ### New: predicting the kind of move
 
-![Three same-capacity models with Faker-only, team and full recorded context](docs/figures/hierarchical_ablation.png)
+![Four same-capacity models with Faker-only, team, visibility proxy and global timeline fields](docs/figures/hierarchical_ablation.png)
 
-A separate **development-only** policy predicts a coherent broad-to-fine destination and whether the account stays nearby, returns to base, approaches Dragon/Baron, or makes another observed move. The complete recorded context reaches **17.49%** next-region accuracy at 8×8 versus a **15.29%** simple role/phase rule on 46 validation games. The match-level interval for the gain still includes zero, and the same validation set chose the model and calibration. Its five-class macro F1 is **44.9%** versus **16.5%** for always choosing the common class, but reset detection remains weak. These are movement proxies around the target account, not evidence of its actual vision, intent, influence or better play. [See the full ablation and limitations](RESULTS.md#new-development-experiment--a-decision-shaped-shadow-2026-10-10).
+A separate **development-only** policy predicts a coherent broad-to-fine destination and whether the account stays nearby, returns to base, approaches Dragon/Baron, or makes another observed move. The `x` proxy plus global timeline fields reaches **17.49%** next-region accuracy at 8×8 versus a **15.29%** simple role/phase rule on 46 validation games. Removing the global resource fields yields **16.86%**, with no reliable paired difference. The match-level interval for the gain over the simple rule still includes zero, and the same validation set chose the model and calibration. Its five-class macro F1 is **44.9%** versus **16.5%** for always choosing the common class, but reset detection remains weak. The enemy positions in both variants are a heuristic last-seen proxy, not complete oracle positions or Faker POV. [See the full ablation and limitations](RESULTS.md#new-development-experiment--a-decision-shaped-shadow-2026-10-10).
+
+![How much of the map a model must name to cover 90% of observed destinations](docs/figures/predictability_gap.png)
+
+The exact next **one** of 64 broad cells remains **17.49%**. On this already-used validation set, naming **41 of 64 cells** reaches **90.12% coverage**—an answer covering **64.1% of the map**, not 90% exact accuracy. The 8×8 exact score falls to **7.5% after minute 20**. An independent current-position audit found no saved-cell misalignment across train and validation. [Read the visibility and predictability audit](VISIBILITY.md).
+
+A targeted three-head model for early, middle and late game was also trained. It scored **16.39% overall and 5.91% late**, below the simpler model's **17.49% overall and 7.53% late**; it was kept as a documented negative experiment. This is why the next work focuses on better observation and fresh matches, not a larger phase head.
 
 ### A higher resolution, but harder question
 
@@ -76,7 +82,7 @@ The lines follow *observed* movement toward jungle, bot carry and support in fiv
 
 Only **one early minute in one match** places all five allied champions within 2,500 units of the bot carry. This proximity audit cannot tell whether a deliberate five-bot lane would work; it says the current corpus gives almost no examples of that shape. [GAME_THEORY_LAB.md](GAME_THEORY_LAB.md) turns unconventional strategies into testable questions with explicit costs and played-game evidence.
 
-The public figures and README banners use [published aggregate counts and metrics](docs/data/public_summary.json), so they can be read without downloading or distributing Riot match data. Regenerate them locally with `.venv/bin/python scripts/render_results.py`, or from those public aggregates with `.venv/bin/python scripts/render_results.py --from-summary`.
+The public figures and README banners use [published aggregate counts and metrics](docs/data/public_summary.json), so they can be read without downloading or distributing Riot match data. Regenerate the original figures with `.venv/bin/python scripts/render_results.py --from-summary`, the model ablation with `.venv/bin/python scripts/render_hierarchical.py --from-summary`, and the 90% coverage audit with `.venv/bin/python scripts/render_predictability.py --from-summary`.
 
 ## Visual dashboard
 

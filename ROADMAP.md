@@ -44,14 +44,14 @@ The two paths protect the evidence: new model ideas may use **development** matc
 
 ## Current execution status
 
-M0 is frozen locally with 465 source matches, a cutoff of **2026-10-01 13:22:43 UTC**, and a 100-match minimum. M1's first live named snapshot (`20261009-freeze1`) returned the same 470 IDs and **0 new usable matches**; the prospective scorer correctly remains `pending`. M2's observable movement-tag parser ran on five games and then all 465, yielding eight labels and validity masks without parse errors. These tags are geometry, not verified intent or causal help. The early M3 auxiliary 8×8-loss variant reached **17.10%** validation versus the frozen candidate's **17.33%**. The new coherent hierarchical M3 policy reaches **17.49%** after validation calibration using full recorded context, against a **15.29%** role/phase rule; its match-bootstrap gain interval still includes zero. The epoch, context variant and prior weight all used that validation split. Neither M3 variant has been evaluated on the old test or independently confirmed. No raw Riot JSON, keys, models or prospective match files are committed to Git.
+M0 is frozen locally with 465 source matches, a cutoff of **2026-10-01 13:22:43 UTC**, and a 100-match minimum. M1's first live named snapshot (`20261009-freeze1`) returned the same 470 IDs and **0 new usable matches**; the prospective scorer correctly remains `pending`. M2's observable movement-tag parser ran on five games and then all 465, yielding eight labels and validity masks without parse errors. These tags are geometry, not verified intent or causal help. The early M3 auxiliary 8×8-loss variant reached **17.10%** validation versus the frozen candidate's **17.33%**. The coherent hierarchical M3 policy reaches **17.49%** after validation calibration using the `x` enemy-position proxy plus global timeline fields, against a **15.29%** role/phase rule; its match-bootstrap gain interval still includes zero. The 109-channel visibility proxy reaches **16.86%**; the 0.63-point difference is inconclusive. Epoch, context variant and prior weight all used that validation split. Neither M3 variant has been evaluated on the old test or independently confirmed. No raw Riot JSON, keys, models or prospective match files are committed to Git.
 
 The second live snapshot (`20261010`) again returned **470 unique ranked-solo IDs across five pages, 465 usable cached games and 0/100 genuinely new matches**. The key worked; this is a data-availability constraint, not a failed API call. The development track can continue on training/validation while the frozen prospective test remains untouched.
 
 ### Research sequence after the M3 ablation
 
-1. **Fix the visible failure modes.** The M3 full model's early 8×8 accuracy is **29.8%**, middle **13.1%**, late **7.5%**; reset-class F1 is **5.8%** on 50 validation examples. Add event-aware temporal windows, phase balance and objective timer/visibility masks, then compare on a *new* development split or cross-validation by match. Keep old test out of selection.
-2. **Separate player-visible information from server truth.** Today's full variant contains all recorded player positions and global gold/XP. Mark each feature's visibility and provenance; compare a conservative observable-context model with the omniscient upper-bound diagnostic. A raw full-minus-Faker ablation gain does not prove Faker saw or reacted to those exact inputs.
+1. **Fix the visible failure modes with new evidence.** The M3 full model's early 8×8 accuracy is **29.8%**, middle **13.1%**, late **7.5%**; reset-class F1 is **5.8%** on 50 validation examples. A three-head phase expert was trained and **fell to 5.9% late / 16.4% overall**, so it was not promoted. Add event-aware temporal windows, wave state, objective timing and actual visibility annotations, then compare on a *new* development split or cross-validation by match. Keep old test out of selection.
+2. **Get actual player-visible evidence.** The four-variant ablation and [feature matrix](VISIBILITY.md) now separate own, ally, heuristic last-seen enemy, and global timeline resource channels. The `x` proxy is **not** Faker POV, and the global-field advantage is inconclusive. Lawful replay/player-view alignment and missingness labels are needed before a true visibility-conditioned model.
 3. **Expand with provenance, not duplicates.** Keep collecting verified new queue-420 games for the frozen M0 prospective lockbox. For additional development data, build a separately identified high-elo/professional source with patch, player, perspective, rights and match alignment. Pretrain there, fine-tune on Faker ranked, and evaluate cross-domain shift before claiming transfer.
 4. **Build a distinct M3 future gate.** Freeze candidate weights, prior weight, metric and a later-game cutoff before any new-game evaluation. Do not insert M3 into the M0 lockbox after seeing M0's result. At least 100 eligible future games and a positive match-level lower bound are needed for a predictive claim.
 5. **Then address sub-minute prediction.** Source lawful replay/player-view evidence with precise timestamps and visibility provenance; align it to match events and quantify annotation error. Interpolating one-minute Riot positions is not a substitute.
@@ -67,7 +67,12 @@ The sub-minute goal is a separate data milestone: align lawful replay/POV materi
 .venv/bin/python -m shadowfaker.macro_actions
 .venv/bin/python -m shadowfaker.hierarchical --pilot-only --epochs 2
 .venv/bin/python -m shadowfaker.hierarchical --epochs 25
+.venv/bin/python -m shadowfaker.hierarchical --phase-gate --pilot-only --epochs 2
+.venv/bin/python -m shadowfaker.hierarchical --phase-gate --epochs 25
+.venv/bin/python -m shadowfaker.transition_probe --pilot-only
+.venv/bin/python -m shadowfaker.transition_probe
 .venv/bin/python scripts/render_hierarchical.py --from-summary
+.venv/bin/python scripts/render_predictability.py --from-summary
 .venv/bin/python scripts/run_prospective.py --offline
 # On a later UTC date, with a renewed Riot key if needed:
 .venv/bin/python scripts/run_prospective.py --snapshot 20261010
@@ -95,7 +100,7 @@ The all-queue PUUID listing reached **519 IDs**, but the 49 additional matches a
 |---|---|---|
 | Comparable game growth | New verified queue-420 games for the same PUUID or separately evaluated accounts/domains | Same PUUID has **0 fresh ranked**; 49 other modes must remain separate. |
 | Observed opponent response | Enemy trajectories, objective trades and exposure at matched states | Proximity and arrivals indexed; no causal resource-spend claim. |
-| Better predictive interactions | Validation gain over frozen model, followed by a new future lockbox | First 13-channel candidate is **8.71%** 16×16 validation versus frozen **10.59%**. New hierarchical full-context model: **17.49%** 8×8 validation, versus old frozen **17.33%** on the same split; difference is tiny and adaptively selected. No M3 test score. |
+| Better predictive interactions | Validation gain over frozen model, followed by a new future lockbox | First 13-channel candidate is **8.71%** 16×16 validation versus frozen **10.59%**. Hierarchical global-field proxy: **17.49%** 8×8 validation, versus old frozen **17.33%** on the same split; visibility proxy **16.86%**. Differences are tiny and adaptively selected. No M3 test score. |
 | Sub-minute temporal model | Lawfully sourced replay/POV positions and timestamps with perspective provenance | Riot timelines still sample positions about every 60 seconds. Events alone cannot infer every-second positions. |
 | Strategy challenge | A calibrated environment or comparable played-game outcomes, with opponent adaptation and uncertainty | Five formation curves are synthetic, not win probabilities. |
 
