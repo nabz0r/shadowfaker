@@ -41,3 +41,9 @@ For every experiment, log its patch, region, queue or professional domain, team 
 5. **Playable evaluation:** before claiming a novel team strategy wins, test it in a valid environment with opponent adaptation, matched team strength and repeated games. Source code, replay fit and offline metrics cannot substitute for this gate.
 
 This register is updated with the [roadmap](ROADMAP.md) and [progress log](PROGRESS.md). New analyses must say which rung of the evidence ladder they reach. A future model is selected on development validation and gets its **own** later lockbox; the current [frozen prospective test](BENCHMARK_PROTOCOL.md) belongs to the existing checkpoint.
+
+## Interactive five-role composition, with explicit opponent response
+
+The Challenge tab now lets a reader assign each of **five hypothetical players** to top, mid, jungle or bot. It redraws a blue-versus-red lane allocation at the selected five-minute tick, alongside pressure, map coverage and resource-sharing curves. The opponent's five positions follow a declared response-delay rule: after the selected delay, one hypothetical opponent reallocates toward our most populated zone from another zone. The resource-sharing slider controls an abstract diminishing-return formula, so stacking all five in one lane visibly reduces map coverage.
+
+This is a **scenario sketch**, not a learned simulator or a LoL win-probability estimate. The real training corpus almost never contains five-person early bot groups. It cannot identify what the enemy would have done if a different formation had been played, or whether five Faker agents exist. A publishable comparison would need a playable environment, patch-specific resource and objective accounting, opponents that adapt, matched team skill and repeated randomized trials. The new [IoC](IOC_VISION.md) can guide which observed state variables such a simulator must match; it cannot supply counterfactual outcomes on its own.

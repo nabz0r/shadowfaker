@@ -18,9 +18,11 @@ from .util import atomic_json
 from .features import position, number
 from .events64 import event_category, position_cell
 from .geometry64 import local_metric
+from .ioc import inventory_snapshots
 
 
-def _observed_context(match: dict, timeline: dict, puuid: str, minute: float) -> dict:
+def _observed_context(match: dict, timeline: dict, puuid: str, minute: float,
+                      inventories=None) -> dict:
     """Display the complete observed transition, keeping the future separate."""
     players = (match.get("info") or {}).get("participants") or []
     own = next(p for p in players if p.get("puuid") == puuid)
@@ -32,8 +34,9 @@ def _observed_context(match: dict, timeline: dict, puuid: str, minute: float) ->
     frames = (timeline.get("info") or {}).get("frames") or []
     index = min(range(len(frames)-1),key=lambda j:abs(number(frames[j].get("timestamp"),j*60000)/60000-minute))
     current,next_frame = frames[index:index+2]
+    if inventories is None: inventories = inventory_snapshots(timeline)[0]
     prev = frames[index-1] if index else None
-    def actors(frame):
+    def actors(frame, frame_index):
         pf = frame.get("participantFrames") or {}
         result=[]
         for p in sorted(teams,key=lambda p:(0 if p==pid else 1 if teams[p]==team_id else 2,roles[p],p)):
@@ -43,9 +46,10 @@ def _observed_context(match: dict, timeline: dict, puuid: str, minute: float) ->
                            "role":roles[p],"champion":champions[p],
                            "xy":None if xy is None else [round(float(v),5) for v in xy],
                            "gold":int(number(data.get("totalGold"))),"xp":int(number(data.get("xp"))),
-                           "level":int(number(data.get("level")))})
+                           "level":int(number(data.get("level"))),
+                           "items":[item for item, count in sorted(inventories[frame_index][p].items()) for _ in range(count)]})
         return result
-    now_actors,next_actors=actors(current),actors(next_frame)
+    now_actors,next_actors=actors(current,index),actors(next_frame,index+1)
     own_xy=next(a["xy"] for a in now_actors if a["side"]=="faker")
     previous_xy=None
     if prev is not None:
@@ -91,7 +95,7 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
     checkpoint_hash = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
     output = artifacts / "replays" / mid / "trace.json" if allow_any else artifacts / "replay_trace.json"
     existing = read_json(output)
-    if (existing and existing.get("schema_version") == 3 and existing.get("split") and existing.get("match_id") == mid and existing.get("checkpoint_sha256") == checkpoint_hash
+    if (existing and existing.get("schema_version") == 4 and existing.get("split") and existing.get("match_id") == mid and existing.get("checkpoint_sha256") == checkpoint_hash
             and existing.get("max_frames") == max_frames
             and all((artifacts / "replay_frames" / row["image"]).is_file() for row in existing["rows"])):
         return output
@@ -105,6 +109,7 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
     raw = processed.parent / "raw"
     match = json.loads((raw / "matches" / f"{mid}.json").read_text())
     timeline = json.loads((raw / "timelines" / f"{mid}.json").read_text())
+    inventories = inventory_snapshots(timeline)[0]
     puuid = read_json(raw / "manifest.json")["account"]["puuid"]
     with torch.no_grad():
         outputs = [model(x[i:i + 128], champion[i:i + 128]) for i in range(0, count, 128)]
@@ -148,7 +153,7 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
         filename = f"{mid}/{i:02d}.png" if allow_any else f"{i:02d}.png"
         image.save(folder / f"{i:02d}.png")
         entropy = -float(np.sum(p * np.log(np.maximum(p, 1e-12))) / np.log(256))
-        rows.append({"minute": float(minute[i]), **_observed_context(match,timeline,puuid,float(minute[i])),
+        rows.append({"minute": float(minute[i]), **_observed_context(match,timeline,puuid,float(minute[i]),inventories),
                      "actual_region": actual_region,
                      "predicted_region": guess_region, "actual_probability": float(p[actual_region]),
                      "predicted_probability": float(p[guess_region]), "forecast_entropy_0_1": entropy,
@@ -156,7 +161,7 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
                      "level": round(float(current[2] * 18)), "cs": round(float(current[4] * 400)),
                      "estimated_final_win_probability": float(values[i]), "image": filename})
     artifacts.mkdir(parents=True, exist_ok=True)
-    atomic_json(output, {"schema_version": 3, "match_id": mid, "max_frames": max_frames,
+    atomic_json(output, {"schema_version": 4, "match_id": mid, "max_frames": max_frames,
                          "checkpoint_sha256": checkpoint_hash, "source_step_seconds": 60,
                          "view": model.view,
                          "split": next(k for k,v in meta["splits"].items() if mid in v),

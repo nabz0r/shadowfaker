@@ -124,7 +124,7 @@ Object.assign(copy.fr, {
   replay_key_now:"Point plein : position à t", replay_key_next:"Anneau : arrivée à t+1", replay_key_model:"Losange : case prédite", replay_key_limit:"Le fond est une probabilité du modèle 16×16 ; les autres joueurs sont des observations Riot à t.",
   corpus_title:"Qu'avons-nous vraiment en mémoire ?", corpus_intro:"Les fichiers bruts restent sur cette machine. Ici, seuls leurs volumes et leur sens sont publiés : une partie avec une timeline ranked, un résumé professionnel et une fiche de finale ne donnent pas la même résolution.", corpus_cached:"JSON de match en cache", corpus_cached_note:"toutes queues et régions du cache", corpus_timeline:"Timelines JSON", corpus_timeline_note:"les remakes peuvent manquer", corpus_usable:"Ranked KR exploitables", corpus_usable_note:"seules cibles du modèle spatial", corpus_facts:"Fiches de fin de match", corpus_facts_note:"pour explorer, jamais pour prédire à t", corpus_source:"Source", corpus_volume:"Volume", corpus_have:"Ce qu'on observe", corpus_use:"Usage correct", corpus_kr_have:"Positions des dix joueurs ~60 s, économie, niveaux, événements horodatés", corpus_kr_use:"États causaux et labels spatiaux ; split par partie", corpus_euw_have:"Timelines ranked, identité historique attribuée", corpus_euw_use:"Appoint au train d'événements, pas preuve d'identité", corpus_other:"Autres queues KR", corpus_other_have:"Matchs et timelines d'autres modes", corpus_other_use:"Archive locale, hors train ranked", corpus_pro:"Résumés pro 2022–2026", corpus_pro_have:"Score final, patch, champion, ligue ; miroir non vérifié", corpus_pro_use:"Découverte de cas, aucune trajectoire", corpus_finals:"Finales gagnées", corpus_finals_have:"Résultat, durée, lien par manche", corpus_finals_use:"Pistes de VOD, pas de labels de mouvement", corpus_states:"frames d'état", corpus_actors:"observations de joueurs", corpus_transitions:"transitions Faker", corpus_events:"événements indexés", corpus_position_kicker:"POURQUOI DES POINTS MANQUENT SUR LA CARTE", corpus_position_copy:"Achats, points de compétence et beaucoup de wards n'ont pas de coordonnées dans la timeline. Même quand un kill est positionné, le point peut être celui de la victime. Une position d'événement n'est donc jamais automatiquement celle de Faker.", corpus_next_title:"Ce que cet index change, et le prochain verrou", corpus_next_copy:"Date UTC, champion, côté bleu/rouge, score K/D/A, dégâts, vision, objets et compositions rendent les 465 parties retrouvables. Ce sont des données finales : les ajouter aux entrées à t tricherait. Pour viser une prédiction spatiale sous la minute, il faut un replay assorti au match ID, vérifier l'horloge et la vision, puis piloter cinq parties et tester sur des parties futures.", corpus_open_library:"Explorer les fiches de parties ↗",
   catalog_title:"465 parties, enfin lisibles", catalog_intro:"Recherche par champion, objet, date UTC, patch, ID ou composition. Ces cartes sont des statistiques finales du match et ne servent pas d'entrées au modèle à la minute t.", catalog_more:"Afficher plus", catalog_win:"VICTOIRE", catalog_loss:"DÉFAITE", catalog_unknown:"RÉSULTAT INCONNU", catalog_allies:"Alliés", catalog_enemies:"Adversaires", catalog_items:"Objets finaux", catalog_damage:"Dégâts champions", catalog_vision:"Vision", catalog_cs:"CS", catalog_duration:"Durée", catalog_side_blue:"CÔTÉ BLEU", catalog_side_red:"CÔTÉ ROUGE", catalog_filter_placeholder:"Azir, Sablier, 2026-09, KR_…", catalog_filter_label:"Filtrer les parties ranked", catalog_found:n=>`${n.toLocaleString("fr")} parties trouvées`,
-  pressure_intro:"On compte les adversaires observés autour de Faker à chaque frame Riot (~60 s). Choisis une zone : les moyennes, les entrées et les états 0/1 ou 0/2 sont recalculés pour ce rayon.", pressure_zone:"Rayon autour de Faker", pressure_scheme:"Schéma d'échelle : le cercle suit le rayon choisi, pas une trajectoire ni des positions réelles.", pressure_near:"Adversaires proches", pressure_near_help:"Moyenne de joueurs ennemis avec position connue dans le cercle, sur une frame observée. Unité : joueurs par frame (0 à 5).", pressure_arrivals:"Entrées observées", pressure_arrival_help:"Ennemis positionnés hors du cercle à la frame précédente puis dedans à la suivante. Unité : entrées nettes par frame ; l'instant exact reste inconnu.", pressure_clock:"Tranche temporelle", pressure_clock_help:"Le curseur global choisit 0–10, 10–20 ou 20+ minutes. Les barres restent des moyennes sur toutes les parties.",
+  pressure_intro:"On compte les adversaires observés autour de Faker à chaque frame Riot (~60 s). Choisis une zone : les moyennes, les entrées et les états 0/1 ou 0/2 sont recalculés pour ce rayon.", pressure_zone:"Rayon autour de Faker", pressure_scheme:"Schéma d'échelle : le cercle suit le rayon choisi, pas une trajectoire ni des positions réelles.", pressure_near:"Adversaires proches", pressure_near_help:"Moyenne de joueurs ennemis avec position connue dans le cercle, sur une frame observée. Unité : joueurs par frame (0 à 5).", pressure_arrivals:"Entrées observées", pressure_arrival_help:"Ennemis positionnés hors du cercle à la frame précédente puis dedans à la suivante. Unité : entrées nettes par frame ; l'instant exact reste inconnu.", pressure_clock:"Tranche temporelle", pressure_clock_help:"Le curseur global choisit 0–10, 10–20 ou 20+ minutes. Les barres restent des moyennes sur toutes les parties.", pressure_live_kicker:"UNE PARTIE · DIX JOUEURS · MINUTE OBSERVÉE", pressure_live_title:"Qui est vraiment autour de Faker ?", pressure_live_intro:"La carte et la liste suivent la partie chargée et la frise commune. Les points sont des positions de timeline ; le cercle suit le rayon choisi.", pressure_game_label:"Partie indexée", pressure_game_open:"Charger", pressure_live_limit:"Positions et inventaires reconstruits depuis la timeline à t. La carte révèle aussi les adversaires cachés à Faker : ce n'est pas sa vision ni une mesure de sorts dépensés. Les icônes d'objets utilisent un atlas récent, parfois différent du patch joué.",
   atlas_point:(label,phase,x,y,count,grid,cohort)=>`${label} · ${phase} min · ${cohort} · case ${x},${y} sur ${grid}×${grid} : ${count.toLocaleString("fr")} observation${count>1?"s":""} exacte${count>1?"s":""}.`,
   atlas_empty:(label,phase,cohort)=>`${label} · ${phase} min · ${cohort}. Survole une case pour lire son compte exact ; la lueur autour n'ajoute aucun point.`,
   map_cell:(col,row,actual,shadow)=>`Case ${col},${row} sur 16×16 · Faker observé : ${actual} % des 1 197 arrivées · Shadow : ${shadow} % des 1 197 choix.`
@@ -135,11 +135,43 @@ Object.assign(copy.en, {
   replay_key_now:"Solid dot: position at t", replay_key_next:"Ring: observed arrival at t+1", replay_key_model:"Diamond: predicted cell", replay_key_limit:"The background is a 16×16 model probability; other players are Riot observations at t.",
   corpus_title:"What do we actually have in memory?", corpus_intro:"Raw files stay on this machine. Only aggregate counts and their meaning are published here: a ranked timeline, a professional summary and a final-game card have different resolution.", corpus_cached:"Cached match JSON", corpus_cached_note:"all queues and regions in the cache", corpus_timeline:"Timeline JSON", corpus_timeline_note:"short remakes can be absent", corpus_usable:"Usable KR ranked", corpus_usable_note:"the spatial model's target cohort", corpus_facts:"Post-game cards", corpus_facts_note:"for exploration, never prediction at t", corpus_source:"Source", corpus_volume:"Volume", corpus_have:"What we observe", corpus_use:"Valid use", corpus_kr_have:"Ten-player positions ~60 s, economy, levels, timestamped events", corpus_kr_use:"Causal states and spatial labels; split by match", corpus_euw_have:"Ranked timelines, historically attributed identity", corpus_euw_use:"Auxiliary event training, not identity proof", corpus_other:"Other KR queues", corpus_other_have:"Matches and timelines from other modes", corpus_other_use:"Local archive, outside ranked training", corpus_pro:"Pro summaries 2022–2026", corpus_pro_have:"Final score, patch, champion, league; unverified mirror", corpus_pro_use:"Case discovery, no trajectories", corpus_finals:"Winning finals", corpus_finals_have:"Result, duration and link per game", corpus_finals_use:"VOD leads, no movement labels", corpus_states:"sampled states", corpus_actors:"player observations", corpus_transitions:"Faker transitions", corpus_events:"indexed events", corpus_position_kicker:"WHY MAP POINTS ARE MISSING", corpus_position_copy:"Purchases, skill points and many wards have no coordinates in the timeline. A positioned kill can be located at the victim. An event position is never automatically Faker's position.", corpus_next_title:"What this index changes, and the next gate", corpus_next_copy:"UTC date, champion, blue/red side, K/D/A, damage, vision, items and compositions make 465 games discoverable. These are final statistics: using them as time-t inputs would leak the future. Spatial prediction below a minute needs a replay matched to a game ID, clock and vision checks, a five-game pilot and a future-game test.", corpus_open_library:"Explore the game cards ↗",
   catalog_title:"465 games, readable at last", catalog_intro:"Search by champion, item, UTC date, patch, ID or composition. These cards contain final-match statistics, never time-t model inputs.", catalog_more:"Show more", catalog_win:"WIN", catalog_loss:"LOSS", catalog_unknown:"RESULT UNKNOWN", catalog_allies:"Allies", catalog_enemies:"Opponents", catalog_items:"Final items", catalog_damage:"Champion damage", catalog_vision:"Vision", catalog_cs:"CS", catalog_duration:"Duration", catalog_side_blue:"BLUE SIDE", catalog_side_red:"RED SIDE", catalog_filter_placeholder:"Azir, Hourglass, 2026-09, KR_…", catalog_filter_label:"Filter ranked games", catalog_found:n=>`${n.toLocaleString("en")} games found`,
-  pressure_intro:"We count observed opponents near Faker in each Riot frame (~60 s). Select a zone to recalculate averages, entries and 0/1 or 0/2 states for that radius.", pressure_zone:"Radius around Faker", pressure_scheme:"Scale diagram: the circle follows your chosen radius, not real player locations or paths.", pressure_near:"Nearby opponents", pressure_near_help:"Mean enemies with known positions inside the circle per observed frame. Unit: players per frame (0 to 5).", pressure_arrivals:"Observed entries", pressure_arrival_help:"Enemies with known positions outside the circle in one frame and inside it in the next. Unit: net entries per frame; exact timing is unknown.", pressure_clock:"Time slice", pressure_clock_help:"The shared slider selects 0–10, 10–20 or 20+ minutes. Bars remain averages across all games.",
+  pressure_intro:"We count observed opponents near Faker in each Riot frame (~60 s). Select a zone to recalculate averages, entries and 0/1 or 0/2 states for that radius.", pressure_zone:"Radius around Faker", pressure_scheme:"Scale diagram: the circle follows your chosen radius, not real player locations or paths.", pressure_near:"Nearby opponents", pressure_near_help:"Mean enemies with known positions inside the circle per observed frame. Unit: players per frame (0 to 5).", pressure_arrivals:"Observed entries", pressure_arrival_help:"Enemies with known positions outside the circle in one frame and inside it in the next. Unit: net entries per frame; exact timing is unknown.", pressure_clock:"Time slice", pressure_clock_help:"The shared slider selects 0–10, 10–20 or 20+ minutes. Bars remain averages across all games.", pressure_live_kicker:"ONE GAME · TEN PLAYERS · OBSERVED MINUTE", pressure_live_title:"Who is actually around Faker?", pressure_live_intro:"The map and roster follow the selected game and shared time slider. Points are timeline positions; the circle follows the selected radius.", pressure_game_label:"Indexed game", pressure_game_open:"Load", pressure_live_limit:"Positions and inventories are reconstructed from the timeline at t. The map also reveals opponents hidden from Faker: it is not his vision or a measure of spells spent. Item icons use a recent atlas that may differ from the played patch.",
   atlas_point:(label,phase,x,y,count,grid,cohort)=>`${label} · ${phase} min · ${cohort} · cell ${x},${y} of ${grid}×${grid}: ${count.toLocaleString("en")} exact observation${count===1?"":"s"}.`,
   atlas_empty:(label,phase,cohort)=>`${label} · ${phase} min · ${cohort}. Hover a cell for its exact count; the display halo adds no data points.`,
   map_cell:(col,row,actual,shadow)=>`Cell ${col},${row} of 16×16 · Faker observed: ${actual}% of 1,197 arrivals · Shadow: ${shadow}% of 1,197 choices.`
 });
+Object.assign(copy.fr, {
+  corpus_ids_kicker:"RIOT IDS · RÉGION · PREUVE", corpus_ids_title:"Les pseudonymes exacts du corpus",
+  corpus_ids_note:"Riot résout un Riot ID en PUUID, mais ne certifie pas l'identité de la personne. Les alias historiques sont attribués par des sources externes ; seuls les matches KR du compte principal forment la cible spatiale.",
+  corpus_events_kicker:"TIMELINE · TYPE · POSITION", corpus_events_title:"Que veut dire un événement ?",
+  corpus_events_note:"Volume indexé et fraction avec coordonnées par type. Les ventes, destructions et annulations d'objets sont comptées dans les JSON bruts pour reconstruire l'inventaire, mais hors de l'ancien total d'événements indexés."
+});
+Object.assign(copy.en, {
+  corpus_ids_kicker:"RIOT IDS · REGION · EVIDENCE", corpus_ids_title:"Exact account names in the corpus",
+  corpus_ids_note:"Riot resolves a Riot ID to a PUUID but does not certify the human player. Historical aliases rely on outside attribution; only the main KR account supplies spatial targets.",
+  corpus_events_kicker:"TIMELINE · TYPE · LOCATION", corpus_events_title:"What does an event mean?",
+  corpus_events_note:"Indexed volume and located fraction by type. Item sales, destruction and undo are counted in raw JSON to reconstruct inventories but sit outside the older indexed-event total."
+});
+Object.assign(copy.fr, {challenge_compose_title:"Compose cinq présences hypothétiques",
+  challenge_allocation_title:"Qui occupe quelle zone à cette minute ?",
+  challenge_allocation_note:"Bleu = nos cinq présences hypothétiques. Rouge = cinq réponses adverses prévues par la règle choisie. Chaque colonne est un nombre de joueurs, pas un avantage réel en jeu."});
+Object.assign(copy.en, {challenge_compose_title:"Compose five hypothetical presences",
+  challenge_allocation_title:"Who occupies each zone at this minute?",
+  challenge_allocation_note:"Blue = our five hypothetical presences. Red = five opponent responses under the selected rule. Each column is a player count, not a real in-game advantage."});
+copy.fr.challenge_names.custom="Composer 5 joueurs";
+copy.en.challenge_names.custom="Compose 5 players";
+copy.fr.pressure_live_limit="Positions Riot à t ; adversaires parfois cachés à Faker. Les objets sont une estimation par événements : trinkets initiaux et améliorations automatiques peuvent manquer. Audit final : 29 % des sets exacts. Les icônes utilisent un atlas récent distinct du patch joué.";
+copy.en.pressure_live_limit="Riot positions at t may reveal enemies hidden from Faker. Items are estimated from events: starting trinkets and automatic upgrades can be missing. Final-set audit: 29% exact. Icons use a recent atlas distinct from the played patch.";
+Object.assign(copy.fr, {guide_choose_copy:"Le fond montre une couche agrégée ; les points des dix joueurs viennent d'une seule partie et peuvent être masqués.",
+  ioc_vision_title:"Une mémoire de la partie, centrée sur Faker",ioc_vision_intro:"À chaque minute observée, nous suivons les dix joueurs et estimons leurs objets depuis les événements déjà survenus. Le patch joué fournit les propriétés ; les événements futurs restent des cibles.",
+  ioc_core:"état + interactions",ioc_items:"objets horodatés",ioc_patch:"catalogue du patch",ioc_vision_limit:"La visibilité ennemie est un proxy de dernière observation, pas la vraie minimap de Faker. Une page de builds actuelle ne révèle ni son inventaire passé ni sa décision.",
+  ioc_vision_link:"Lire la matrice, les sources et les limites ↗",ioc_vision_result:"Validation réutilisée : 17,41 % en 8×8 ; gain d'ablation incertain. L'inventaire par événements n'est exact que pour 29 % des sets d'objets finaux. Couvrir 90 % des destinations requiert 40/64 cases.",
+  ioc_source_riot:"12 patches de parties · propriétés statiques d'objets · utilisées à t",ioc_source_ugg:"Contexte de build public · pas de feature historique ; accès automatisé refusé",ioc_source_google:"Découverte de sources seulement · aucun snippet converti en vérité de match"});
+Object.assign(copy.en, {guide_choose_copy:"The background is one aggregate layer; points for ten players come from one game and can be hidden.",
+  ioc_vision_title:"A game memory centred on Faker",ioc_vision_intro:"At each observed minute we track ten players and estimate their items from events already seen. The played patch supplies properties; later events remain targets.",
+  ioc_core:"state + interactions",ioc_items:"timestamped items",ioc_patch:"patch catalog",ioc_vision_limit:"Enemy visibility is a last-seen proxy, not Faker's real minimap. A current build page reveals neither a past inventory nor a decision.",
+  ioc_vision_link:"Read the matrix, sources and limits ↗",ioc_vision_result:"Reused validation: 17.41% at 8×8; uncertain ablation lift. The event inventory matches only 29% of final item sets exactly. Covering 90% of destinations needs 40/64 cells.",
+  ioc_source_riot:"12 played patches · static item properties · used at t",ioc_source_ugg:"Public build context · no historical feature; automated access denied",ioc_source_google:"Source discovery only · no snippet converted to match truth"});
 
 let language = "fr";
 let summary = null;
@@ -152,9 +184,16 @@ let challengeData = null;
 let pressureData = null;
 let spriteManifest = null;
 let pressureRadius = 2500;
+const iocFilters = {faker:true, allies:true, enemies:true, lanes:true, items:true, radius:true, role:"ALL"};
+const lanePaths = {
+  TOP:[[.06,.06],[.07,.90],[.10,.94],[.94,.94]],
+  MID:[[.06,.06],[.94,.94]],
+  BOT:[[.06,.06],[.90,.07],[.94,.10],[.94,.94]]
+};
 let predictabilityData = null;
 let eventAblation = null;
 let challengeScenario = "five_faker";
+let customAllocation = ["top","mid","jungle","bot","bot"];
 let atlasValues = null;
 let trace = null;
 let surfaceMode = "actual";
@@ -162,6 +201,8 @@ let replayTimer = null;
 let sharedMinute = 0;
 let worldFinals = null;
 let corpusData = null;
+let iocSummary = null;
+let iocQuality = null;
 let gameFacts = [];
 let gameCardsShown = 12;
 let selectedFinalYear = 2025;
@@ -265,6 +306,64 @@ function renderCorpus() {
     const name = document.createTextNode(`${label} · `);
     const number = document.createElement("b"); number.textContent = count.toLocaleString(language);
     chip.append(name, number); categories.append(chip);
+  }
+  const accounts=$("#corpus-accounts");accounts.replaceChildren();
+  for(const source of corpusData.source_accounts||[]){
+    const card=document.createElement("article");card.className="corpus-account";
+    const name=document.createElement("strong");name.textContent=source.riot_id;
+    const badge=document.createElement("span");badge.textContent=source.region;
+    const counts=document.createElement("p");counts.textContent=language==="fr"?
+      `${source.ranked_ids} ID(s) ranked disponibles · ${source.usable_timelines??0} timeline(s) exploitables`:
+      `${source.ranked_ids} available ranked ID(s) · ${source.usable_timelines??0} usable timeline(s)`;
+    const claim=document.createElement("small");claim.textContent=source.region==="KR"?
+      (language==="fr"?"Compte résolu par Riot ; identité de la personne non certifiée.":"Account resolved by Riot; human identity unverified."):
+      (language==="fr"?`Attribution historique externe : ${source.claim}.`:`Outside historical attribution: ${source.claim}.`);
+    card.append(name,badge,counts,claim);
+    if(source.source_url){const link=document.createElement("a");link.href=source.source_url;link.target="_blank";
+      link.rel="noopener noreferrer";link.textContent=language==="fr"?"Source de l'attribution ↗":"Attribution source ↗";card.append(link);}
+    accounts.append(card);
+  }
+  const descriptions = language==="fr" ? {
+    ITEM_PURCHASED:"Achat horodaté ; item et acteur connus, lieu absent.",
+    ITEM_SOLD:"Vente horodatée dans le JSON brut ; inventaire à t.",
+    ITEM_DESTROYED:"Objet consommé ou transformé dans le JSON brut ; inventaire à t.",
+    ITEM_UNDO:"Annulation d'achat dans le JSON brut ; avant/après item.",
+    SKILL_LEVEL_UP:"Point de compétence ; pas une position.",
+    ward_placed:"Ward posée ; position parfois absente.",ward_cleared:"Ward détruite ; position parfois absente.",
+    faker_kill:"Kill attribué à Faker ; lieu de la victime éventuel.",
+    faker_death:"Mort de Faker ; lieu de la victime éventuel.",
+    ally_kill:"Kill allié ; lieu de la victime éventuel.",enemy_kill:"Kill adverse ; lieu de la victime éventuel.",
+    dragon:"Dragon éliminé ; événement d'objectif.",baron:"Nashor éliminé ; événement d'objectif.",
+    herald:"Herald éliminé ; événement d'objectif.",grubs:"Grubs éliminés ; événement d'objectif.",
+    building:"Bâtiment détruit ; lieu du bâtiment éventuel."
+  } : {
+    ITEM_PURCHASED:"Timestamped purchase; item and actor known, no location.",
+    ITEM_SOLD:"Timestamped sale in raw JSON; updates inventory at t.",
+    ITEM_DESTROYED:"Consumed or transformed item in raw JSON; updates inventory at t.",
+    ITEM_UNDO:"Purchase undo in raw JSON; before/after item.",
+    SKILL_LEVEL_UP:"Skill point; not a player position.",
+    ward_placed:"Ward placed; location may be missing.",ward_cleared:"Ward destroyed; location may be missing.",
+    faker_kill:"Kill credited to Faker; possible victim location.",
+    faker_death:"Faker death; possible victim location.",
+    ally_kill:"Ally kill; possible victim location.",enemy_kill:"Opponent kill; possible victim location.",
+    dragon:"Dragon killed; objective event.",baron:"Baron killed; objective event.",
+    herald:"Herald killed; objective event.",grubs:"Grubs killed; objective event.",
+    building:"Building destroyed; possible building location."
+  };
+  const details=$("#corpus-event-detail");details.replaceChildren();
+  for(const event of w.event_breakdown||[]){
+    const row=document.createElement("article");row.className="corpus-event-row";
+    const head=document.createElement("div");
+    const label=document.createElement("strong");label.textContent=event.category.replaceAll("_"," ");
+    const amount=document.createElement("b");amount.textContent=event.events.toLocaleString(language);
+    head.append(label,amount);
+    const note=document.createElement("p");note.textContent=descriptions[event.category]||event.category;
+    const spatial=document.createElement("small");spatial.textContent=language==="fr"?
+      `${event.positioned.toLocaleString(language)} lieux / ${event.events.toLocaleString(language)} événements${event.indexed?" indexés":" bruts · hors total indexé"}`:
+      `${event.positioned.toLocaleString(language)} located / ${event.events.toLocaleString(language)} ${event.indexed?"indexed events":"raw events · outside indexed total"}`;
+    const bar=document.createElement("span");bar.className="corpus-event-bar";
+    const fill=document.createElement("i");fill.style.width=`${100*event.positioned/Math.max(1,event.events)}%`;
+    bar.append(fill);row.append(head,note,spatial,bar);details.append(row);
   }
 }
 
@@ -403,6 +502,8 @@ function translate() {
     });
   });
   $("#language").textContent = language === "fr" ? "EN" : "FR";
+  renderIocResult();
+  renderIocControls();
   if (summary) {
     updateTempo();
     updateReadout(7, 7);
@@ -419,6 +520,20 @@ function translate() {
   if (gameFacts.length) { renderGameCards(); renderGamePreview(); }
   if (trace) updateReplay();
   showSharedMinute();
+}
+
+function renderIocResult() {
+  if (!iocSummary || !iocQuality) return;
+  const score = 100 * iocSummary.variants.full.top1_8;
+  const inventory = 100 * iocQuality.exact_final_id_set_fraction;
+  const coverage = Object.entries(iocSummary.variants.full.topk8)
+    .map(([k, value]) => [Number(k), value]).sort((a, b) => a[0] - b[0])
+    .find(([, value]) => value >= .9)?.[0];
+  const locale = language === "fr" ? "fr-FR" : "en-US";
+  const fmt = (number, digits) => number.toLocaleString(locale, {minimumFractionDigits: digits, maximumFractionDigits: digits});
+  $("#ioc-vision-result").textContent = language === "fr"
+    ? `Validation réutilisée : ${fmt(score, 2)} % en 8×8 ; gain d'ablation incertain. L'inventaire par événements n'est exact que pour ${fmt(inventory, 1)} % des sets d'objets finaux. Couvrir 90 % des destinations requiert ${coverage}/64 cases.`
+    : `Reused validation: ${fmt(score, 2)}% at 8×8; uncertain ablation lift. The event inventory matches only ${fmt(inventory, 1)}% of final item sets exactly. Covering 90% of destinations needs ${coverage}/64 cells.`;
 }
 
 function updateReadout(col, row) {
@@ -552,6 +667,8 @@ function renderAtlas() {
     ctx.beginPath(); ctx.moveTo(pixel, 0); ctx.lineTo(pixel, 512); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0, pixel); ctx.lineTo(512, pixel); ctx.stroke();
   }
+  drawCanvasIoc(ctx);
+  renderIocReadout("#atlas-ioc-readout");
   $("#atlas-total").previousElementSibling.textContent = modelPositions ?
     (local ? (language === "fr" ? "Destinations de validation" : "Validation destinations") :
              (language === "fr" ? "Destinations du test historique" : "Historical test destinations")) :
@@ -565,7 +682,7 @@ function renderAtlas() {
 
 function renderChallenge() {
   const tabs = $("#challenge-scenarios"); tabs.replaceChildren();
-  for (const key of Object.keys(challengeData.scenarios)) {
+  for (const key of [...Object.keys(challengeData.scenarios),"custom"]) {
     const button = document.createElement("button");
     button.type = "button";
     button.textContent = copy[language].challenge_names[key];
@@ -578,7 +695,29 @@ function renderChallenge() {
   const sharing = shares[Number($("#challenge-sharing").value)];
   $("#challenge-response-label").textContent = `${delay * 5} min`;
   $("#challenge-sharing-label").textContent = `${Math.round(Number(sharing) * 100)} %`;
-  const rows = challengeData.scenarios[challengeScenario][String(delay)][sharing];
+  const compose=$("#challenge-compose");compose.hidden=challengeScenario!=="custom";
+  const players=$("#challenge-players");players.replaceChildren();
+  if(challengeScenario==="custom")customAllocation.forEach((zone,index)=>{
+    const label=document.createElement("label"),select=document.createElement("select");
+    label.append(document.createTextNode(`${language==="fr"?"Joueur":"Player"} ${index+1}`));
+    for(const key of ["top","mid","jungle","bot"]){
+      const option=document.createElement("option");option.value=key;option.textContent=key.toUpperCase();select.append(option);
+    }
+    select.value=zone;select.addEventListener("change",()=>{customAllocation[index]=select.value;renderChallenge();});
+    label.append(select);players.append(label);
+  });
+  const customRows=()=>Array.from({length:8},(_,tick)=>{
+    const ours=Object.fromEntries(["top","mid","jungle","bot"].map(zone=>[zone,customAllocation.filter(value=>value===zone).length]));
+    const enemy={top:1,mid:1,jungle:1,bot:2};
+    const focus=Object.keys(ours).reduce((a,b)=>ours[b]>ours[a]?b:a,"top");
+    if(tick>=delay){const donor=focus==="bot"?"top":"bot";enemy[donor]--;enemy[focus]++;}
+    const resource=Object.values(ours).reduce((sum,n)=>sum+(n?Math.min(1,n)+Number(sharing)*Math.max(0,Math.min(n-1,1)):0),0)/5;
+    const coverage=Object.values(ours).filter(n=>n>0).length/4;
+    const local=Math.max(0,ours[focus]-enemy[focus])/5;
+    return {minute:tick*5,allocation:ours,opponent_allocation:enemy,resource_access:resource,
+      map_coverage:coverage,local_pressure:local};
+  });
+  const rows=challengeScenario==="custom"?customRows():challengeData.scenarios[challengeScenario][String(delay)][sharing];
   const chart = $("#challenge-chart"); chart.replaceChildren();
   const xAt = (i) => 55 + i * 100, yAt = (v) => 240 - v * 190;
   for (const value of [0,.25,.5,.75,1]) {
@@ -608,6 +747,168 @@ function renderChallenge() {
   const pct = (x) => `${Math.round(x * 100)}/100`;
   $("#challenge-readout").textContent = copy[language].challenge_readout(
     selected.minute,pct(selected.local_pressure),pct(selected.map_coverage),pct(selected.resource_access));
+  const lanes=$("#challenge-lanes");lanes.replaceChildren();
+  for(const zone of ["top","mid","jungle","bot"]){
+    const row=document.createElement("div");row.className="challenge-lane";
+    const name=document.createElement("strong");name.textContent=zone.toUpperCase();
+    const team=document.createElement("span");team.className="team";team.style.width=`${selected.allocation[zone]*10}%`;
+    const opponent=document.createElement("span");opponent.className="opponent";opponent.style.width=`${selected.opponent_allocation[zone]*10}%`;
+    const counts=document.createElement("small");counts.textContent=`${selected.allocation[zone]} : ${selected.opponent_allocation[zone]}`;
+    row.append(name,team,opponent,counts);lanes.append(row);
+  }
+}
+
+function renderIocControls() {
+  const labels = language === "fr" ?
+    {faker:"Faker",allies:"Alliés",enemies:"Adversaires",lanes:"Couloirs",items:"Objets",radius:"Zone",role:"Rôle"} :
+    {faker:"Faker",allies:"Allies",enemies:"Opponents",lanes:"Lanes",items:"Items",radius:"Radius",role:"Role"};
+  for (const container of document.querySelectorAll(".ioc-controls")) {
+    container.replaceChildren();
+    for (const key of ["faker","allies","enemies","lanes","items","radius"]) {
+      const label=document.createElement("label"),input=document.createElement("input");
+      input.type="checkbox";input.checked=iocFilters[key];input.dataset.iocFilter=key;
+      label.append(input,document.createTextNode(labels[key]));container.append(label);
+      input.addEventListener("change",()=>{
+        iocFilters[key]=input.checked;renderIocControls();refreshIocViews();
+      });
+    }
+    const roleLabel=document.createElement("label"),select=document.createElement("select");
+    roleLabel.append(document.createTextNode(`${labels.role} `));
+    const names=language==="fr"?{ALL:"Tous",TOP:"Top",JUNGLE:"Jungle",MIDDLE:"Mid",BOTTOM:"Bot",UTILITY:"Support"}:
+      {ALL:"All",TOP:"Top",JUNGLE:"Jungle",MIDDLE:"Mid",BOTTOM:"Bot",UTILITY:"Support"};
+    for(const [value,name] of Object.entries(names)){
+      const option=document.createElement("option");option.value=value;option.textContent=name;select.append(option);
+    }
+    select.value=iocFilters.role;select.dataset.iocRole="1";
+    select.addEventListener("change",()=>{iocFilters.role=select.value;renderIocControls();refreshIocViews();});
+    roleLabel.append(select);container.append(roleLabel);
+  }
+}
+
+function refreshIocViews() {
+  if(atlas512||events64)renderAtlas();
+  if(summary)renderSurface();
+  if(pressureData)renderPressure();
+}
+
+function showIocActor(actor) {
+  if(actor.side==="faker")return iocFilters.faker;
+  return iocFilters[actor.side==="ally"?"allies":"enemies"] &&
+    (iocFilters.role==="ALL" || actor.role===iocFilters.role);
+}
+
+function currentIocRow() {return trace?.rows?.[Number($("#replay-slider").value)];}
+
+function renderIocReadout(selector) {
+  const row=currentIocRow();
+  const own=row?.actors_t?.find(a=>a.side==="faker");
+  if(!own){$(selector).textContent=language==="fr"?"Superpose une partie observée en la chargeant dans Pression ou Évolution.":
+    "Overlay an observed game by loading it in Pressure or Evolution.";return;}
+  const actors=row.actors_t.filter(a=>a.xy&&showIocActor(a));
+  const itemText=iocFilters.items ? (language==="fr"?`${own.items?.length||0} objets de Faker suivis à t`:
+    `${own.items?.length||0} Faker items tracked at t`) : "";
+  const ended=sharedMinute>row.minute+.5 ? (language==="fr"?" · dernière frame disponible":" · last available frame"):"";
+  $(selector).textContent=language==="fr"?
+    `Surimpression : ${row.minute.toFixed(0)} min d'une partie${ended} · ${actors.length} positions affichées${itemText?` · ${itemText}`:""}. Le fond agrège plusieurs parties ; les points décrivent cette partie seulement.`:
+    `Overlay: ${row.minute.toFixed(0)} min of one game${ended} · ${actors.length} positions shown${itemText?` · ${itemText}`:""}. The background aggregates many games; the points describe this one game.`;
+}
+
+function drawCanvasIoc(ctx) {
+  const row=currentIocRow();
+  if(!row)return;
+  const project=xy=>[xy[0]*512,(1-xy[1])*512];
+  if(iocFilters.lanes){
+    ctx.save();ctx.lineWidth=2;ctx.setLineDash([8,7]);ctx.strokeStyle="rgba(255,220,165,.72)";
+    for(const path of Object.values(lanePaths)){
+      ctx.beginPath();path.forEach((xy,i)=>{const p=project(xy);i?ctx.lineTo(...p):ctx.moveTo(...p);});ctx.stroke();
+    }
+    ctx.restore();
+  }
+  const own=row.actors_t.find(a=>a.side==="faker");
+  if(iocFilters.radius&&own?.xy){
+    const [x,y]=project(own.xy);ctx.save();ctx.beginPath();ctx.arc(x,y,pressureRadius/15000*512,0,Math.PI*2);
+    ctx.fillStyle="rgba(255,83,107,.11)";ctx.strokeStyle="#ffd895";ctx.lineWidth=2;ctx.fill();ctx.stroke();ctx.restore();
+  }
+  for(const actor of row.actors_t.filter(a=>a.xy&&showIocActor(a))){
+    const [x,y]=project(actor.xy),color=actor.side==="faker"?"#ffd895":actor.side==="ally"?"#70a8ff":"#ff637d";
+    ctx.beginPath();ctx.arc(x,y,actor.side==="faker"?8:6,0,Math.PI*2);
+    ctx.fillStyle=color;ctx.fill();ctx.strokeStyle="#fff";ctx.lineWidth=1.7;ctx.stroke();
+    if(iocFilters.items&&actor.side==="faker"){
+      ctx.font="bold 13px sans-serif";ctx.fillStyle="#fff4db";
+      ctx.fillText(`F · ${actor.items?.length||0}`,Math.min(462,x+11),Math.max(18,y-10));
+    }
+  }
+}
+
+function renderPressureLive() {
+  const svg = $("#pressure-live-map"), roster = $("#pressure-live-roster");
+  svg.replaceChildren(); roster.replaceChildren();
+  const row = trace?.rows?.[Number($("#replay-slider").value)];
+  const own = row?.actors_t?.find(actor => actor.side === "faker");
+  if (!own?.xy) {
+    $("#pressure-live-readout").textContent = language === "fr" ?
+      "Charge une partie indexée pour afficher les positions à la minute choisie." :
+      "Load an indexed game to show player positions at the selected minute.";
+    return;
+  }
+  const project = xy => [30 + xy[0] * 500, 530 - xy[1] * 500];
+  svg.append(svgNode("rect", {x:30,y:30,width:500,height:500,fill:"#190f1a",stroke:"#94556b","stroke-width":2}));
+  if(iocFilters.lanes)for(const [lane,path] of Object.entries(lanePaths)){
+    svg.append(svgNode("polyline",{points:path.map(xy=>project(xy).join(",")).join(" "),
+      fill:"none",stroke:"#ffcf98",opacity:.55,"stroke-width":4,"stroke-dasharray":"8 8"}));
+    const mid=project(path[Math.floor(path.length/2)]);
+    const label=svgNode("text",{x:mid[0]+5,y:mid[1]-6,fill:"#ffd895","font-size":10});label.textContent=lane;svg.append(label);
+  }
+  for (let i=1;i<8;i++) {
+    const v=30+i*62.5;
+    svg.append(svgNode("line",{x1:v,y1:30,x2:v,y2:530,stroke:"#5e354a",opacity:.55}));
+    svg.append(svgNode("line",{x1:30,y1:v,x2:530,y2:v,stroke:"#5e354a",opacity:.55}));
+  }
+  const [fx,fy] = project(own.xy);
+  if(iocFilters.radius)svg.append(svgNode("circle",{cx:fx,cy:fy,r:pressureRadius/15000*500,
+    fill:"#ff536b",opacity:.11,stroke:"#ff9eae","stroke-width":5}));
+  const known = row.actors_t.filter(actor => actor.xy);
+  const nearby = side => known.filter(actor => actor.side === side &&
+    Math.hypot(actor.xy[0]-own.xy[0],actor.xy[1]-own.xy[1]) <= pressureRadius/15000);
+  const nearEnemy = nearby("enemy"), nearAlly = nearby("ally");
+  for (const actor of known.filter(showIocActor)) {
+    const [px,py] = project(actor.xy);
+    const inside = actor.side !== "faker" && Math.hypot(actor.xy[0]-own.xy[0],actor.xy[1]-own.xy[1]) <= pressureRadius/15000;
+    const color = actor.side === "faker" ? "#ffd895" : actor.side === "ally" ? "#70a8ff" : "#ff637d";
+    if (inside) svg.append(svgNode("line",{x1:fx,y1:fy,x2:px,y2:py,stroke:color,opacity:.7,
+      "stroke-width":2,"stroke-dasharray":"5 5"}));
+    svg.append(svgNode("circle",{cx:px,cy:py,r:actor.side==="faker"?10:inside?8:6,
+      fill:color,stroke:"#fff7ee","stroke-width":inside?2.5:1.5}));
+    const label=svgNode("text",{x:Math.min(490,px+10),y:Math.max(25,py-7),fill:color,
+      "font-size":11,"font-weight":800});
+    label.textContent=actor.side==="faker"?"FAKER":actor.role.slice(0,3);svg.append(label);
+  }
+  const missing = 10-known.length;
+  const ended=sharedMinute>row.minute+.5 ? (language==="fr"?" · dernière frame disponible":" · last available frame"):"";
+  $("#pressure-live-readout").textContent = language === "fr" ?
+    `${row.minute.toFixed(0)} min${ended} · ${nearEnemy.length}/5 adversaires et ${nearAlly.length}/4 alliés dans ${pressureRadius.toLocaleString("fr")} unités · ${missing} position(s) absente(s).` :
+    `${row.minute.toFixed(0)} min${ended} · ${nearEnemy.length}/5 opponents and ${nearAlly.length}/4 allies within ${pressureRadius.toLocaleString("en")} units · ${missing} missing position(s).`;
+  for (const actor of row.actors_t.filter(showIocActor)) {
+    const card=document.createElement("div");card.className=`pressure-actor ${actor.side}`;
+    const distance = actor.xy ? Math.round(Math.hypot(actor.xy[0]-own.xy[0],actor.xy[1]-own.xy[1])*15000) : null;
+    card.classList.toggle("inside",actor.side!=="faker" && distance!==null && distance<=pressureRadius);
+    const heading=document.createElement("div");heading.className="pressure-actor-heading";
+    heading.append(spriteIcon("champions",actor.champion,actor.champion));
+    const title=document.createElement("strong");title.textContent=`${actor.side==="faker"?"FAKER":actor.role} · ${actor.champion}`;
+    const range=document.createElement("span");range.textContent=actor.side==="faker"?`Niv. ${actor.level}`:
+      distance===null?"position ?":`${distance.toLocaleString(language)} u`;
+    heading.append(title,range);card.append(heading);
+    const items=document.createElement("div");items.className="pressure-actor-items";
+    for(const item of (iocFilters.items ? actor.items||[] : []).slice(0,7)) {
+      const name=spriteManifest?.items?.[String(item)]?.[language] || `#${item}`;
+      const icon=spriteIcon("items",item,name);icon.title=name;items.append(icon);
+    }
+    if(iocFilters.items&&!actor.items?.length) {
+      const empty=document.createElement("small");empty.textContent=language==="fr"?"Aucun objet suivi à t":"No tracked item at t";items.append(empty);
+    }
+    if(iocFilters.items)card.append(items);
+    roster.append(card);
+  }
 }
 
 function renderPressure() {
@@ -666,6 +967,7 @@ function renderPressure() {
     const detail=document.createElement("small");detail.textContent=`${row.frames.toLocaleString(language)} ${language==="fr"?"états · adversaires proches en moyenne":"states · nearby opponents on average"}`;
     card.append(title,value,detail);cards.append(card);
   }
+  renderPressureLive();
 }
 
 function svgNode(name, attributes = {}) {
@@ -727,6 +1029,36 @@ function renderSurface() {
     title.textContent = `${x},${y}: ${percent(count, density.samples)}%`;
     top.append(title); svg.append(top);
   }
+  const live=currentIocRow();
+  if(live){
+    const locate=xy=>project(xy[0]*grid,xy[1]*grid,0);
+    if(iocFilters.lanes)for(const path of Object.values(lanePaths)){
+      svg.append(svgNode("polyline",{points:path.map(xy=>locate(xy).join(",")).join(" "),
+        fill:"none",stroke:"#ffd895",opacity:.78,"stroke-width":2,"stroke-dasharray":"6 5"}));
+    }
+    const own=live.actors_t.find(actor=>actor.side==="faker");
+    if(iocFilters.radius&&own?.xy){
+      const points=Array.from({length:49},(_,i)=>{
+        const angle=i/48*Math.PI*2;
+        return locate([own.xy[0]+Math.cos(angle)*pressureRadius/15000,
+                       own.xy[1]+Math.sin(angle)*pressureRadius/15000]);
+      });
+      svg.append(svgNode("polyline",{points:points.map(p=>p.join(",")).join(" "),
+        fill:"none",stroke:"#ffadbd",opacity:.9,"stroke-width":1.6}));
+    }
+    for(const actor of live.actors_t.filter(a=>a.xy&&showIocActor(a))){
+      const [x,y]=locate(actor.xy);
+      const color=actor.side==="faker"?"#ffd895":actor.side==="ally"?"#70a8ff":"#ff637d";
+      svg.append(svgNode("circle",{cx:x,cy:y,r:actor.side==="faker"?7:5,fill:color,
+        stroke:"#fff","stroke-width":1.7}));
+      if(iocFilters.items&&actor.side==="faker"){
+        const badge=svgNode("text",{x:Math.min(558,x+10),y:y-9,fill:"#fff4db","font-size":12,
+          "font-weight":800,stroke:"#261622","stroke-width":2,"paint-order":"stroke"});
+        badge.textContent=`F · ${actor.items?.length||0}`;svg.append(badge);
+      }
+    }
+  }
+  renderIocReadout("#surface-ioc-readout");
   const title = svgNode("text", {x: 28, y: 40, fill: actual ? "#62e4d8" : "#ffa1c9",
                                  "font-size": 16, "font-weight": 700, "letter-spacing": 2});
   title.textContent = actual ? copy[language].surface_actual.toUpperCase() : copy[language].surface_shadow.toUpperCase();
@@ -932,6 +1264,7 @@ function setTrace(data) {
   $("#replay-slider").max=trace.rows.length-1;$("#replay-slider").value=0;
   $("#replay-nav").hidden=false;
   $("#game-picker").value=trace.match_id;
+  $("#pressure-game-picker").value=trace.match_id;
   $("#game-status").textContent=`${trace.match_id} · ${trace.split} · ${trace.rows.length} frames`;
   renderGamePreview(trace.match_id);
   renderMoments();setSharedMinute(sharedMinute);
@@ -1031,10 +1364,11 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
-  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest] = payloads;
+  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality] = payloads;
+  renderIocResult();
   if (summary && (atlas512 || grid64)) renderSurface();
   if (atlas512 || events64) renderAtlas();
   if (challengeData) renderChallenge();
@@ -1095,6 +1429,10 @@ $("#library-query").addEventListener("keydown",event=>{if(event.key==="Enter")se
 $("#game-open").addEventListener("click",()=>openGame());
 $("#game-picker").addEventListener("keydown",event=>{if(event.key==="Enter")openGame();});
 $("#game-picker").addEventListener("input",()=>renderGamePreview());
+$("#pressure-game-open").addEventListener("click",()=>openGame($("#pressure-game-picker").value.trim()));
+$("#pressure-game-picker").addEventListener("keydown",event=>{
+  if(event.key==="Enter")openGame($("#pressure-game-picker").value.trim());
+});
 $("#game-filter").addEventListener("input",()=>{gameCardsShown=12;renderGameCards();});
 $("#game-more").addEventListener("click",()=>{gameCardsShown+=12;renderGameCards();});
 $("#pressure-radius").addEventListener("input",event=>{

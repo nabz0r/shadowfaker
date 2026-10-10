@@ -53,7 +53,7 @@
       "active_features": 24,
       "parameters": 732782,
       "selected_epoch": 10,
-      "checkpoint_sha256": "4f98c13217456659a9eeba235c04bd7902a6c94193542305441bed884f8fdf99",
+      "checkpoint_sha256": "23923dafa145d69febfe5db60c7e310953ec3bb1a9b6a42cc2ef88ab0ed1bfba",
       "raw_top1_8": 0.15137254901960784,
       "top1_8": 0.17098039215686275,
       "topk8": {
@@ -87,7 +87,7 @@
       "active_features": 73,
       "parameters": 732782,
       "selected_epoch": 4,
-      "checkpoint_sha256": "f8d49c99599198c8d5cd2842ef14d4669c1ace6e05bb71c374afc6af1d08b652",
+      "checkpoint_sha256": "37917fa53f5e4420053c8f92670c4e0801fb29e7cea150ad34200e848b3d172c",
       "raw_top1_8": 0.14980392156862746,
       "top1_8": 0.16862745098039217,
       "topk8": {
@@ -121,7 +121,7 @@
       "active_features": 109,
       "parameters": 732782,
       "selected_epoch": 18,
-      "checkpoint_sha256": "fff4b3618f8fc39011145f0825e0d3896849a9346ea31eac022292875a274652",
+      "checkpoint_sha256": "107003b740fa40b135d67b4556cc64f179ab9160c4dfd156ac2d830f972b1042",
       "raw_top1_8": 0.16705882352941176,
       "top1_8": 0.16862745098039217,
       "topk8": {
@@ -155,7 +155,7 @@
       "active_features": 147,
       "parameters": 732782,
       "selected_epoch": 17,
-      "checkpoint_sha256": "39abb02c5791531beff5b12bd6a0d82137575061a0e57c885af3b81bf93e9d05",
+      "checkpoint_sha256": "2824c37a9ae4266d4a24bfd2ad01cdbd1c28e1c8be1a1e00f6454f4c2e1a51fc",
       "raw_top1_8": 0.16862745098039217,
       "top1_8": 0.17490196078431372,
       "topk8": {

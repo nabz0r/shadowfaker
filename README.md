@@ -16,10 +16,10 @@ The dashboard now opens **one dynamic tab at a time**. Its six gold stars refer 
 |---|---|
 | **Atlas 512×512** | Observed cells, event layers and the exact-cell failure in [the atlas result](#a-512512-atlas-and-its-accuracy-limit) |
 | **Legacy 16×16 / 3D** | [Observed versus predicted maps](#faker-on-the-map-shadow-on-the-map) and [the frequency surface](#the-landscape-of-next-moves) |
-| **Evolution / Tempo / Pressure** | A local game clock, [team movement](#the-project-at-a-glance) and [selectable opponent zone](PRESSURE.md) |
+| **Evolution / Tempo / Pressure** | A local game clock, [team movement](#the-project-at-a-glance), a [selectable opponent zone](PRESSURE.md) and ten observed positions |
 | **Scores / Research / Evidence** | [Measured baselines](#what-we-score), failed rare-event classes and [research gates](NEXT_RESEARCH.md) |
-| **Strategies / Challenge** | [Hypotheses and the standard for stronger play](SHADOW_PLUS.md); the site simulation is illustrative |
-| **Finals BO5 / Corpus / Archives** | [Six sourced Worlds finals and 25 games](WORLD_FINALS.md), [what the database actually contains](CORPUS.md), plus private ranked match cards |
+| **Strategies / Challenge** | [Hypotheses and the standard for stronger play](SHADOW_PLUS.md); compose any five-player lane allocation in the illustrative simulation |
+| **Finals BO5 / Corpus / Archives** | [Six sourced Worlds finals and 25 games](WORLD_FINALS.md), [the IoC matrix](IOC_VISION.md), plus private ranked match cards |
 
 The horizontal tab strip stays available on mobile; [see the 390-pixel capture](DESIGN.md#dynamic-chapter-tabs). The shared clock changes the linked views according to their own cohorts; it does not add observations between one-minute Riot frames.
 
@@ -31,11 +31,11 @@ The horizontal tab strip stays available on mobile; [see the 390-pixel capture](
 
 ![Three-dimensional observed-position surface tab](docs/figures/dashboard_surface.png)
 
-**An opponent zone with units.** On the Pressure tab, change the radius from 1,000 to 5,000 map units. The circle explains the scale; the phase bars, entry rate and 0/1 or 0/2 slices use counts recalculated for that radius across 465 games. They describe observed proximity at roughly one-minute frames. [See the formulas, denominators and limits](PRESSURE.md).
+**An opponent zone with units.** On the Pressure tab, change the radius from 1,000 to 5,000 map units. A selected game's map and roster now show all ten observed positions, champion and item icons **at the selected minute**; Faker, allies, opponents, lanes, role and items can be filtered. Phase bars, entry rate and 0/1 or 0/2 slices use counts recalculated across 465 games. These are roughly one-minute observations; enemy dots include information Faker might not have seen. [See the formulas, denominators and limits](PRESSURE.md).
 
 ![Interactive pressure zone with measured phase bars](docs/figures/dashboard_pressure.png)
 
-**A visible corpus, readable games.** The Corpus tab separates 470 KR ranked IDs from 465 usable games and explains why just 33,329 of 353,409 events have coordinates. The local Archives tab shows UTC time, team compositions, K/D/A, damage, vision and final items for each indexed game, with 169 champion and 160 item icons packed into two local sprite atlases. These final-game facts support exploration only; they never enter prediction at time `t`. [Open the data ledger](CORPUS.md).
+**A visible corpus, readable games.** The Corpus tab separates 470 KR ranked IDs from 465 usable games, lists exact Riot IDs and each event category, and explains why just 33,329 of 353,409 indexed events have coordinates. The local Archives tab shows UTC time, team compositions, K/D/A, damage, vision and final items for each indexed game, with 169 champion and 160 item icons packed into two local sprite atlases. These final-game facts support exploration only; they never enter prediction at time `t`. [Open the data ledger](CORPUS.md).
 
 ![Auditable corpus inventory](docs/figures/dashboard_corpus.png)
 
@@ -48,6 +48,24 @@ The horizontal tab strip stays available on mobile; [see the 390-pixel capture](
 ![Animated tour through Faker and T1's six winning Worlds finals](docs/figures/six_finals.gif)
 
 [Open the visual design and mobile view](DESIGN.md) · [Read every final's provenance](WORLD_FINALS.md) · [Inspect exact model results](RESULTS.md).
+
+### New: an item-aware index of context
+
+![The live Corpus tab explains causal features, sources and their limits](docs/figures/dashboard_ioc.png)
+
+![Item-context ablation and the map area required for 90 percent coverage](docs/figures/ioc_challenge.png)
+
+At each observed minute the local **IoC** estimates ten players' items from timestamped purchases, sales, destruction and undos. It adds **350 item-event channels** to the 147 existing state and interaction channels. Another **120 channels** describe the items tracked with official, **played-patch-matched Riot Data Dragon** catalogs. Five games passed the pilot; all **465 games / 12,510 transitions** were then rebuilt from cache with no parse errors. The per-game matrix remains local. A retrospective audit finds only **29.05%** of final actor item-ID sets exactly reconstructed (mean Jaccard **0.839**); initial trinkets and automatic upgrades can be missed. Finished-match items are used for that audit only, never as model input at `t`.
+
+On the same **46 reused validation games**, the 617-channel candidate scores **17.41%** exact next 8×8 cell, versus **17.18%** without patch descriptors, **16.94%** without the new item channels, and **15.29%** for the strongest simple rule. The paired lift over no added item channels is **+0.47 percentage points**, with a match-bootstrap 95% interval of **−0.16 to +1.13 points**. It is exploratory and does **not** improve on the earlier 147-channel candidate's **17.49%**. Covering **90.75%** of arrivals requires naming **40/64 cells, or 62.5% of the map**; it is not 90% exact prediction. The archived 16×16 and 512×512 results remain separate.
+
+The Corpus tab shows an [external-source register](IOC_VISION.md): official [Riot Data Dragon](https://developer.riotgames.com/docs/lol#data-dragon) is used for patch-matched static descriptors; [U.GG](https://u.gg/lol/champions/azir/build) is a build-context reference (its direct automated access was denied and current builds cannot label a historical minute); [Google Custom Search](https://developers.google.com/custom-search/v1/overview) is a discovery route requiring credentials and closed to new customers. No search snippet, current-patch win rate or final-game item enters an old state. The game dashboard remains an independent fan project.
+
+Rebuild from local raw caches with **one command**: `.venv/bin/python scripts/run_ioc_challenge.py`. It tests five games first, resumes per-game outputs, trains matched ablations, updates the aggregate figure and the local replay. [Matrix schema, causal rule and next evidence gate](IOC_VISION.md) · [exact scores](RESULTS.md#item-aware-index-of-context--development-only-2026-10-10).
+
+![Compose five hypothetical bot players and observe the abstract opponent response at minute 15](docs/figures/dashboard_challenge_custom.png)
+
+The Challenge tab now lets a reader assign all five hypothetical players to any of four zones and watch a declared opponent-response rule at each five-minute tick. The 5-bot screenshot shows the resource and coverage cost in **arbitrary, uncalibrated units**. [Simulation assumptions and playable evidence gate](GAME_THEORY_LAB.md#interactive-five-role-composition-with-explicit-opponent-response).
 
 ### New: more games, a faster prediction target
 
@@ -206,7 +224,7 @@ cp .env.example .env
 
 If `pip` is unavailable in the virtual environment, use `uv pip install --python .venv/bin/python -r requirements.txt -e .`. The base ranked pipeline validates **every stage on five games first**, then collects all available games up to the target, parses, analyzes, trains, selects on validation, evaluates on held-out test games, and exports a GIF. JSON and match-level NPZ files are cached; rerun the same command after a crash or key renewal. For a five-game base smoke run: `.venv/bin/python scripts/run_pipeline.py --limit 5 --epochs 3`.
 
-`run_next_level.py` also works as the one-command entry point on a fresh checkout: it invokes the base pipeline if the ranked dataset or checkpoint is missing, then validates its new stages on five games and builds the full local research extension. After the 64×64 parent exists, it pilots the 512 adapter on five games before full training and validation. A rerun reuses matching checkpoints and cached source data. Its 512 and interaction candidates are scored on validation only; its 64×64 historical test report is explicitly marked as previously inspected. The local text index and per-game media are ignored by Git. Use `--pilot-only` to check the base extensions on five games without scaling.
+`run_next_level.py` also works as the one-command entry point on a fresh checkout: it invokes the base pipeline if the ranked dataset or checkpoint is missing, then validates its new stages on five games and builds the full local research extension, including the item-aware IoC experiment. After the 64×64 parent exists, it pilots the 512 adapter on five games before full training and validation. A rerun reuses matching checkpoints and cached source data. Its 512, interaction and IoC candidates are scored on validation only; its 64×64 historical test report is explicitly marked as previously inspected. The local text index and per-game media are ignored by Git. Use `--pilot-only` to check the base extensions on five games without scaling.
 
 To refresh just the **private ranked cards, search index, local sprites and aggregate corpus ledger** from existing caches, run `.venv/bin/python scripts/refresh_catalog.py`. This runs the five-game pilot first and leaves model checkpoints alone. The static Data Dragon art requires CDN access only when its ignored local cache is empty.
 

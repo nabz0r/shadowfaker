@@ -25,7 +25,8 @@ FIGURES = FIGURES | frozenset({"grid64_observed_vs_predicted.png", "event_atlas6
                                "enemy_pressure.png", "challenge_scenarios.png",
                                "predictability_gap.png", "hierarchical_ablation.png",
                                "atlas512_validation.png", "atlas512_events.png",
-                               "corpus_event_clock.png", "event_context_ablation.png"})
+                               "corpus_event_clock.png", "event_context_ablation.png",
+                               "ioc_challenge.png"})
 ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/app.js": ROOT / "dashboard" / "app.js",
           "/style.css": ROOT / "dashboard" / "style.css",
@@ -38,6 +39,8 @@ ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/event-ablation.json": ROOT / "docs" / "data" / "public_event_ablation.json",
           "/world-finals.json": ROOT / "docs" / "data" / "world_finals.json",
           "/corpus.json": ROOT / "docs" / "data" / "public_corpus_inventory.json",
+          "/ioc-summary.json": ROOT / "docs" / "data" / "public_ioc_challenge.json",
+          "/ioc-quality.json": ROOT / "docs" / "data" / "public_ioc_quality.json",
           "/sprites.json": ROOT / "docs" / "data" / "sprites.json",
           "/assets/champions.png": ROOT / "dashboard" / "assets" / "champions.png",
           "/assets/items.png": ROOT / "dashboard" / "assets" / "items.png",

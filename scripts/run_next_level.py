@@ -157,6 +157,8 @@ def main() -> None:
     command(sys.executable, CONFIG.root / "scripts" / "render_ecosystem.py")
     command(sys.executable, CONFIG.root / "scripts" / "render_identity.py")
     stage("Dashboard aggregates, replay and public figures refreshed. Open http://127.0.0.1:8008/ with serve_dashboard.py.")
+    command(sys.executable, CONFIG.root / "scripts" / "run_ioc_challenge.py", "--epochs", str(args.epochs))
+    stage("Causal item IoC, played-patch catalogs, matched ablations and public IoC figure refreshed.")
 
 
 if __name__ == "__main__": main()

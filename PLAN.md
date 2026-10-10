@@ -1,5 +1,15 @@
 # Shadow Faker — plan d'exécution
 
+## M9 — pression située et contexte d'objets à l'instant t (2026-10-10)
+
+1. Relier Pression au rejeu local sélectionné : représenter sur la carte les dix positions *observées* à la minute choisie, un cercle métrique centré sur Faker, les alliés et ennemis proches, les positions absentes et les inventaires connus. Le rayon et la frise doivent modifier réellement le relevé ; les moyennes de 465 parties restent dans un panneau distinct. Cette carte Riot omnisciente n'est pas la vision de Faker.
+2. Construire un IoC temporel par match depuis les événements `ITEM_PURCHASED`, `ITEM_SOLD`, `ITEM_DESTROYED` et `ITEM_UNDO` horodatés. Un état à `t` ne peut consommer que des événements `timestamp <= t`; le résultat, le score et les objets finaux du JSON match ne sont jamais des entrées. Conserver les positions déjà parsées, l'identité d'objets en représentation compacte, les comptes de changements et des masques de visibilité pour les ennemis. Versionner le schéma et cacher chaque match pour reprise.
+3. Piloter cinq parties avec tests de causalité et d'inventaire, puis préparer 465 parties en streaming. Rechallenger sur les seuls 373 train / 46 validation un candidat de même architecture que la politique hiérarchique. Comparer au modèle courant, à la fréquence/copier et aux métriques 8×8, 16×16, 64×64 et à la surface nécessaire pour 90 % de couverture. Garder le vieux test et le lockbox hors sélection.
+4. Enrichir les objets détenus à `t` par le catalogue officiel Data Dragon du patch joué ; cacher les 12 versions nécessaires, tester la source en pilote puis comparer complet / sans propriétés / sans objets. Traiter U.GG et les recherches Google comme pistes de provenance, pas comme features historiques sans match, timestamp, patch et perspective vérifiés.
+5. Publier sur `main` le code, les tests, un graphique de comparaison, README/RESULTS/PRESSURE/PROGRESS à jour et des captures réelles du site. Les états par partie, modèles et JSON Riot restent locaux. Ne revendiquer aucune amélioration si la validation ne la montre pas.
+
+Risques : les événements d'inventaire peuvent être incomplets ou corrigés par `ITEM_UNDO`, l'art des objets est d'un patch récent et la position ennemie de la timeline est omnisciente. La résolution temporelle des positions reste ~60 s. L'objectif 90 % doit toujours nommer sa cible et la surface de carte correspondante. Une page U.GG actuelle ou un extrait Google ne porte pas l'état historique d'une partie ; HTTP 403 ou une API commerciale fermée ne seront pas contournés ni présentés comme données d'entraînement.
+
 ```mermaid
 flowchart TD
     API[Riot API KR/asia] --> RAW[JSON locaux en cache]

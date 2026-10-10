@@ -16,10 +16,10 @@ La page fonctionne désormais par **onglets dynamiques** : une vue à la fois, a
 |---|---|
 | **Atlas 512×512** | Cases et événements observés, puis [échec de la case exacte](#atlas-512512--résultat-mesuré) |
 | **16×16 historique / 3D** | [Carte observée contre prédite et surface](#le-paysage-des-prochains-mouvements) |
-| **Évolution / Tempo / Pression** | Chronologie d'une partie, [fonctionnement](#fonctionnement) et [zone adverse réglable](PRESSURE.md) |
+| **Évolution / Tempo / Pression** | Chronologie d'une partie, [fonctionnement](#fonctionnement), [zone adverse réglable](PRESSURE.md) et positions des dix joueurs |
 | **Scores / Recherche / Preuves** | Baselines, échecs par classe et [prochains tests](NEXT_RESEARCH.md) |
-| **Stratégies / Challenge** | [Hypothèses et critères d'un jeu meilleur](SHADOW_PLUS.md) ; la simulation est illustrative |
-| **Finales BO5 / Corpus / Archives** | [Six finales sourcées, 25 manches](WORLD_FINALS.md), [inventaire de la base](CORPUS.md) et fiches ranked privées |
+| **Stratégies / Challenge** | [Hypothèses et critères d'un jeu meilleur](SHADOW_PLUS.md) ; composition libre de cinq postes dans la simulation illustrative |
+| **Finales BO5 / Corpus / Archives** | [Six finales sourcées, 25 manches](WORLD_FINALS.md), [matrice IoC](IOC_VISION.md) et fiches ranked privées |
 
 La barre d'onglets reste accessible sur mobile : [capture à 390 pixels](DESIGN.md#dynamic-chapter-tabs). La chronologie commune synchronise des vues de cohortes différentes ; elle n'invente pas de positions entre les frames Riot espacées d'environ une minute.
 
@@ -31,11 +31,11 @@ La barre d'onglets reste accessible sur mobile : [capture à 390 pixels](DESIGN.
 
 ![Onglet surface tridimensionnelle des destinations observées](docs/figures/dashboard_surface.png)
 
-**Une zone de pression qu'on peut changer.** De 1 000 à 5 000 unités autour de Faker, le cercle explique l'échelle et les barres recalculent adversaires proches, entrées nettes et états 0/1 ou 0/2 pour les 465 parties. C'est une proximité observée à environ une minute, pas une lecture de l'intention adverse. [Définitions, unités et limites](PRESSURE.md).
+**Une zone de pression qu'on peut changer.** De 1 000 à 5 000 unités autour de Faker, la carte d'une partie montre maintenant les dix positions observées, les champions et objets détenus **à la minute choisie**. Faker, alliés, adversaires, couloirs, objets et rôle sont filtrables. Les barres recalculent adversaires proches, entrées nettes et états 0/1 ou 0/2 pour les 465 parties. Ce sont des observations espacées d'environ une minute ; des adversaires affichés pouvaient être cachés à Faker. [Définitions, unités et limites](PRESSURE.md).
 
 ![Zone de pression interactive avec barres par phase](docs/figures/dashboard_pressure.png)
 
-**Le corpus devient lisible.** L'onglet Corpus distingue 470 IDs ranked KR de 465 parties utilisables et explique pourquoi seuls 33 329 des 353 409 événements portent une coordonnée. L'onglet Archives montre date UTC, compositions, K/D/A, dégâts, vision et objets finaux avec des sprites locaux pour les 169 champions et 160 objets observés. Ces statistiques finales ne sont jamais des entrées au temps `t`. [Inventaire détaillé](CORPUS.md).
+**Le corpus devient lisible.** L'onglet Corpus distingue 470 IDs ranked KR de 465 parties utilisables, liste les Riot IDs exacts et les types d'événements, puis explique pourquoi seuls 33 329 des 353 409 événements indexés portent une coordonnée. L'onglet Archives montre date UTC, compositions, K/D/A, dégâts, vision et objets finaux avec des sprites locaux pour les 169 champions et 160 objets observés. Ces statistiques finales ne sont jamais des entrées au temps `t`. [Inventaire détaillé](CORPUS.md).
 
 ![Inventaire visuel des données indexées](docs/figures/dashboard_corpus.png)
 
@@ -48,6 +48,24 @@ La barre d'onglets reste accessible sur mobile : [capture à 390 pixels](DESIGN.
 ![Animation des six finales mondiales gagnées par Faker et T1](docs/figures/six_finals.gif)
 
 [Direction visuelle et capture mobile](DESIGN.md) · [Sources des finales](WORLD_FINALS.md) · [Résultats chiffrés](RESULTS.md).
+
+### Nouveau : l'index de contexte et l'itemisation à l'instant t
+
+![L'onglet Corpus explique les caractéristiques causales, les sources et leurs limites](docs/figures/dashboard_ioc.png)
+
+![Ablation des objets et taille de zone nécessaire pour une couverture de 90 pour cent](docs/figures/ioc_challenge.png)
+
+À chaque minute observée, l'**IoC** local estime les objets des dix joueurs à partir des achats, ventes, destructions et annulations horodatés. **350 canaux** décrivent cette chronologie ; **120 autres** décrivent les objets suivis avec le catalogue officiel Data Dragon **du patch joué**. Ils s'ajoutent aux 147 canaux d'état et d'interaction. Pilote sur cinq parties, puis **465 parties / 12 510 transitions** reconstruites depuis le cache sans erreur. Les matrices par partie restent locales. Un audit rétrospectif ne retrouve exactement que **29,05 %** des sets d'IDs d'objets finaux (Jaccard moyen **0,839**) : certains trinkets initiaux et améliorations automatiques manquent. Les objets finaux servent uniquement à cet audit, jamais d'entrée à `t`.
+
+Sur les **46 mêmes parties de validation déjà utilisées**, le candidat à 617 canaux atteint **17,41 %** de prochaine case 8×8 exacte, contre **17,18 %** sans propriétés du patch, **16,94 %** sans les **nouveaux** canaux d’objets et **15,29 %** pour la meilleure règle simple. Le gain apparié contre cette dernière ablation est de **+0,47 point**, intervalle bootstrap par partie à 95 % **[−0,16 ; +1,13] point** : il est incertain. Le précédent candidat à 147 canaux atteignait **17,49 %** ; celui-ci ne le dépasse donc pas. Pour couvrir **90,75 %** des destinations, il faut proposer **40 cases sur 64**, soit **62,5 % de la carte**. Ce n'est pas 90 % de précision exacte.
+
+Le Corpus affiche les sources externes : [Data Dragon Riot](https://developer.riotgames.com/docs/lol#data-dragon) alimente les caractéristiques statiques du patch ; [U.GG](https://u.gg/lol/champions/azir/build) sert de référence de builds, mais l'accès automatisé direct a été refusé et un build actuel ne peut décrire une minute historique ; [Google Custom Search](https://developers.google.com/custom-search/v1/overview) servirait à découvrir des sources, avec identifiants requis et inscription fermée aux nouveaux clients. Aucun extrait de recherche, taux de victoire actuel ou objet final n'est injecté dans l'état passé. [Vision et provenance détaillées](IOC_VISION.md).
+
+Une commande relance cette expérience depuis les caches locaux : `.venv/bin/python scripts/run_ioc_challenge.py`. Elle pilote cinq parties, reprend les fichiers par partie, entraîne les ablations et reconstruit le graphique et le rejeu. [Scores exacts](RESULTS.md#item-aware-index-of-context--development-only-2026-10-10).
+
+![Cinq présences hypothétiques bot et réponse adverse abstraite à la minute 15](docs/figures/dashboard_challenge_custom.png)
+
+L'onglet Challenge permet maintenant de répartir librement cinq présences entre top, mid, jungle et bot et de faire varier le délai de réponse adverse. Le visuel « cinq bot » montre le coût en ressources et couverture dans des **unités arbitraires, non calibrées**. [Hypothèses et conditions d'un vrai test de jeu](GAME_THEORY_LAB.md#interactive-five-role-composition-with-explicit-opponent-response).
 
 ### Nouveau : plus de parties, une cible à dix secondes
 
@@ -188,7 +206,7 @@ cp .env.example .env
 .venv/bin/python scripts/run_next_level.py --limit 1000 --epochs 25
 ```
 
-Si `pip` n'est pas disponible dans le venv, utiliser `uv pip install --python .venv/bin/python -r requirements.txt -e .`. La commande unique exécute d'abord **toutes les phases sur cinq parties**, puis la collecte cible, le parsing, l'entraînement, l'évaluation et le GIF. Elle construit ensuite les atlas 64×64 et **512×512**, la matrice des dix joueurs, les variables d'interaction entraînables, l'index vectoriel, les résumés bilingues et les visuels. Après entraînement du parent 64, elle teste l'adaptateur 512 sur cinq parties avant de passer à 373 parties de train et 46 de validation. Elle reprend les JSON, les NPZ et les checkpoints déjà écrits. On peut la relancer après une interruption ou après avoir remplacé une clé expirée dans `.env`. Le test 64×64 historique est déjà examiné ; les variantes 512 et d'interaction ne sont évaluées que sur validation.
+Si `pip` n'est pas disponible dans le venv, utiliser `uv pip install --python .venv/bin/python -r requirements.txt -e .`. La commande unique exécute d'abord **toutes les phases sur cinq parties**, puis la collecte cible, le parsing, l'entraînement, l'évaluation et le GIF. Elle construit ensuite les atlas 64×64 et **512×512**, la matrice des dix joueurs, les variables d'interaction entraînables, l'IoC d'objets, l'index vectoriel, les résumés bilingues et les visuels. Après entraînement du parent 64, elle teste l'adaptateur 512 sur cinq parties avant de passer à 373 parties de train et 46 de validation. Elle reprend les JSON, les NPZ et les checkpoints déjà écrits. On peut la relancer après une interruption ou après avoir remplacé une clé expirée dans `.env`. Le test 64×64 historique est déjà examiné ; les variantes 512, interaction et IoC ne sont évaluées que sur validation.
 
 Pour refaire uniquement les **fiches privées, la recherche, les sprites locaux et l'inventaire agrégé** depuis les caches existants : `.venv/bin/python scripts/refresh_catalog.py`. Le pilote cinq parties passe d'abord ; les checkpoints du modèle ne sont pas modifiés. Les images statiques Data Dragon sont téléchargées uniquement si leur cache local est vide.
 

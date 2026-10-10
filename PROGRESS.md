@@ -493,3 +493,91 @@
 - [x] Vue Pression : cinq rayons sélectionnables, schéma de taille, barres par phase, cartes 0/1 et 0/2, unités et dénominateurs visibles. Test navigateur : 1 000 → 5 000 unités fait passer la moyenne précoce de 0,37 à 1,58 ; le curseur commun en phase tardive modifie la moyenne et le dénominateur. Aucune erreur console observée. Captures réelles dans `docs/figures/` et méthodes dans `PRESSURE.md`/`CORPUS.md`.
 - [x] QA finale locale : **33 tests Python**, syntaxe JS, compilation Python et `git diff --check` passent ; routes sprites HTTP 200, chemin raw HTTP 404. 100 interactions navigateur rayon/chronologie vérifiées, zéro erreur console ; recherche EN sur « Hourglass » donne 68 parties et traduit les objets ; layout 390 px en une colonne, aucun débordement horizontal. Captures Pression desktop/mobile, Corpus et Archives sauvegardées. Liens locaux des README et guides visuels résolus.
 - [x] M6–M8 publiés sur GitHub `main` via la connexion authentifiée au commit `ab8aeafc6dbef616ba39bbbeb7df0b47dcd197ba`. L'arbre distant `1627ada50ddca8745049fa538f5eb49c6f202ef1` est identique à l'arbre local testé ; les 19 blobs binaires ont été vérifiés par SHA Git avant l'assemblage. `git fetch` et la synchronisation de `main` local ont confirmé la publication. Cette ligne d'audit est un second commit documentaire.
+
+## M9 — Pression située et IoC d'itemisation (2026-10-10)
+
+- [x] Plan M9 défini avant l'implémentation dans `PLAN.md` : position des dix joueurs à `t`, inventaires horodatés, masque de visibilité, ablation, 90 % avec surface et séparation des cohortes.
+- [x] Pilote cinq parties : 125 décisions, 497 canaux par frame, aucun échec. `ITEM_PURCHASED/SOLD/DESTROYED/UNDO` sont appliqués dans l'ordre des timestamps, jamais après `t`.
+- [x] Préparation complète depuis le cache : 465 parties, 12 510 décisions, zéro échec. Une timeline comporte deux frames exceptionnellement proches à 28 min ; l'alignement a été corrigé par timestamp le plus proche, après un premier passage 464/465. Les NPZ par partie restent privés et reprenables.
+- [x] IoC statique officiel : Data Dragon, 12 patches joués, pilote 5 parties / 125 paires puis 465 parties / 12 510 paires, 617 canaux (147 état/interactions + 350 objets horodatés + 120 propriétés du patch), zéro erreur. Les catalogues et NPZ restent dans les caches ignorés de Git.
+- [x] Entraînement sur 373/46 train/validation, même architecture 777 902 paramètres et trois variantes. Exact 8×8 validation : sans objets 16,94 %, objets horodatés 17,18 %, objets + Data Dragon 17,41 %, meilleure règle simple 15,29 %. Ancien candidat hiérarchique 17,49 % ; pas de promotion. Gain apparié complet contre sans objets +0,47 point, IC par match [−0,16 ; +1,13] ; propriétés statiques seules +0,24 [−0,15 ; +0,63]. Test historique et lockbox non lus. Couverture 90,75 % avec 40/64 cases, soit 62,5 % de la carte, non précision exacte.
+- [x] Page Corpus : Riot IDs exacts avec statut d'attribution, compte de chaque type d'événement et présence de coordonnées ; ventes/destructions/annulations brutes clairement séparées de l'ancien total indexé. Panneau IoC avec 147→497→617, sources Riot/U.GG/Google et figure d'ablation. Atlas/3D/Pression : positions d'une partie au-dessus des agrégats, filtres acteur/rôle/objets/couloirs/rayon, lecture explicite de la dernière frame si la partie finit avant l'heure globale.
+- [x] Challenge : composition libre de cinq rôles, allocation alliée/adverse à la minute, délai de réponse et partage des ressources ; unités arbitraires et absence de probabilité de victoire affichées. `IOC_VISION.md`, RESULTS, CORPUS, PRESSURE, GAME_THEORY_LAB, ROADMAP et README FR/EN mis à jour avec deux captures réelles et un graphique scientifique. `run_ioc_challenge.py` reprend les checkpoints ; `run_next_level.py` l'appelle pour l'exécution complète en une commande.
+- [x] Relance intégrale de l'extension IoC depuis les caches : pilote cinq jeux, 465 jeux, entraînements repris, figure, inventaire et rejeu actualisés. **36 tests** Python, compilation, syntaxe JS, diff et liens Markdown locaux passent. Navigateur : 100 actions nouvelles vérifiées (40 minutes, cinq rayons, 12 filtres Pression, six rôles, 12 filtres Atlas, 12 filtres 3D, 13 paramètres Challenge), zéro erreur console ; cinq onglets sans débordement à 390 px. Figure HTTP 200, chemin `data/raw` HTTP 404.
+- [x] Audit qualité d'inventaire ajouté après diagnostic d'un bruit de données : 1 351/4 650 sets d'IDs finaux exacts (29,05 %, Jaccard moyen 0,839), 3 132/129 750 frames d'acteurs avec >7 IDs distincts. Les objets initiaux/améliorations automatiques peuvent échapper aux événements. Le champ historique `item_slots` est un compte plafonné de quantités issues d'événements, pas les vrais emplacements. JSON d'audit agrégé publié, sans ID de partie ; objets finaux réservés à l'audit, jamais à l'état `t`.
+- [x] Commande unique `run_next_level.py --limit 1000 --epochs 25` relancée jusqu'au bout (exit 0), y compris pilote cinq parties, corpus complet, ablations IoC et audit. Site redémarré : résultats IoC et audit chargés depuis les JSON publics, traduction FR/EN vérifiée, zéro erreur console, nouvelles routes HTTP 200 et `data/raw` HTTP 404. Capture IoC régénérée ; 36 tests, syntaxe JS, compilation, liens et diff sans erreur.
+- [ ] Publication finale `main` et vérification de l'arbre distant contre l'arbre local testé.
+
+- [2026-10-10T17:09:59+00:00] Item IoC pilot: five games, 125 observations, zero errors.
+
+- [2026-10-10T17:09:59+00:00] Item IoC: 465 games, 12510 observations, 497 channels.
+
+- [2026-10-10T17:09:59+00:00] Static item IoC pilot: five games, 125 observations, zero errors.
+
+- [2026-10-10T17:10:02+00:00] Patch-matched Data Dragon IoC: 465 games, 617 channels, 12 patches.
+
+- [2026-10-10T17:10:06+00:00] Static IoC validation: 46 games; selected full at 8x8=0.1741.
+
+- [2026-10-10T17:10:08+00:00] Public IoC figure, corpus inventory and local game replay refreshed.
+
+- [2026-10-10T17:12:22+00:00] Next-level five-game pilot reused from checkpoint.
+
+- [2026-10-10T17:12:25+00:00] 64x64 labels: 465 matches, 12510 pairs, 0 errors.
+
+- [2026-10-10T17:12:28+00:00] Event atlas: 465 ranked matches, 0 errors.
+
+- [2026-10-10T17:12:28+00:00] Warehouse: 12975 states, 12510 transitions, 353409 events.
+
+- [2026-10-10T17:12:28+00:00] Post-game facts: 465 private ranked cards; 0 errors. These are retrospective, not time-t model inputs.
+
+- [2026-10-10T17:12:29+00:00] Data Dragon sprites: 169 champions, 160 items; pinned static version.
+
+- [2026-10-10T17:12:31+00:00] Corpus inventory: 353409 events, 33329 positioned.
+
+- [2026-10-10T17:12:31+00:00] Enemy pressure: 12975 positional frames.
+
+- [2026-10-10T17:13:13+00:00] Text: 930 EN/FR summaries, 0 errors.
+
+- [2026-10-10T17:13:13+00:00] Vectors: 12510 states; kNN val exact64=0.0094.
+
+- [2026-10-10T17:13:14+00:00] 64x64 historical test: 0.0109 exact, best baseline 0.0192; prospective claim pending.
+
+- [2026-10-10T17:13:14+00:00] 512x512 five-game pilot: 4 train + 1 val games, 26 targets; parent-label alignment passed.
+
+- [2026-10-10T17:13:14+00:00] 512x512 development validation: 46 games, 1275 targets; exact model=0.0000, copy=0.0063; test untouched.
+
+- [2026-10-10T17:13:19+00:00] 512x512 sparse atlas: 465 ranked games, 0 errors; sparse cells stay local.
+
+- [2026-10-10T17:13:21+00:00] Interaction training states: 12510 pairs, 0 errors.
+
+- [2026-10-10T17:13:21+00:00] Interaction candidate validation exact16=0.0871; test intentionally unscored.
+
+- [2026-10-10T17:13:23+00:00] Hierarchical pilot: 3 train + 2 val games; validation only.
+
+- [2026-10-10T17:16:56+00:00] Hierarchical ablations: selected full on validation 8x8=0.1749; historical test unscored.
+
+- [2026-10-10T17:16:56+00:00] Phase-expert pilot: 3 train + 2 val games; validation only.
+
+- [2026-10-10T17:18:14+00:00] Phase-expert candidate: validation 8x8=0.1639; historical test unscored.
+
+- [2026-10-10T17:18:15+00:00] Transition geometry pilot: 4 train + 1 val games; alignment checked.
+
+- [2026-10-10T17:18:16+00:00] Transition geometry: 0.1569 validation top-1; 0 alignment mismatches.
+
+- [2026-10-10T17:18:18+00:00] Dashboard aggregates, replay and public figures refreshed. Open http://127.0.0.1:8008/ with serve_dashboard.py.
+
+- [2026-10-10T17:18:19+00:00] Item IoC pilot: five games, 125 observations, zero errors.
+
+- [2026-10-10T17:18:19+00:00] Static item IoC pilot: five games, 125 observations, zero errors.
+
+- [2026-10-10T17:18:24+00:00] Item IoC: 465 games, 12510 observations, 497 channels.
+
+- [2026-10-10T17:18:27+00:00] Patch-matched Data Dragon IoC: 465 games, 617 channels, 12 patches.
+
+- [2026-10-10T17:18:30+00:00] Event-inventory audit: 1351/4650 exact final ID sets; proxy caveat documented.
+
+- [2026-10-10T17:18:34+00:00] Static IoC validation: 46 games; selected full at 8x8=0.1741.
+
+- [2026-10-10T17:18:37+00:00] Public IoC figure, corpus inventory and local game replay refreshed.
+
+- [2026-10-10T17:18:37+00:00] Causal item IoC, played-patch catalogs, matched ablations and public IoC figure refreshed.

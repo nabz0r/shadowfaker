@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Publish aggregate inventory counts; never publish raw matches or IDs."""
 import json
+from collections import Counter
 from pathlib import Path
 import sqlite3
 
@@ -29,10 +30,25 @@ def build() -> dict:
         events = db.execute("SELECT COUNT(*) FROM events").fetchone()[0]
         events_positioned = db.execute("SELECT COUNT(*) FROM events WHERE cell64 IS NOT NULL").fetchone()[0]
         by_category = dict(db.execute("SELECT category,COUNT(*) FROM events GROUP BY category"))
+        event_breakdown = [{"category": category, "events": total, "positioned": positioned,
+                            "actors": actors, "items": items, "skills": skills, "indexed": True}
+                           for category,total,positioned,actors,items,skills in db.execute("""
+                SELECT category,COUNT(*),SUM(cell64 IS NOT NULL),SUM(actor_id > 0),
+                       SUM(item_id > 0),SUM(skill_slot > 0)
+                FROM events GROUP BY category ORDER BY COUNT(*) DESC""")]
+    item_lifecycle = Counter()
+    for mid in meta["counts"]:
+        timeline = json.loads((RAW / "timelines" / f"{mid}.json").read_text())
+        item_lifecycle.update(e.get("type") for frame in (timeline.get("info") or {}).get("frames") or []
+                              for e in frame.get("events") or []
+                              if e.get("type") in {"ITEM_PURCHASED","ITEM_SOLD","ITEM_DESTROYED","ITEM_UNDO"})
+    for category in ("ITEM_SOLD","ITEM_DESTROYED","ITEM_UNDO"):
+        event_breakdown.append({"category":category,"events":item_lifecycle[category],
+                                "positioned":0,"actors":None,"items":None,"skills":0,"indexed":False})
     with sqlite3.connect(text_db) as db:
         text_kinds = dict(db.execute("SELECT source_kind,COUNT(*) FROM documents GROUP BY source_kind"))
     result = {
-        "schema_version": 1,
+        "schema_version": 2,
         "source_snapshot": original["latest_id_snapshot"],
         "raw_cache": {
             "match_json": len(list((RAW / "matches").glob("*.json"))),
@@ -49,6 +65,18 @@ def build() -> dict:
             "curated_final_games": sum(len(f["games"]) for f in finals["finals"]),
             "curated_landmark_games": len(finals["extra_games"]),
         },
+        "source_accounts": [{"riot_id":"#".join(original["account"]["resolved"]),
+                             "region":"KR", "ranked_ids":len(original["games"]),
+                             "usable_timelines":len(meta["counts"]),
+                             "status":"Riot account-v1 PUUID resolved; personal identity not independently proven",
+                             "source_url":None}] + [
+            {"riot_id":riot_id,"region":"EUW" if account["route"]=="europe" else "NA",
+             "ranked_ids":account["ranked_ids"],
+             "usable_timelines":sum(game.get("status")=="ok" for game in alias["games"].values()
+                                    if game.get("alias")==riot_id) if isinstance(alias["games"],dict) else None,
+             "status":account["identity"], "claim":account["claim"],
+             "source_url":account["source_url"] if account["ranked_ids"] else None}
+            for riot_id, account in alias["accounts"].items()],
         "warehouse": {
             "ranked_matches": count_table(warehouse, "matches"),
             "frames": states, "actor_rows": actors,
@@ -56,6 +84,8 @@ def build() -> dict:
             "events_with_coordinates": events_positioned,
             "events_without_coordinates": events - events_positioned,
             "event_categories": by_category,
+            "event_breakdown": event_breakdown,
+            "item_lifecycle_raw_counts": dict(item_lifecycle),
         },
         "search_index": text_kinds,
         "postgame_facts": count_table(ROOT / "data" / "processed" / "game_facts.sqlite", "games"),

@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "source_snapshot": "20261010_ranked",
   "raw_cache": {
     "match_json": 550,
@@ -16,6 +16,52 @@
     "curated_final_games": 25,
     "curated_landmark_games": 3
   },
+  "source_accounts": [
+    {
+      "riot_id": "Hide on bush#KR1",
+      "region": "KR",
+      "ranked_ids": 470,
+      "usable_timelines": 465,
+      "status": "Riot account-v1 PUUID resolved; personal identity not independently proven",
+      "source_url": null
+    },
+    {
+      "riot_id": "Hide on bush#61151",
+      "region": "EUW",
+      "ranked_ids": 31,
+      "usable_timelines": 31,
+      "status": "historical_attribution_not_player_proof",
+      "claim": "2024 EUW Worlds bootcamp",
+      "source_url": "https://www.sheepesports.com/de/all/articles/lol-2024-worlds-players-accounts-on-euw-server/en"
+    },
+    {
+      "riot_id": "silent silence#08022",
+      "region": "EUW",
+      "ranked_ids": 0,
+      "usable_timelines": 0,
+      "status": "historical_attribution_not_player_proof",
+      "claim": "community attributed, historical",
+      "source_url": null
+    },
+    {
+      "riot_id": "wincg#84926",
+      "region": "EUW",
+      "ranked_ids": 0,
+      "usable_timelines": 0,
+      "status": "historical_attribution_not_player_proof",
+      "claim": "community attributed, historical",
+      "source_url": null
+    },
+    {
+      "riot_id": "Neo Hide on bush#NA1",
+      "region": "NA",
+      "ranked_ids": 0,
+      "usable_timelines": 0,
+      "status": "historical_attribution_not_player_proof",
+      "claim": "community attributed, historical",
+      "source_url": null
+    }
+  ],
   "warehouse": {
     "ranked_matches": 465,
     "frames": 12975,
@@ -38,6 +84,158 @@
       "herald": 417,
       "ward_cleared": 26887,
       "ward_placed": 110666
+    },
+    "event_breakdown": [
+      {
+        "category": "ITEM_PURCHASED",
+        "events": 115245,
+        "positioned": 0,
+        "actors": 114315,
+        "items": 115245,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "ward_placed",
+        "events": 110666,
+        "positioned": 0,
+        "actors": 104377,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "SKILL_LEVEL_UP",
+        "events": 67282,
+        "positioned": 0,
+        "actors": 66924,
+        "items": 0,
+        "skills": 67282,
+        "indexed": true
+      },
+      {
+        "category": "ward_cleared",
+        "events": 26887,
+        "positioned": 0,
+        "actors": 26886,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "enemy_kill",
+        "events": 9994,
+        "positioned": 9994,
+        "actors": 9994,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "ally_kill",
+        "events": 9510,
+        "positioned": 9510,
+        "actors": 9510,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "building",
+        "events": 5076,
+        "positioned": 5076,
+        "actors": 4889,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "faker_kill",
+        "events": 2767,
+        "positioned": 2767,
+        "actors": 2767,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "faker_death",
+        "events": 2185,
+        "positioned": 2185,
+        "actors": 2182,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "dragon",
+        "events": 1540,
+        "positioned": 1540,
+        "actors": 1540,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "grubs",
+        "events": 1395,
+        "positioned": 1395,
+        "actors": 1390,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "baron",
+        "events": 445,
+        "positioned": 445,
+        "actors": 445,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "herald",
+        "events": 417,
+        "positioned": 417,
+        "actors": 398,
+        "items": 0,
+        "skills": 0,
+        "indexed": true
+      },
+      {
+        "category": "ITEM_SOLD",
+        "events": 4739,
+        "positioned": 0,
+        "actors": null,
+        "items": null,
+        "skills": 0,
+        "indexed": false
+      },
+      {
+        "category": "ITEM_DESTROYED",
+        "events": 110087,
+        "positioned": 0,
+        "actors": null,
+        "items": null,
+        "skills": 0,
+        "indexed": false
+      },
+      {
+        "category": "ITEM_UNDO",
+        "events": 4207,
+        "positioned": 0,
+        "actors": null,
+        "items": null,
+        "skills": 0,
+        "indexed": false
+      }
+    ],
+    "item_lifecycle_raw_counts": {
+      "ITEM_PURCHASED": 115245,
+      "ITEM_DESTROYED": 110087,
+      "ITEM_UNDO": 4207,
+      "ITEM_SOLD": 4739
     }
   },
   "search_index": {

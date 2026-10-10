@@ -11,6 +11,7 @@ import hashlib
 import json
 import math
 import os
+import re
 from pathlib import Path
 import time
 
@@ -37,6 +38,11 @@ VARIANTS = ("faker", "allies", "visible_proxy", "full")
 
 def feature_mask(names: list[str], variant: str) -> np.ndarray:
     """Same input width for every ablation; remove entire unavailable channels."""
+    if variant == "item_off":
+        return np.asarray([float(not bool(re.fullmatch(r"p\d+_(?:item_(?:bin_\d+|slots|changes_last_minute|history_known)|static_.*)", name)))
+                           for name in names], np.float32)
+    if variant == "static_off":
+        return np.asarray([float(not bool(re.fullmatch(r"p\d+_static_.*", name))) for name in names], np.float32)
     if variant not in VARIANTS:
         raise ValueError(f"Unknown context variant: {variant}")
     if variant == "full":
@@ -475,8 +481,11 @@ def score(model: HierarchicalPolicy, dataset: DecisionDataset, stats: dict,
 
 def run(*, pilot: bool = False, epochs: int = 25, batch_size: int = 128,
         patience: int = 5, width: int = 96, layers: int = 2,
-        variants: tuple[str, ...] = VARIANTS, phase_gate: bool = False) -> dict:
-    meta = read_json(SOURCE / "meta.json")
+        variants: tuple[str, ...] = VARIANTS, phase_gate: bool = False,
+        source: Path = SOURCE, experiment: str | None = None) -> dict:
+    if experiment is not None and not re.fullmatch(r"[a-z0-9-]{1,48}", experiment):
+        raise ValueError("Experiment name must be lowercase letters, digits and hyphens")
+    meta = read_json(source / "meta.json")
     if not meta:
         raise FileNotFoundError("Build interaction features first")
     if meta["feature_dim"] != len(meta["feature_names"]):
@@ -489,21 +498,25 @@ def run(*, pilot: bool = False, epochs: int = 25, batch_size: int = 128,
         if phase_gate else (MODELS.parent / "hierarchical-pilot" if pilot else MODELS)
     output_artifacts = ARTIFACTS.parent / ("hierarchical-phase-pilot" if pilot else "hierarchical-phase") \
         if phase_gate else (ARTIFACTS.parent / "hierarchical-pilot" if pilot else ARTIFACTS)
+    if experiment:
+        output_models = MODELS.parent / (experiment + ("-pilot" if pilot else ""))
+        output_artifacts = ARTIFACTS.parent / (experiment + ("-pilot" if pilot else ""))
     output_models.mkdir(parents=True, exist_ok=True)
     output_artifacts.mkdir(parents=True, exist_ok=True)
-    stats = train_statistics(ids_train, meta["counts"], meta["feature_names"])
+    stats = train_statistics(ids_train, meta["counts"], meta["feature_names"], source=source)
     weights_cpu = {"decision": torch.from_numpy(stats["decision_weight"]),
                    "tags": torch.from_numpy(stats["tag_pos_weight"])}
-    probe = DecisionDataset(ids_train, meta["counts"], feature_mask(meta["feature_names"], "full"))
+    probe = DecisionDataset(ids_train, meta["counts"], feature_mask(meta["feature_names"], "full"), source=source)
     times = probe_device(probe, meta["feature_dim"], weights_cpu, batch_size, phase_gate)
     device = min(times, key=times.get)
     results = {}
     for variant in variants:
         mask = feature_mask(meta["feature_names"], variant)
-        train_set = DecisionDataset(ids_train, meta["counts"], mask)
-        val_set = DecisionDataset(ids_val, meta["counts"], mask)
+        train_set = DecisionDataset(ids_train, meta["counts"], mask, source=source)
+        val_set = DecisionDataset(ids_val, meta["counts"], mask, source=source)
         signature_data = {"train": ids_train, "val": ids_val,
             "counts": meta["counts"], "schema": meta["schema_version"], "variant": variant,
+            "source": str(source.resolve()),
             "mask": mask.tolist(), "epochs": epochs, "width": width, "layers": layers,
             "lr": 3e-4, "loss": [1, .5, .2, .25, .08]}
         if phase_gate: signature_data["phase_gate"] = True
@@ -631,14 +644,17 @@ def main() -> None:
     parser.add_argument("--pilot-only", action="store_true")
     parser.add_argument("--epochs", type=int, default=25)
     parser.add_argument("--batch-size", type=int, default=128)
-    parser.add_argument("--variants", nargs="+", choices=VARIANTS)
+    parser.add_argument("--variants", nargs="+", choices=(*VARIANTS,"item_off","static_off"))
+    parser.add_argument("--source", type=Path, default=SOURCE)
+    parser.add_argument("--experiment")
     parser.add_argument("--phase-gate", action="store_true",
                         help="Train separate 8x8 residual heads per game phase")
     args = parser.parse_args()
     report = run(pilot=args.pilot_only, epochs=args.epochs,
                  batch_size=args.batch_size,
                  variants=tuple(args.variants or (("full",) if args.phase_gate else VARIANTS)),
-                 phase_gate=args.phase_gate)
+                 phase_gate=args.phase_gate, source=args.source,
+                 experiment=args.experiment)
     print(json.dumps(report, indent=2))
 
 

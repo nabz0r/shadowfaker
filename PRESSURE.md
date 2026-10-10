@@ -23,3 +23,9 @@ Recompute after the state warehouse exists:
 ```
 
 The script reads one match at a time from the ignored local SQLite warehouse, then publishes only aggregate counts. Its five-game pilot and full 465-game run are logged in [PROGRESS.md](PROGRESS.md). [Corpus provenance](CORPUS.md) · [Research roadmap](ROADMAP.md).
+
+## One observed game beside the aggregate pressure curves
+
+The Pressure tab now pairs the population curves above with **one selected game's** ten player positions at the shared minute. The map draws a circle in game units centred on Faker and highlights actors inside it; the roster shows champion, role, distance, level and item IDs inferred from events at that minute. Filters independently show Faker, allies, enemies, lanes, item icons, the circle and a role. The same overlays appear on the 512×512 atlas and the projected 3D frequency surface, where the item toggle shows a small Faker tracked-item count. A background density always aggregates multiple games; overlay points always come from **one** game. When the global slider extends beyond that game's last frame, the readout explicitly says it is showing the last available frame.
+
+The complete enemy dots in the UI are **Riot oracle positions**, not a reconstruction of what Faker saw. The item icons/counts are an incomplete event-derived proxy, with [29.05% exact final item-ID sets in a retrospective audit](docs/data/public_ioc_quality.json). The model's item input uses a separate last-seen proxy for enemies; even that proxy is not real fog of war. Proximity does not measure spells spent, attention, team communication or causal pressure drawn. See [the feature and source matrix](IOC_VISION.md).

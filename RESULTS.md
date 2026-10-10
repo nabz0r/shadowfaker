@@ -204,3 +204,21 @@ The 2024 EUW supplement improves development log loss by **0.00765**, match-boot
 ### Time-linked visual audit
 
 The public 64×64 test histograms are now split by starting minute: **460** decisions at 0–10 min, **437** at 10–20 min, and **300** at 20+ min. They sum to the same 1,197 test decisions and reproduce the original observed and predicted all-phase histogram **cell by cell**. The sticky dashboard scrubber synchronizes these aggregates with observed opponent pressure, five-minute tempo, one selected game and a clearly synthetic scenario marker. These are different cohorts and resolutions, so a cursor at minute 13 means *the 10–20 minute aggregate* on the atlas and *the nearest available frame* in the open game. It is not a second-by-second reconstruction.
+
+## Item-aware index of context — development only (2026-10-10)
+
+![Exact destination ablation and prediction-set area](docs/figures/ioc_challenge.png)
+
+The new [IoC matrix](IOC_VISION.md) preserves the same Faker target and 373/46/46 match split. It adds 350 time-causal held-item channels from four item lifecycle events, then 120 static properties from official Data Dragon catalogs matched to the **12 played patches**. Five-game pilots passed before all **465 games / 12,510 transitions** were cached separately; zero parsing errors. All three variants use the same 777,902-parameter encoder, seed and 25-epoch budget, with early stopping and a validation-selected prior weight. This is a development experiment on the **same 46 validation games / 1,275 observations** used for earlier model design.
+
+| Candidate on reused validation | Input channels active | Exact 8×8 top-1 | Exact 16×16 | Exact 64×64 |
+|---|---:|---:|---:|---:|
+| No **added** item channels, same-capacity ablation | 147 | 16.94% | 9.80% | 1.25% |
+| + timestamped item lifecycle | 497 | 17.18% | 9.96% | 1.10% |
+| + played-patch item descriptors | 617 | **17.41%** | 9.80% | 1.18% |
+| Best simple train-only rule | — | 15.29% | — | — |
+| Previous hierarchical candidate, separate run | 147 | **17.49%** | — | — |
+
+For the 617-channel model, the paired match-bootstrap gain over the 147-channel ablation is **+0.47 percentage points, 95% interval [−0.16, +1.13]**. The older core already contains a recent-purchase count and unspent gold; this ablation removes the **new held-item channels**, not every item-related signal. The added static descriptors alone give **+0.24 points [−0.15, +0.63]**. Both intervals cross zero; the overall candidate does not beat the prior development model's 17.49%. The best 8×8 simple baseline is the role/phase prior at 15.29%. Validation-selected calibration means its positive comparison is exploratory, not a future-game guarantee. No historical test or prospective match was scored for this new candidate.
+
+The 617-channel model's exact **top-1 is 17.41%**. Naming **40 of 64 8×8 cells** covers **90.75%** of observed destinations, but names **62.5% of the map**. The line plot displays that tradeoff explicitly. These numbers do not establish 90% exact prediction, true player-visible decision making or improved win probability. The event inventory is noisy: a [retrospective aggregate audit](docs/data/public_ioc_quality.json) matches only **1,351/4,650 (29.05%)** final actor item-ID sets exactly, despite **0.839 mean Jaccard** overlap. This is a candidate explanation for the small uncertain ablation lift, not proof of its cause. CPU won the local micro-benchmark for this small network (0.0418 s vs 0.5685 s MPS probe); the training code selects the faster backend. Raw Riot games and per-match scores stay local; [only aggregate JSON](docs/data/public_ioc_challenge.json) is published.
