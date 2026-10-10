@@ -18,6 +18,12 @@ from .util import atomic_json, read_json
 DATA = CONFIG.processed / "event_clock"
 MODEL = CONFIG.models / "event_clock.pt"
 RESULT = CONFIG.artifacts / "event_clock_validation.json"
+MASK_GROUPS = {
+    "allies": tuple(name for name in FEATURES if name == "nearest_ally" or name.startswith("ally_")),
+    "enemies": tuple(name for name in FEATURES if name == "nearest_enemy" or name.startswith("enemy_")),
+    "jungle_bot_support": tuple(f"{side}_{role}_distance" for side in ("ally", "enemy")
+                                for role in ("jungle", "bottom", "utility")),
+}
 
 
 class EventMLP(nn.Module):
@@ -76,7 +82,14 @@ def _metrics(prob: np.ndarray, label: np.ndarray) -> dict:
 
 
 def run(pilot: bool = False, epochs: int = 25, batch: int = 512,
-        with_euw: bool = False) -> dict:
+        with_euw: bool = False, mask_group: str | None = None) -> dict:
+    if mask_group is not None and mask_group not in MASK_GROUPS:
+        raise ValueError(f"Unknown mask group: {mask_group}")
+    if mask_group is not None and with_euw:
+        raise ValueError("Use the fixed KR-only development population for this ablation")
+    feature_mask = np.ones(len(FEATURES), dtype=np.float32)
+    for name in MASK_GROUPS.get(mask_group, ()):
+        feature_mask[FEATURES.index(name)] = 0
     torch.manual_seed(CONFIG.seed)
     np.random.seed(CONFIG.seed)
     rng = random.Random(CONFIG.seed)
@@ -106,14 +119,15 @@ def run(pilot: bool = False, epochs: int = 25, batch: int = 512,
     net = EventMLP().to(device)
     optimizer = torch.optim.AdamW(net.parameters(), lr=8e-4, weight_decay=1e-3)
     best, best_epoch, stale, history = float("inf"), 0, 0, []
-    target_model = MODEL.with_name("event_clock_pilot.pt" if pilot else
-                                   "event_clock_euw.pt" if with_euw else "event_clock.pt")
+    target_model = MODEL.with_name(
+        f"event_clock_ablate_{mask_group}{'_pilot' if pilot else ''}.pt" if mask_group else
+        "event_clock_pilot.pt" if pilot else "event_clock_euw.pt" if with_euw else "event_clock.pt")
     target_model.parent.mkdir(parents=True, exist_ok=True)
     for epoch in range(1,epochs+1):
         net.train()
         train_loss, train_n = 0.0, 0
         for _, x,y in _iter_batches(train_ids,batch,True,rng):
-            xb = torch.from_numpy(x).to(device)
+            xb = torch.from_numpy(x * feature_mask).to(device)
             yb = torch.from_numpy(y).to(device)
             optimizer.zero_grad(set_to_none=True)
             loss = nn.functional.cross_entropy(net(xb), yb)
@@ -125,7 +139,7 @@ def run(pilot: bool = False, epochs: int = 25, batch: int = 512,
         val_loss, val_n = 0.0, 0
         with torch.no_grad():
             for _,x,y in _iter_batches(val_ids,batch,False,rng):
-                logits = net(torch.from_numpy(x).to(device))
+                logits = net(torch.from_numpy(x * feature_mask).to(device))
                 val_loss += float(nn.functional.cross_entropy(logits,torch.from_numpy(y).to(device)))*len(y)
                 val_n += len(y)
         score = val_loss/val_n
@@ -140,15 +154,21 @@ def run(pilot: bool = False, epochs: int = 25, batch: int = 512,
     net.load_state_dict(torch.load(target_model,map_location=device,weights_only=True))
     net.eval()
     labels, pred, phases = [], [], []
+    per_match_loss: dict[str, dict[str, float | int]] = {}
     with torch.no_grad():
-        for _,x,y in _iter_batches(val_ids,batch,False,rng):
+        for mid,x,y in _iter_batches(val_ids,batch,False,rng):
             labels.append(y)
-            pred.append(net(torch.from_numpy(x)).softmax(-1).numpy())
+            batch_prob = net(torch.from_numpy(x * feature_mask)).softmax(-1).numpy()
+            pred.append(batch_prob)
+            row = per_match_loss.setdefault(mid, {"sum": 0.0, "n": 0})
+            row["sum"] += float(-np.log(np.maximum(batch_prob[np.arange(len(y)), y], 1e-9)).sum())
+            row["n"] += len(y)
             phases.append(np.where(x[:,0]*60<10,0,np.where(x[:,0]*60<20,1,2)))
     label = np.concatenate(labels)
     prob = np.concatenate(pred)
     phase = np.concatenate(phases)
     report = {"schema_version": 1, "pilot": pilot, "with_euw": with_euw,
+              "mask_group": mask_group, "masked_features": list(MASK_GROUPS.get(mask_group, ())),
               "target": "first marked event in next 10 seconds",
               "train_matches": len(train_ids), "validation_matches": len(val_ids),
               "train_windows": 0, "validation_windows": len(label),
@@ -159,13 +179,16 @@ def run(pilot: bool = False, epochs: int = 25, batch: int = 512,
               "phase_frequency": _metrics(phase_prob[phase],label),
               "class_counts_validation": dict(zip(CLASSES,np.bincount(label,minlength=len(CLASSES)).tolist())),
               "selection": "validation only; historic test and prospective lockbox untouched",
-              "position_note": "10-second event locus is not Faker's position"}
+              "position_note": "10-second event locus is not Faker's position",
+              "per_match_logloss": per_match_loss}
     # Exact train count is read from local files, not inferred from total corpus.
     for mid in train_ids:
         with np.load(DATA/f"{mid}.npz") as z:
             report["train_windows"] += len(z["y"])
-    output = RESULT.with_name("event_clock_pilot.json" if pilot else
-                              "event_clock_euw_validation.json" if with_euw else "event_clock_validation.json")
+    output = RESULT.with_name(
+        f"event_clock_ablate_{mask_group}{'_pilot' if pilot else ''}.json" if mask_group else
+        "event_clock_pilot.json" if pilot else
+        "event_clock_euw_validation.json" if with_euw else "event_clock_validation.json")
     output.parent.mkdir(parents=True,exist_ok=True)
     atomic_json(output,report)
     return report
@@ -175,10 +198,11 @@ def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--pilot",action="store_true")
     p.add_argument("--with-euw",action="store_true")
+    p.add_argument("--mask-group",choices=tuple(MASK_GROUPS))
     p.add_argument("--epochs",type=int,default=25)
     a=p.parse_args()
-    r=run(a.pilot,a.epochs,with_euw=a.with_euw)
-    print(json.dumps({k:v for k,v in r.items() if k != "history"},indent=2))
+    r=run(a.pilot,a.epochs,with_euw=a.with_euw,mask_group=a.mask_group)
+    print(json.dumps({k:v for k,v in r.items() if k not in ("history", "per_match_logloss")},indent=2))
 
 
 if __name__ == "__main__":

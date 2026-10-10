@@ -16,6 +16,12 @@ The latest refresh still returns **465 usable KR ranked timelines**. A historica
 
 Run the new expansion from a prepared local pipeline with one command: `.venv/bin/python scripts/run_expansion.py`. It caches Riot and CSV inputs, pilots five games first, trains both event variants and renders the aggregate figure. The pro CSV mirror is labelled separately and never enters the event model.
 
+Next evidence gate: [matched replay feasibility, role-context ablation and player-visible evaluation](NEXT_RESEARCH.md).
+
+![Whether role-distance features improve the ten-second event model](docs/figures/event_context_ablation.png)
+
+An equal-capacity ablation on the KR development split found **no gain** from the current minute-spaced ally/opponent distance proxies for the ward-heavy ten-second event target. The full model scores **F1 = 0** on Faker kills, Faker deaths and objectives: global accuracy mostly reflects wards. That result does not establish the roles' strategic importance; [see the numbers and limits](NEXT_RESEARCH.md#first-completed-experiment-role-context-ablation).
+
 **Measured status:** 465 usable ranked matches and 12,510 observations were collected from the available 470 match IDs. The selected model predicts the exact next 16×16 region in 11.28% of held-out test observations, versus 11.61% for a train-only role/phase prior. The requested clear exact-region baseline win has **not** been demonstrated. An exploratory pooling of predictions into 8×8 and 4×4 macro regions shows a positive signal that requires a fresh confirmatory test. Purchases and skill upgrades exceed their no-event baselines after validation calibration. Exact figures and limits are in [RESULTS.md](RESULTS.md).
 
 ### New: predicting the kind of move
