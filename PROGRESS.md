@@ -377,3 +377,9 @@
 - [2026-10-10T13:20:36+00:00] Transition geometry: 0.1569 validation top-1; 0 alignment mismatches.
 
 - [2026-10-10T13:20:38+00:00] Dashboard aggregates, replay and public figures refreshed. Open http://127.0.0.1:8008/ with serve_dashboard.py.
+
+## Publication M3b/M3c — 2026-10-10
+
+- [2026-10-10T13:23:37+00:00] Published the 21-file predictability/visibility audit to GitHub `main` at `454a4775e0d00f0fc81fb0839300096161430d32`; remote tree `e3df92e96df1ebd16e5c372f6194fac2696f1b60` equals the locally tested tree. Synced local `main` to the remote commit with a clean worktree.
+- [2026-10-10T13:23:37+00:00] Current best 8×8 validation top-1 remains 17.49%. Its top-41 set covers 90.12% of next cells but occupies 41/64 cells. The visible-proxy audit is inconclusive and the phase-expert and transition candidates did not improve top-1. No new candidate has been evaluated on the historical test; the prospective lockbox is still 0/100 games.
+- [2026-10-10T13:23:37+00:00] Next evidence gate: collect independent future games and player-visible or replay-derived subminute observations before making a 90% exact-location claim. Preserve the frozen historical model and match-level isolation.
