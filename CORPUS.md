@@ -29,6 +29,8 @@ flowchart LR
 
 The state warehouse holds **12,975 frames**, **129,750 player observations**, **12,510 adjacent-frame transitions** and **353,409 typed events**. Only **33,329 events (9.4%)** have a recorded coordinate. Many purchases, skill points and wards have none; a positioned kill may identify the victim's location. The 320,080 unpositioned events remain useful as time/type context but cannot be drawn as spatial observations. See [the aggregate inventory](docs/data/public_corpus_inventory.json) for category counts and domains.
 
+The [event-by-event validation](EVENT_VALIDATION.md) reconciles **563,198 raw events** with the warehouse: **353,409/353,409** indexed rows match their source fields. It exposes 1,288 purchases/skill points with source actor 0, 62 champion deaths without a player killer and 23,610 tower plates outside the old index. This checks transcription, not Faker's vision or motives.
+
 ### Exact account names and event provenance
 
 The [public aggregate source inventory](docs/data/public_corpus_inventory.json) now lists the exact Riot IDs and regions without publishing PUUIDs: `Hide on bush#KR1` (470 ranked IDs, 465 usable), `Hide on bush#61151` on EUW (31/31, [historical external attribution](https://www.sheepesports.com/de/all/articles/lol-2024-worlds-players-accounts-on-euw-server/en)), and three community-attributed historical IDs with **zero** currently available ranked matches: `silent silence#08022`, `wincg#84926` (EUW), `Neo Hide on bush#NA1` (NA). Resolving a Riot ID confirms an account lookup, not the human behind it. Only the first account supplies spatial Faker labels.

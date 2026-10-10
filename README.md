@@ -18,7 +18,7 @@ The dashboard now opens **one dynamic tab at a time**. Its six gold stars refer 
 | **Legacy 16×16 / 3D** | [Observed versus predicted maps](#faker-on-the-map-shadow-on-the-map) and [the frequency surface](#the-landscape-of-next-moves) |
 | **Evolution / Tempo / Pressure** | A local game clock, [team movement](#the-project-at-a-glance), a [selectable opponent zone](PRESSURE.md) and ten observed positions |
 | **Scores / Research / Evidence** | [Measured baselines](#what-we-score), failed rare-event classes and [research gates](NEXT_RESEARCH.md) |
-| **Strategies / Challenge** | [Hypotheses and the standard for stronger play](SHADOW_PLUS.md); compose any five-player lane allocation in the illustrative simulation |
+| **Strategies / Challenge** | [Hypotheses and the standard for stronger play](SHADOW_PLUS.md); compose five lanes or challenge the [Faker episode memory](FAKER_MEMORY.md) |
 | **Finals BO5 / Corpus / Archives** | [Six sourced Worlds finals and 25 games](WORLD_FINALS.md), [the IoC matrix](IOC_VISION.md), plus private ranked match cards |
 
 The horizontal tab strip stays available on mobile; [see the 390-pixel capture](DESIGN.md#dynamic-chapter-tabs). The shared clock changes the linked views according to their own cohorts; it does not add observations between one-minute Riot frames.
@@ -61,7 +61,19 @@ On the same **46 reused validation games**, the 617-channel candidate scores **1
 
 The Corpus tab shows an [external-source register](IOC_VISION.md): official [Riot Data Dragon](https://developer.riotgames.com/docs/lol#data-dragon) is used for patch-matched static descriptors; [U.GG](https://u.gg/lol/champions/azir/build) is a build-context reference (its direct automated access was denied and current builds cannot label a historical minute); [Google Custom Search](https://developers.google.com/custom-search/v1/overview) is a discovery route requiring credentials and closed to new customers. No search snippet, current-patch win rate or final-game item enters an old state. The game dashboard remains an independent fan project.
 
-Rebuild from local raw caches with **one command**: `.venv/bin/python scripts/run_ioc_challenge.py`. It tests five games first, resumes per-game outputs, trains matched ablations, updates the aggregate figure and the local replay. [Matrix schema, causal rule and next evidence gate](IOC_VISION.md) · [exact scores](RESULTS.md#item-aware-index-of-context--development-only-2026-10-10).
+![Which timeline events are indexed, and which remain outside the old index](docs/figures/event_validation.png)
+
+An independent [event validation](EVENT_VALIDATION.md) reconciles **563,198 raw Riot events** with the local warehouse: **353,409/353,409 indexed rows** reproduce their source fields. It flags **1,288 purchases/skill points without a player ID**, **62 deaths without a player killer** and **23,610 tower plates outside the old index**. Exact transcription does not prove that Faker saw an event or explain his decision.
+
+![Live Corpus audit with exact event counts and source caveats](docs/figures/dashboard_event_validation.png)
+
+![Faker episode retrieval challenged against a simple rule and Shadow IoC](docs/figures/faker_memory_challenge.png)
+
+The new [Faker Memory](FAKER_MEMORY.md) keeps **10,038 training decisions** as private state→next-move episodes. A match-disjoint calibration chooses a retrieval policy, then the 46 reused validation matches challenge it: **11.53%** exact next 8×8 region, behind the role/phase rule (**15.29%**) and Shadow IoC (**17.41%**). Its nearest example gets **0%** exact 512×512 cells. The Challenge tab includes an anonymous case quiz with revealable observed destinations; browser answers do not retrain anything. This is an inspectable memory and a measured failed challenger, not an LLM fine-tune or evidence of 90% prediction.
+
+![Interactive Faker Memory quiz with live validation scores](docs/figures/dashboard_faker_memory.png)
+
+Rebuild from local raw caches with **one command**: `.venv/bin/python scripts/run_ioc_challenge.py`. It tests five games first, resumes per-game outputs, validates event transcription, trains matched ablations, updates the aggregate figures and the local replay. [Matrix schema, causal rule and next evidence gate](IOC_VISION.md) · [exact scores](RESULTS.md#item-aware-index-of-context--development-only-2026-10-10).
 
 ![Compose five hypothetical bot players and observe the abstract opponent response at minute 15](docs/figures/dashboard_challenge_custom.png)
 

@@ -18,6 +18,7 @@ La page fonctionne désormais par **onglets dynamiques** : une vue à la fois, a
 | **16×16 historique / 3D** | [Carte observée contre prédite et surface](#le-paysage-des-prochains-mouvements) |
 | **Évolution / Tempo / Pression** | Chronologie d'une partie, [fonctionnement](#fonctionnement), [zone adverse réglable](PRESSURE.md) et positions des dix joueurs |
 | **Scores / Recherche / Preuves** | Baselines, échecs par classe et [prochains tests](NEXT_RESEARCH.md) |
+| **Stratégies / Challenge** | Hypothèses de composition et [quiz de la mémoire Faker](FAKER_MEMORY.md) |
 | **Stratégies / Challenge** | [Hypothèses et critères d'un jeu meilleur](SHADOW_PLUS.md) ; composition libre de cinq postes dans la simulation illustrative |
 | **Finales BO5 / Corpus / Archives** | [Six finales sourcées, 25 manches](WORLD_FINALS.md), [matrice IoC](IOC_VISION.md) et fiches ranked privées |
 
@@ -61,7 +62,21 @@ Sur les **46 mêmes parties de validation déjà utilisées**, le candidat à 61
 
 Le Corpus affiche les sources externes : [Data Dragon Riot](https://developer.riotgames.com/docs/lol#data-dragon) alimente les caractéristiques statiques du patch ; [U.GG](https://u.gg/lol/champions/azir/build) sert de référence de builds, mais l'accès automatisé direct a été refusé et un build actuel ne peut décrire une minute historique ; [Google Custom Search](https://developers.google.com/custom-search/v1/overview) servirait à découvrir des sources, avec identifiants requis et inscription fermée aux nouveaux clients. Aucun extrait de recherche, taux de victoire actuel ou objet final n'est injecté dans l'état passé. [Vision et provenance détaillées](IOC_VISION.md).
 
-Une commande relance cette expérience depuis les caches locaux : `.venv/bin/python scripts/run_ioc_challenge.py`. Elle pilote cinq parties, reprend les fichiers par partie, entraîne les ablations et reconstruit le graphique et le rejeu. [Scores exacts](RESULTS.md#item-aware-index-of-context--development-only-2026-10-10).
+![Quels événements sont indexés et lesquels restent hors de l'ancien index](docs/figures/event_validation.png)
+
+Une [validation indépendante des événements](EVENT_VALIDATION.md) rapproche **563 198 événements Riot bruts** de la base locale : **353 409/353 409 lignes indexées** reproduisent les champs de leur source. Elle signale **1 288 achats/points de compétence sans ID joueur**, **62 morts sans tueur joueur** et **23 610 plaques de tourelle hors de l'ancien index**. Une transcription exacte ne prouve ni que Faker a vu l'événement ni pourquoi il a agi.
+
+![Audit visible des événements dans l'onglet Corpus](docs/figures/dashboard_event_validation.png)
+
+### Nouveau : une mémoire des décisions de Faker
+
+![Mémoire de Faker comparée à la règle simple et à Shadow IoC](docs/figures/faker_memory_challenge.png)
+
+La [mémoire locale des décisions](FAKER_MEMORY.md) indexe **10 038 épisodes d'entraînement** : état de la partie à `t`, contexte des dix joueurs et destination de Faker à la frame suivante. Un challenger par cas similaires calibre ses choix sur des parties de train distinctes puis obtient **11,53 %** de cases 8×8 exactes sur 46 parties de validation réutilisées, contre **15,29 %** pour la règle rôle/phase et **17,41 %** pour Shadow IoC. Sa case 512×512 exacte est à **0 %**. L'onglet Challenge permet de deviner une destination puis de révéler le choix observé ; les clics ne réentraînent pas le modèle. Les épisodes détaillés restent locaux et aucune partie de test historique n'a été consultée.
+
+![Quiz interactif de la mémoire de Faker](docs/figures/dashboard_faker_memory.png)
+
+Une commande relance cette expérience depuis les caches locaux : `.venv/bin/python scripts/run_ioc_challenge.py`. Elle pilote cinq parties, reprend les fichiers par partie, valide les événements, entraîne les ablations et reconstruit les graphiques et le rejeu. [Scores exacts](RESULTS.md#item-aware-index-of-context--development-only-2026-10-10).
 
 ![Cinq présences hypothétiques bot et réponse adverse abstraite à la minute 15](docs/figures/dashboard_challenge_custom.png)
 

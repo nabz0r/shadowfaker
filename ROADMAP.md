@@ -2,6 +2,10 @@
 
 Updated 2026-10-10. This roadmap preserves the original objective: model **Faker's macro decisions** and eventually test whether a policy can improve team outcomes. The 465-match development corpus has already influenced model and metric choices. Its test split must never be presented as a fresh confirmation again.
 
+## Next evidence gate: trainable Faker memory
+
+The [Faker Memory database and challenger](FAKER_MEMORY.md) are operational: a five-game pilot, 10,038 train episodes, 125 causal fields, match-disjoint calibration and an anonymous quiz. Retrieval scores **11.53%** 8×8 on reused validation, below the **15.29%** role/phase baseline and **17.41%** Shadow IoC. Next: annotate a new matched replay/player-view cohort, retain source timestamps and visibility masks, freeze a future-match lockbox, then train an action policy or reranker only on the training partition. A text LLM may retrieve sourced explanations; it has no basis yet for a claim of superior play or 90% exact cells.
+
 ```mermaid
 flowchart LR
     M0[M0 Freeze evidence: done] --> M1[M1 New ranked games: 0 / 100]

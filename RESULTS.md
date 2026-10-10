@@ -207,6 +207,12 @@ The public 64×64 test histograms are now split by starting minute: **460** deci
 
 ## Item-aware index of context — development only (2026-10-10)
 
+### Faker Memory: episodic challenger on the same validation cohort
+
+![Train-only episode retrieval versus the baseline and Shadow IoC](docs/figures/faker_memory_challenge.png)
+
+The [private episodic database](FAKER_MEMORY.md) contains **10,038 train decisions in 373 matches** and **1,275 validation decisions in 46 matches**. Configuration was selected by a further **298/75-match train partition**, never by frame mixing. The winning retrieval rule uses 15 neighbours and current-position emphasis, without the 50 item IoC fields; calibration top-1 was **13.41%**. On reused validation it reaches **11.53% exact 8×8**, below the train-only role/phase prior (**15.29%**) and the separate Shadow IoC transformer (**17.41%**). Nearest-case transfer gets **0.63% exact 64×64** and **0% exact 512×512**. No historical test match was read; this is a failed challenger and no model was promoted. The repeated validation cohort and model-selection history preclude a confirmatory claim.
+
 ![Exact destination ablation and prediction-set area](docs/figures/ioc_challenge.png)
 
 The new [IoC matrix](IOC_VISION.md) preserves the same Faker target and 373/46/46 match split. It adds 350 time-causal held-item channels from four item lifecycle events, then 120 static properties from official Data Dragon catalogs matched to the **12 played patches**. Five-game pilots passed before all **465 games / 12,510 transitions** were cached separately; zero parsing errors. All three variants use the same 777,902-parameter encoder, seed and 25-epoch budget, with early stopping and a validation-selected prior weight. This is a development experiment on the **same 46 validation games / 1,275 observations** used for earlier model design.

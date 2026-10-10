@@ -2,6 +2,8 @@
 
 Shadow Faker's **IoC** is an *index of context*: a time-stamped, Faker-centred account of the other nine players, their movements, objectives, recent events and items. It is not a claim to have recovered Faker's clicks, attention, voice communication or exact fog of war. The prediction target remains **the next observed action of the account**, never an action of another player.
 
+The separate [event validation](EVENT_VALIDATION.md) confirms the **raw-to-index transcription** of all 353,409 older warehouse rows and lists exclusions and source attribution gaps. It does not validate the inferred held-item inventory or the meaning of a move.
+
 ```mermaid
 flowchart LR
   A["Riot match + timeline<br/>465 KR ranked games"] --> B["Event ledger<br/>timestamps, actors, locations"]

@@ -26,7 +26,8 @@ FIGURES = FIGURES | frozenset({"grid64_observed_vs_predicted.png", "event_atlas6
                                "predictability_gap.png", "hierarchical_ablation.png",
                                "atlas512_validation.png", "atlas512_events.png",
                                "corpus_event_clock.png", "event_context_ablation.png",
-                               "ioc_challenge.png"})
+                               "ioc_challenge.png", "event_validation.png",
+                               "faker_memory_challenge.png"})
 ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/app.js": ROOT / "dashboard" / "app.js",
           "/style.css": ROOT / "dashboard" / "style.css",
@@ -41,6 +42,8 @@ ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/corpus.json": ROOT / "docs" / "data" / "public_corpus_inventory.json",
           "/ioc-summary.json": ROOT / "docs" / "data" / "public_ioc_challenge.json",
           "/ioc-quality.json": ROOT / "docs" / "data" / "public_ioc_quality.json",
+          "/event-validation.json": ROOT / "docs" / "data" / "public_event_validation.json",
+          "/faker-memory.json": ROOT / "docs" / "data" / "public_faker_memory.json",
           "/sprites.json": ROOT / "docs" / "data" / "sprites.json",
           "/assets/champions.png": ROOT / "dashboard" / "assets" / "champions.png",
           "/assets/items.png": ROOT / "dashboard" / "assets" / "items.png",
@@ -77,6 +80,17 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.wfile.write(data)
 
     def do_GET(self) -> None:
+        if urlsplit(self.path).path == "/api/memory/cases":
+            path = CONFIG.processed / "faker_memory_challenge.json"
+            if not path.is_file():
+                self._json({"examples": []})
+                return
+            source = read_json(path) or {}
+            # Local anonymized quiz cases only; raw events and match IDs stay private.
+            allowed = {"minute", "champion", "role", "predicted_cell8", "observed_cell8"}
+            self._json({"examples": [{key: value for key, value in row.items() if key in allowed}
+                                     for row in source.get("examples", [])]})
+            return
         if urlsplit(self.path).path == "/api/games":
             if not FACTS_DB.is_file():
                 self._json([])

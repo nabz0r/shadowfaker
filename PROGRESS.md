@@ -494,6 +494,19 @@
 - [x] QA finale locale : **33 tests Python**, syntaxe JS, compilation Python et `git diff --check` passent ; routes sprites HTTP 200, chemin raw HTTP 404. 100 interactions navigateur rayon/chronologie vérifiées, zéro erreur console ; recherche EN sur « Hourglass » donne 68 parties et traduit les objets ; layout 390 px en une colonne, aucun débordement horizontal. Captures Pression desktop/mobile, Corpus et Archives sauvegardées. Liens locaux des README et guides visuels résolus.
 - [x] M6–M8 publiés sur GitHub `main` via la connexion authentifiée au commit `ab8aeafc6dbef616ba39bbbeb7df0b47dcd197ba`. L'arbre distant `1627ada50ddca8745049fa538f5eb49c6f202ef1` est identique à l'arbre local testé ; les 19 blobs binaires ont été vérifiés par SHA Git avant l'assemblage. `git fetch` et la synchronisation de `main` local ont confirmé la publication. Cette ligne d'audit est un second commit documentaire.
 
+## M11 — Mémoire de Faker et challenger (2026-10-10)
+
+- [x] Architecture définie dans `PLAN.md` après la demande d'une base de décisions Faker et d'une boucle de challenge/apprentissage. Le transformer de comportement existant et un éventuel LLM textuel ont des rôles distincts ; aucun score futur ou 90 % exact n'est présumé.
+- [x] Base locale causale train/validation, calibration par match, challenger de récupération et bilan honnête. Pilote 5+5 parties / 260 épisodes ; corpus 373 train / 10 038 épisodes et 46 validation / 1 275 épisodes, 125 attributs choisis (75 core + 50 IoC). Recherche sur 298 matches de mémoire et 75 matches de calibration, split par match. Sélection k=15, positions ×4, sans IoC, puis validation exacte 8×8 **11,53 %**, sous règle rôle/phase **15,29 %** et Shadow IoC **17,41 %**. Nearest 64×64 **0,63 %**, 512×512 **0 %** ; aucun test historique lu et aucune promotion. Base SQLite et exemples détaillés ignorés par Git ; JSON public agrégé.
+- [x] Interface de challenge et documentation : tableau de scores dynamique, grille 8×8 interactive, choix/révélation/cas suivant, 24 exemples anonymes locaux, traduction FR/EN. `FAKER_MEMORY.md`, RESULTS, ROADMAP et README FR/EN à jour ; figure et capture navigateur réelles. L'API locale filtre les champs de cas et ne sert aucun match ID.
+- [x] Relance intégrale de `run_ioc_challenge.py --epochs 25` depuis les caches : exit 0 après pilote 5 parties, audit 465 parties, trois checkpoints IoC repris, mémoire et figures reconstruites. **41 tests** Python, compilation, syntaxe JS, `git diff --check` et liens Markdown locaux passent. Navigateur : score, grille, révélation, cas suivant, traduction FR/EN, 390 px sans débordement, zéro erreur console ; route locale mémoire HTTP 200 et tentative `/data/raw/` HTTP 404.
+
+## M10 — Validation des événements (2026-10-10)
+
+- [x] Plan ajouté à `PLAN.md`. Audit préliminaire des 465 timelines brutes : 62 `CHAMPION_KILL` sans tueur joueur (3 victimes Faker, 59 autres), 23 610 `TURRET_PLATE_DESTROYED` hors ancien index. Les événements gardent leur sens Riot : une position de kill ou d'objectif n'est pas la position de Faker.
+- [x] Comparaison structurelle : pilote cinq parties, 4 190 lignes exactes ; corpus complet 465 parties, **353 409/353 409** lignes exactes sur 563 198 événements bruts, zéro erreur de lecture ou désaccord de classification. Audit de 1 288 achats/skills sans acteur, 62 morts sans tueur joueur dont 3 de Faker, 23 610 plaques hors ancien index. JSON agrégé et graphique publics ; aucun match ID exporté.
+- [x] Corpus/README/docs actualisés ; `EVENT_VALIDATION.md`, JSON agrégé, figure et capture navigateur montrent les exclusions.
+
 ## M9 — Pression située et IoC d'itemisation (2026-10-10)
 
 - [x] Plan M9 défini avant l'implémentation dans `PLAN.md` : position des dix joueurs à `t`, inventaires horodatés, masque de visibilité, ablation, 90 % avec surface et séparation des cohortes.
@@ -581,3 +594,25 @@
 - [2026-10-10T17:18:37+00:00] Public IoC figure, corpus inventory and local game replay refreshed.
 
 - [2026-10-10T17:18:37+00:00] Causal item IoC, played-patch catalogs, matched ablations and public IoC figure refreshed.
+
+- [2026-10-10T17:55:39+00:00] Item IoC pilot: five games, 125 observations, zero errors.
+
+- [2026-10-10T17:55:39+00:00] Static item IoC pilot: five games, 125 observations, zero errors.
+
+- [2026-10-10T17:55:39+00:00] Event validation pilot: five games, 4190 exact indexed events.
+
+- [2026-10-10T17:55:39+00:00] Faker memory pilot: 260 train/validation episodes across ten games.
+
+- [2026-10-10T17:55:41+00:00] Item IoC: 465 games, 12510 observations, 497 channels.
+
+- [2026-10-10T17:55:44+00:00] Patch-matched Data Dragon IoC: 465 games, 617 channels, 12 patches.
+
+- [2026-10-10T17:55:47+00:00] Event-inventory audit: 1351/4650 exact final ID sets; proxy caveat documented.
+
+- [2026-10-10T17:55:52+00:00] Event validation: 353409/353409 exact indexed rows across 465 games; exclusions documented.
+
+- [2026-10-10T17:55:54+00:00] Static IoC validation: 46 games; selected full at 8x8=0.1741.
+
+- [2026-10-10T17:56:02+00:00] Faker memory: 10038 train and 1275 validation decisions; retrieval 8x8=0.1153, no promotion over baseline.
+
+- [2026-10-10T17:56:05+00:00] Public IoC figure, corpus inventory and local game replay refreshed.

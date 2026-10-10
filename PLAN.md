@@ -1,5 +1,19 @@
 # Shadow Faker — plan d'exécution
 
+## M11 — mémoire de Faker et challenger apprenant (2026-10-10)
+
+Construire une base SQLite **privée** de décisions `(état à t, contexte IoC, arrivée observée à t+1)` depuis les NPZ déjà générés. Une ligne correspond à une observation, le match entier garde son split ; le test historique n'est pas ouvert. Les vecteurs compacts conservent des dimensions choisies de l'état actuel et le patch/rôle/minute comme métadonnées. Indexer et interroger les cas de train, jamais une étiquette val/test pendant la recherche. Publier seulement la taille, le schéma et des scores agrégés.
+
+Le challenger est un récupérateur de situations similaires, distinct du transformer Shadow. Il calibre ses poids et son nombre de voisins sur une partition de calibration **par match** prise dans le train, reconstruit sa mémoire avec tout le train, puis évalue une fois sur validation contre copie-position et prior rôle/phase. Journaliser les propositions et écarts dans la base locale, avec preuve d'étiquette et séparation du test. Aucune réponse du navigateur ne met à jour automatiquement un modèle ; un nouveau candidat ne remplace Shadow qu'après un nouveau jeu de validation. La grille 512×512 reste une mesure de destination dérivée des coordonnées t+1, pas une observation par pixel à chaque instant.
+
+L'interface doit permettre de lire un cas de validation, sa prédiction et des analogies d'entraînement **sans divulguer de match ID** dans les agrégats publics, avec un mode « révéler puis juger ». La documentation explique pourquoi ce n'est pas l'entraînement d'un LLM textuel, et comment un LLM pourrait plus tard résumer des décisions sourcées sans fabriquer des labels.
+
+## M10 — validation des événements et de leurs exclusions (2026-10-10)
+
+Comparer, sur cinq parties puis sur tout le corpus KR, chaque événement indexé au JSON Riot d'origine : type, timestamp, acteur, victime, objet/skill et coordonnées. Vérifier séparément les types ignorés et leur volume, les kills sans tueur joueur, les plaques de tourelle et les événements d'inventaire. Publier uniquement des comptes agrégés et des statuts de fiabilité par famille ; les match IDs et les JSON restent locaux. Une coordonnée de kill désigne le lieu de l'événement, pas la position ou la vision de Faker. Un champ présent prouve la fidélité du parsing, pas l'intention tactique du joueur.
+
+Afficher l'audit dans Corpus avec une légende « contrôlé / partiel / exclu », documenter les erreurs et mettre à jour README, CORPUS et PROGRESS. Ne pas modifier les labels du modèle sans nouveau dataset, ablation et évaluation par match. Vérifier le script sur un petit échantillon, le corpus complet, les tests, l'UI et la publication `main`.
+
 ## M9 — pression située et contexte d'objets à l'instant t (2026-10-10)
 
 1. Relier Pression au rejeu local sélectionné : représenter sur la carte les dix positions *observées* à la minute choisie, un cercle métrique centré sur Faker, les alliés et ennemis proches, les positions absentes et les inventaires connus. Le rayon et la frise doivent modifier réellement le relevé ; les moyennes de 465 parties restent dans un panneau distinct. Cette carte Riot omnisciente n'est pas la vision de Faker.

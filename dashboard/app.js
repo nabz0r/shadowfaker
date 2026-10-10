@@ -172,6 +172,18 @@ Object.assign(copy.en, {guide_choose_copy:"The background is one aggregate layer
   ioc_core:"state + interactions",ioc_items:"timestamped items",ioc_patch:"patch catalog",ioc_vision_limit:"Enemy visibility is a last-seen proxy, not Faker's real minimap. A current build page reveals neither a past inventory nor a decision.",
   ioc_vision_link:"Read the matrix, sources and limits ↗",ioc_vision_result:"Reused validation: 17.41% at 8×8; uncertain ablation lift. The event inventory matches only 29% of final item sets exactly. Covering 90% of destinations needs 40/64 cells.",
   ioc_source_riot:"12 played patches · static item properties · used at t",ioc_source_ugg:"Public build context · no historical feature; automated access denied",ioc_source_google:"Source discovery only · no snippet converted to match truth"});
+Object.assign(copy.fr,{event_validation_kicker:"AUDIT · JSON RIOT ↔ INDEX LOCAL",event_validation_title:"Quels événements sont vraiment validés ?",
+  event_validation_intro:"Nous comparons chaque ligne indexée à son événement d'origine. Le contrôle prouve une transcription fidèle des champs, pas la vision ni l'intention de Faker.",
+  event_validation_doc:"Méthode et décisions ↗",event_validation_exact:"lignes indexées exactes",
+  event_validation_actor:"achats / skills sans joueur attribuable",event_validation_neutral:"morts sans tueur joueur",
+  event_validation_plates:"plaques hors index principal"});
+Object.assign(copy.en,{event_validation_kicker:"AUDIT · RIOT JSON ↔ LOCAL INDEX",event_validation_title:"Which events are actually verified?",
+  event_validation_intro:"Each indexed row is compared with its original event. This checks field transcription, not Faker's vision or intent.",
+  event_validation_doc:"Method and decisions ↗",event_validation_exact:"exact indexed rows",
+  event_validation_actor:"purchases / skills without player attribution",event_validation_neutral:"deaths without a player killer",
+  event_validation_plates:"plates outside the main index"});
+Object.assign(copy.fr,{memory_title:"Un souvenir, une hypothèse, une réponse",memory_intro:"10 038 décisions de train alimentent une base locale de situations. Le challenger retrouve des cas proches, calibre ses choix sur des parties distinctes et prédit la prochaine région. Essayez vous-même sur des exemples de validation.",memory_doc:"Méthode et limites ↗",memory_retrieval:"mémoire · top-1 8×8",memory_baseline:"règle rôle/phase",memory_shadow:"Shadow IoC",memory_scores_limit:"Même validation réutilisée de 46 parties. La mémoire ne bat ni la règle ni Shadow ; aucune promotion du modèle. 512×512 désigne des cases de destination, pas une mesure à 512 Hz.",memory_you:"votre choix",memory_model:"mémoire",memory_actual:"observé",memory_instruction:"Cliquez une case : où Faker sera-t-il à la prochaine minute observée ?",memory_reveal:"Révéler",memory_next:"Cas suivant",memory_quiz_limit:"Ce quiz n'entraîne rien depuis le navigateur. La mémoire est calibrée sur le train ; les réponses de validation servent seulement à mesurer l'erreur.",memory_case:(n,total,row)=>`Cas ${n}/${total} · ${row.champion} · ${row.role} · minute ${row.minute}`,memory_feedback:(choice,pred,actual)=>`Votre case : ${choice ?? "—"} · Mémoire : ${pred} · Observé : ${actual}${choice===actual?" · juste !":""}`});
+Object.assign(copy.en,{memory_title:"A memory, a guess, an answer",memory_intro:"10,038 training decisions form a local case memory. The challenger retrieves similar situations, tunes its choices on separate training matches, then predicts the next region. Try held-out validation cases yourself.",memory_doc:"Method and limits ↗",memory_retrieval:"memory · top-1 8×8",memory_baseline:"role/phase rule",memory_shadow:"Shadow IoC",memory_scores_limit:"Same reused validation set of 46 matches. Retrieval trails both the rule and Shadow; no model promotion. 512×512 means destination cells, not 512 Hz observations.",memory_you:"your choice",memory_model:"memory",memory_actual:"observed",memory_instruction:"Click a cell: where will Faker be at the next observed minute?",memory_reveal:"Reveal",memory_next:"Next case",memory_quiz_limit:"The browser quiz does not train a model. Retrieval is calibrated within training matches; validation answers measure error only.",memory_case:(n,total,row)=>`Case ${n}/${total} · ${row.champion} · ${row.role} · minute ${row.minute}`,memory_feedback:(choice,pred,actual)=>`Your cell: ${choice ?? "—"} · Memory: ${pred} · Observed: ${actual}${choice===actual?" · correct!":""}`});
 
 let language = "fr";
 let summary = null;
@@ -201,6 +213,12 @@ let replayTimer = null;
 let sharedMinute = 0;
 let worldFinals = null;
 let corpusData = null;
+let eventValidation = null;
+let memorySummary = null;
+let memoryCases = [];
+let memoryCaseIndex = 0;
+let memoryChoice = null;
+let memoryRevealed = false;
 let iocSummary = null;
 let iocQuality = null;
 let gameFacts = [];
@@ -324,12 +342,12 @@ function renderCorpus() {
     accounts.append(card);
   }
   const descriptions = language==="fr" ? {
-    ITEM_PURCHASED:"Achat horodaté ; item et acteur connus, lieu absent.",
+    ITEM_PURCHASED:"Achat horodaté ; acteur parfois non attribué, lieu absent.",
     ITEM_SOLD:"Vente horodatée dans le JSON brut ; inventaire à t.",
     ITEM_DESTROYED:"Objet consommé ou transformé dans le JSON brut ; inventaire à t.",
     ITEM_UNDO:"Annulation d'achat dans le JSON brut ; avant/après item.",
     SKILL_LEVEL_UP:"Point de compétence ; pas une position.",
-    ward_placed:"Ward posée ; position parfois absente.",ward_cleared:"Ward détruite ; position parfois absente.",
+    ward_placed:"Ward posée ; aucune coordonnée dans cette cohorte.",ward_cleared:"Ward détruite ; aucune coordonnée dans cette cohorte.",
     faker_kill:"Kill attribué à Faker ; lieu de la victime éventuel.",
     faker_death:"Mort de Faker ; lieu de la victime éventuel.",
     ally_kill:"Kill allié ; lieu de la victime éventuel.",enemy_kill:"Kill adverse ; lieu de la victime éventuel.",
@@ -337,12 +355,12 @@ function renderCorpus() {
     herald:"Herald éliminé ; événement d'objectif.",grubs:"Grubs éliminés ; événement d'objectif.",
     building:"Bâtiment détruit ; lieu du bâtiment éventuel."
   } : {
-    ITEM_PURCHASED:"Timestamped purchase; item and actor known, no location.",
+    ITEM_PURCHASED:"Timestamped purchase; actor sometimes unattributed, no location.",
     ITEM_SOLD:"Timestamped sale in raw JSON; updates inventory at t.",
     ITEM_DESTROYED:"Consumed or transformed item in raw JSON; updates inventory at t.",
     ITEM_UNDO:"Purchase undo in raw JSON; before/after item.",
     SKILL_LEVEL_UP:"Skill point; not a player position.",
-    ward_placed:"Ward placed; location may be missing.",ward_cleared:"Ward destroyed; location may be missing.",
+    ward_placed:"Ward placed; no coordinates in this cohort.",ward_cleared:"Ward destroyed; no coordinates in this cohort.",
     faker_kill:"Kill credited to Faker; possible victim location.",
     faker_death:"Faker death; possible victim location.",
     ally_kill:"Ally kill; possible victim location.",enemy_kill:"Opponent kill; possible victim location.",
@@ -363,8 +381,31 @@ function renderCorpus() {
       `${event.positioned.toLocaleString(language)} located / ${event.events.toLocaleString(language)} ${event.indexed?"indexed events":"raw events · outside indexed total"}`;
     const bar=document.createElement("span");bar.className="corpus-event-bar";
     const fill=document.createElement("i");fill.style.width=`${100*event.positioned/Math.max(1,event.events)}%`;
-    bar.append(fill);row.append(head,note,spatial,bar);details.append(row);
+    const quality=eventValidation?.categories?.[event.category];
+    const status=document.createElement("small");status.className="event-status";
+    if(quality){
+      const partial=quality.missing_required>0;status.classList.toggle("partial",partial);
+      status.textContent=language==="fr"?
+        `${quality.exact.toLocaleString(language)}/${quality.indexed.toLocaleString(language)} champs recopiés exactement${partial?` · ${quality.missing_required.toLocaleString(language)} acteur(s)/champ(s) non attribués`:""}`:
+        `${quality.exact.toLocaleString(language)}/${quality.indexed.toLocaleString(language)} fields transcribed exactly${partial?` · ${quality.missing_required.toLocaleString(language)} unattributed actor(s)/field(s)`:""}`;
+    }else{
+      status.classList.add("partial");status.textContent=language==="fr"?"Hors ancien index ; compté dans le JSON brut":"Outside old index; counted in raw JSON";
+    }
+    bar.append(fill);row.append(head,note,spatial,status,bar);details.append(row);
   }
+}
+
+function renderEventValidation(){
+  if(!eventValidation)return;
+  const report=eventValidation, fr=language==="fr", fmt=n=>Number(n).toLocaleString(language);
+  $("#event-validated").textContent=`${fmt(report.exact_index_rows)} / ${fmt(report.indexed_events)}`;
+  const unattributed=(report.categories.ITEM_PURCHASED?.missing_required||0)+(report.categories.SKILL_LEVEL_UP?.missing_required||0);
+  $("#event-unattributed").textContent=fmt(unattributed);
+  $("#event-neutral").textContent=fmt(Object.values(report.neutral_champion_deaths).reduce((a,b)=>a+b,0));
+  $("#event-plates").textContent=fmt(report.excluded_types.TURRET_PLATE_DESTROYED||0);
+  $("#event-validation-note").textContent=fr?
+    `${fmt(report.audited_matches)} parties contrôlées, ${fmt(report.failed_matches)} échec de lecture. Parmi les morts sans tueur, ${fmt(report.neutral_champion_deaths.faker_victim||0)} concernent Faker et restent des « morts de Faker ». Les ventes/destructions/annulations d'objets sont hors ancien index mais servent au proxy d'inventaire. Aucun événement exclu ne devient automatiquement une nouvelle cible du modèle.`:
+    `${fmt(report.audited_matches)} games checked, ${fmt(report.failed_matches)} read failures. ${fmt(report.neutral_champion_deaths.faker_victim||0)} deaths without a player killer concern Faker and remain “Faker deaths”. Item sales/destruction/undo sit outside the old index but feed the inventory proxy. Excluded events do not automatically become new model targets.`;
 }
 
 function spriteIcon(kind, key, label) {
@@ -517,6 +558,8 @@ function translate() {
   if (eventAblation) renderResearchEvents();
   if (worldFinals) renderFinals();
   if (corpusData) renderCorpus();
+  if (eventValidation) renderEventValidation();
+  if (memorySummary) renderMemory();
   if (gameFacts.length) { renderGameCards(); renderGamePreview(); }
   if (trace) updateReplay();
   showSharedMinute();
@@ -678,6 +721,39 @@ function renderAtlas() {
   $("#atlas-total").textContent = total.toLocaleString(language);
   $("#atlas-unplaced").textContent = positions ? "—" : (local?.without_position ?? oldRecord?.without_position ?? 0).toLocaleString(language);
   $("#atlas-readout").textContent = copy[language].atlas_empty($("#atlas-layer").selectedOptions[0].textContent,phaseLabel(phase),cohort);
+}
+
+function renderMemory() {
+  if (!memorySummary) return;
+  const percent = value => `${(100 * value).toFixed(2).replace(".", language === "fr" ? "," : ".")} %`;
+  $("#memory-retrieval").textContent = percent(memorySummary.validation_top1_8);
+  $("#memory-baseline").textContent = percent(memorySummary.validation_baselines.role_phase_prior);
+  $("#memory-shadow").textContent = iocSummary?.variants?.full?.top1_8 == null ? "—" : percent(iocSummary.variants.full.top1_8);
+  const grid = $("#memory-grid");
+  grid.replaceChildren();
+  if (!memoryCases.length) {
+    $("#memory-case-title").textContent = language === "fr" ? "Cas locaux indisponibles" : "Local cases unavailable";
+    return;
+  }
+  const row = memoryCases[memoryCaseIndex];
+  $("#memory-case-index").textContent = `${String(memoryCaseIndex + 1).padStart(2, "0")} / ${memoryCases.length}`;
+  $("#memory-case-title").textContent = copy[language].memory_case(memoryCaseIndex + 1, memoryCases.length, row);
+  for (let y = 7; y >= 0; y--) for (let x = 0; x < 8; x++) {
+    const cell = y * 8 + x;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "memory-cell";
+    button.setAttribute("role", "gridcell");
+    button.setAttribute("aria-label", `${language === "fr" ? "Case" : "Cell"} ${x + 1}, ${y + 1}`);
+    if (memoryChoice === cell) button.classList.add("choice");
+    if (memoryRevealed && row.predicted_cell8 === cell) button.classList.add("model");
+    if (memoryRevealed && row.observed_cell8 === cell) button.classList.add("actual");
+    button.addEventListener("click", () => { if (!memoryRevealed) { memoryChoice = cell; renderMemory(); } });
+    grid.append(button);
+  }
+  $("#memory-feedback").textContent = memoryRevealed
+    ? copy[language].memory_feedback(memoryChoice, row.predicted_cell8, row.observed_cell8)
+    : memoryChoice === null ? "" : `${language === "fr" ? "Votre choix" : "Your choice"} : ${memoryChoice}`;
 }
 
 function renderChallenge() {
@@ -1364,10 +1440,12 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
-  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality] = payloads;
+  let memoryPayload;
+  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload] = payloads;
+  memoryCases = memoryPayload?.examples || [];
   renderIocResult();
   if (summary && (atlas512 || grid64)) renderSurface();
   if (atlas512 || events64) renderAtlas();
@@ -1378,6 +1456,8 @@ async function start() {
   if (eventAblation) renderResearchEvents();
   if (worldFinals) renderFinals();
   if (corpusData) renderCorpus();
+  if (eventValidation) renderEventValidation();
+  if (memorySummary) renderMemory();
   showSharedMinute();
   await loadGameList();
   try {
@@ -1455,6 +1535,8 @@ $("#atlas-canvas").addEventListener("mousemove", (event) => {
 $("#atlas-canvas").addEventListener("mouseleave", () => { if (atlas512 || events64) $("#atlas-readout").textContent = copy[language].atlas_hover; });
 $("#challenge-response").addEventListener("input", () => { if (challengeData) renderChallenge(); });
 $("#challenge-sharing").addEventListener("input", () => { if (challengeData) renderChallenge(); });
+$("#memory-reveal").addEventListener("click", () => { if (memoryCases.length) { memoryRevealed = true; renderMemory(); } });
+$("#memory-next").addEventListener("click", () => { if (memoryCases.length) { memoryCaseIndex = (memoryCaseIndex + 1) % memoryCases.length; memoryChoice = null; memoryRevealed = false; renderMemory(); } });
 $("#surface-actual").addEventListener("click", () => { surfaceMode = "actual"; if (summary) renderSurface(); });
 $("#surface-shadow").addEventListener("click", () => { surfaceMode = "predicted"; if (summary) renderSurface(); });
 $("#angle-slider").addEventListener("input", () => { if (summary) renderSurface(); });
