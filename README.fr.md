@@ -14,11 +14,22 @@ Pipeline de recherche local visant à modéliser **les décisions macro de Faker
 
 Le dernier rafraîchissement Riot garde **465 timelines ranked KR**. L'alias EUW attribué à Faker lors des Worlds 2024 ajoute **31 timelines ranked** ; une copie publique de données professionnelles ajoute **671 résumés de parties sans trajectoires**, avec provenance incertaine et saison 2026 incomplète. La base sépare ces **1 167 enregistrements** en domaines. Un second modèle prédit le **premier événement macro dans les dix secondes suivantes** à partir du dernier état et des événements passés : **73 482 fenêtres KR** et **5 383 fenêtres EUW d'entraînement**. Sur 46 parties de validation KR, sa perte log atteint **1,3847** avec l'appoint EUW contre **1,4472** pour une règle de fréquence par phase. Ce n'est **pas** un suivi de position de Faker toutes les dix secondes ; le résultat spatial 512×512 ne change pas. [Sources, alias, méthode et limites](DATA_EXPANSION.md).
 
-Prochaine étape vérifiable : [pilote de replay aligné, ablation du contexte des rôles et évaluation de la vision réellement disponible](NEXT_RESEARCH.md).
+Prochaine étape vérifiable : [pilote de replay aligné, détection des événements rares et évaluation de la vision réellement disponible](NEXT_RESEARCH.md). L'ablation du contexte des rôles est terminée.
 
 ![Ablation des distances alliées et adverses pour le modèle d'événements](docs/figures/event_context_ablation.png)
 
 À capacité égale, les distances alliées/adverses échantillonnées à la minute n'ont **pas amélioré** la prédiction globale de l'événement suivant à dix secondes sur la validation actuelle. Le modèle complet obtient **F1 = 0** pour les kills de Faker, ses morts et les objectifs : l'accuracy globale reflète surtout les wards. Cela ne mesure pas l'importance stratégique de ces rôles. [Scores et limites](NEXT_RESEARCH.md#first-completed-experiment-role-context-ablation).
+
+```mermaid
+flowchart LR
+  A["Aujourd'hui : 465 timelines KR<br/>positions ~60 s"] --> B["Un replay Faker assorti<br/>vérifier horloge et carte"]
+  B --> C["Pilote cinq parties<br/>positions + contexte visible"]
+  C --> D["Nouveau split par partie<br/>baseline spatiale à 10 s"]
+  A --> E["Horloge d'événements actuelle<br/>précision / rappel par classe rare"]
+  E --> F["Nouvelle cohorte prospective"]
+```
+
+Le [panneau de recherche du site](#tableau-de-bord-visuel) montre **les neuf classes d'événements**, dont 3 934 wards posées sur 7 480 fenêtres de validation KR. Il charge uniquement [les agrégats publiés](docs/data/public_event_ablation.json). Aucun replay Faker assorti d'une partie n'a encore été acquis.
 
 Une commande relance cette extension après la préparation du pipeline local : `.venv/bin/python scripts/run_expansion.py`. Elle reprend les caches, teste cinq parties, entraîne les variantes et recrée le graphique agrégé.
 
@@ -103,6 +114,8 @@ Les graphiques et bannières proviennent de [résultats agrégés publics](docs/
 ## Tableau de bord visuel
 
 Après installation, lancer le serveur local et ouvrir [http://127.0.0.1:8008/](http://127.0.0.1:8008/). L'interface FR/EN compare **Faker observé, Shadow et niveau de preuve**, avec carte interactive, surface 3D, tempo et hypothèses de stratégie. Le rejeu d'une partie du test et le GIF apparaissent si le pipeline a déjà produit ses fichiers locaux.
+
+L'ouverture directe de [dashboard/index.html](dashboard/index.html) en `file://` sert désormais de **lanceur** : redirection vers le serveur local s'il tourne, sinon commande de démarrage visible. Les graphiques interactifs ont besoin de ce serveur pour les JSON agrégés autorisés et le rejeu privé facultatif. Le nouveau panneau de recherche rend visibles les échecs par classe et les prochaines preuves à obtenir.
 
 ```bash
 .venv/bin/python scripts/serve_dashboard.py

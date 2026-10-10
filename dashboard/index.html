@@ -5,6 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#100c13">
   <title>Shadow Faker · Five Star Research Edition</title>
+  <script>
+    // The dashboard needs its allowlisted local API. A direct file open is a launcher.
+    if (location.protocol === "file:") {
+      window.addEventListener("DOMContentLoaded", () => {
+        const hash = location.hash || "#top";
+        const target = "http://127.0.0.1:8008/" + hash;
+        const launcher = document.createElement("div");
+        launcher.setAttribute("role", "status");
+        launcher.style.cssText = "position:fixed;z-index:9999;inset:0;display:grid;place-items:center;padding:24px;background:#100c13;color:#fff8f5;font:16px system-ui";
+        launcher.innerHTML = '<div style="max-width:630px;padding:32px;border:1px solid #ff536b;background:#24141f"><strong style="color:#ff8094;letter-spacing:.12em">SHADOW FAKER · LOCAL DASHBOARD</strong><h1 style="font-size:32px">Ouvrir le tableau de bord local</h1><p>La page utilise des agrégats et un rejeu servis sur votre Mac. Lancez le serveur depuis le dépôt, puis ouvrez l’adresse ci-dessous.</p><code style="display:block;padding:14px;background:#100c13;overflow:auto">.venv/bin/python scripts/serve_dashboard.py</code><p><a id="dashboard-launch" style="color:#ffd895" href="http://127.0.0.1:8008/">http://127.0.0.1:8008/ ↗</a></p><small>Open the local server to load charts and optional private replays.</small></div>';
+        document.body.append(launcher);
+        launcher.querySelector("#dashboard-launch").href = target;
+        const probe = new Image();
+        probe.onload = () => location.replace(target);
+        probe.src = "http://127.0.0.1:8008/figures/readme_hero_fr.svg?" + Date.now();
+      });
+    }
+  </script>
   <link rel="stylesheet" href="/style.css">
   <script defer src="/app.js"></script>
 </head>
@@ -15,6 +33,7 @@
       <a href="#atlas" data-i18n="nav_atlas">Atlas 512×512</a>
       <a href="#map" data-i18n="nav_map">Legacy 16×16</a>
       <a href="#surface">3D</a>
+      <a href="#research" data-i18n="nav_research">Recherche</a>
       <a id="replay-nav" href="#replay" data-i18n="nav_replay" hidden>Évolution</a>
       <a href="#tempo" data-i18n="nav_tempo">Tempo</a>
       <a href="#strategy" data-i18n="nav_strategy">Stratégies</a>
@@ -109,6 +128,20 @@
       <div class="figure-card"><img src="/figures/grid64_observed_vs_predicted.png" alt="Observed versus predicted destinations on the historical 64 by 64 map" loading="lazy"></div>
       <div class="figure-card"><img src="/figures/benchmark_scales.png" alt="Accuracy of Shadow Faker and strongest baselines across map scales" loading="lazy"></div>
       <div class="explain-grid"><p data-i18n="exact_explain"><strong>16×16 :</strong> Shadow 11,28 %, baseline 11,61 %. Le critère initial n'est pas atteint.</p><p data-i18n="coarse_explain"><strong>8×8 et 4×4 :</strong> un signal de rotations plus larges apparaît, mais il a été examiné après lecture du test. Il faut des parties futures.</p></div>
+    </section>
+
+    <section class="section wrap" id="research">
+      <div class="section-heading"><div><span class="kicker">05B / NEXT EVIDENCE GATE</span><h2 data-i18n="research_title">Ce qu'il faut observer ensuite</h2></div><span class="pill caution" data-i18n="research_badge">Pas de promesse à 90 %</span></div>
+      <p class="lead" data-i18n="research_intro">Le score global d'événements masque ce que le modèle manque : les wards sont majoritaires, et les événements décisifs restent mal reconnus. Les trois étapes suivantes partent d'un test falsifiable, pas d'une grille plus fine.</p>
+      <div class="research-track">
+        <article><span>01 / REPLAY</span><strong data-i18n="research_replay_metric">1 → 5 parties</strong><h3 data-i18n="research_replay_title">Aligner avant d'entraîner</h3><p data-i18n="research_replay_copy">Une partie de Faker avec replay et match ID vérifiés, puis cinq. Comparer positions, horloges et wards aux ancres Riot ; jamais inventer ses clics ou sa vision.</p></article>
+        <article><span>02 / EVENTS</span><strong id="research-f1">F1 = 0</strong><h3 data-i18n="research_events_title">Mesurer les événements rares</h3><p data-i18n="research_events_copy">Kills de Faker, morts et objectifs : précision/rappel par classe, calibration et abstention. La validation actuelle est exploratoire.</p></article>
+        <article><span>03 / VISION</span><strong data-i18n="research_vision_metric">t → t+1</strong><h3 data-i18n="research_vision_title">Revenir au point de vue du joueur</h3><p data-i18n="research_vision_copy">Comparer la carte visible pour l'équipe, notre proxy et la vue spectateur sur les mêmes parties. Les communications restent inconnues sans source dédiée.</p></article>
+      </div>
+      <div class="research-evidence">
+        <div><span class="kicker" data-i18n="research_chart_kicker">46 PARTIES KR · 7 480 FENÊTRES · MODÈLE KR SEUL</span><h3 data-i18n="research_chart_title">Ce que l'accuracy globale cache</h3><p data-i18n="research_chart_intro">Chaque ligne montre le nombre de cibles observées et le F1 du modèle complet pour ce type d'événement. Les barres sont des scores F1, pas des probabilités de victoire.</p><div id="research-event-chart" class="research-event-chart" aria-live="polite"></div><p class="fine" data-i18n="research_chart_limit">Même validation réutilisée pendant le développement ; aucun score prospectif. Un F1 nul signale ici qu'aucune prédiction correcte de cette classe n'a été récupérée au seuil top-1.</p></div>
+        <div class="research-aside"><span data-i18n="research_ward_label">Cibles « ward posée »</span><strong id="research-ward-share">52,6 %</strong><p data-i18n="research_ward_copy">3 934 fenêtres sur 7 480. L'accuracy d'environ 54 % ne signifie pas que Shadow anticipe les décisions qui font gagner.</p><a class="text-link" href="https://github.com/nabz0r/shadowfaker/blob/main/NEXT_RESEARCH.md" target="_blank" rel="noopener" data-i18n="research_doc">Lire le protocole de recherche ↗</a></div>
+      </div>
     </section>
 
     <section class="section wrap" id="tempo">

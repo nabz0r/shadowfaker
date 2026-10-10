@@ -126,3 +126,10 @@ Risques : forte sparsité (12 510 transitions pour 262 144 cases), exactitude at
 - Garder le même classifieur, seed, parties KR train/validation et nombre de paramètres ; masquer des canaux à zéro **à l'entraînement et à la validation**. Comparer au modèle KR complet, jamais au test historique. Pilote 3/2 parties avant 373/46.
 - Mesure : perte log pondérée par nombre de fenêtres et différence appariée bootstrap par match ; macro F1 et classes rares en diagnostics. Un effet observé reste prédictif, pas une attribution causale à Faker.
 - Artefacts détaillés et pertes par match restent locaux ; seuls les scores agrégés entrent dans Git. Conserver le lockbox prospectif intact.
+
+## M5b — accès et lecture des preuves sur le site (2026-10-10)
+
+- Un fichier `dashboard/index.html` ouvert en `file://` ne peut pas charger le backend local et ses routes absolues. Le traiter comme un lanceur qui sonde `127.0.0.1:8008` et donne la commande de démarrage si le serveur n'est pas disponible.
+- Exposer exclusivement l'agrégat public de l'ablation via une nouvelle route autorisée. Tracer les neuf classes avec leur fréquence et F1, distinguer le modèle KR seul du modèle avec appoint EUW et nommer la validation réutilisée.
+- Rendre les prochaines preuves visibles : une partie replay assortie, cinq parties alignées, puis baseline spatiale à dix secondes ; en parallèle, mesurer précision/rappel des événements rares et contexte visible par Faker. Garder les hypothèses séparées des résultats.
+- Synchroniser README EN/FR, RESULTS, ROADMAP, NEXT_RESEARCH et PROGRESS. Vérifier serveur, fichier local, langues FR/EN, mobile, absence de fuite brute, tests et `main` distant.

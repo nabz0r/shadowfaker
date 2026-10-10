@@ -16,11 +16,22 @@ The latest refresh still returns **465 usable KR ranked timelines**. A historica
 
 Run the new expansion from a prepared local pipeline with one command: `.venv/bin/python scripts/run_expansion.py`. It caches Riot and CSV inputs, pilots five games first, trains both event variants and renders the aggregate figure. The pro CSV mirror is labelled separately and never enters the event model.
 
-Next evidence gate: [matched replay feasibility, role-context ablation and player-visible evaluation](NEXT_RESEARCH.md).
+Next evidence gate: [matched replay alignment, rare-event detection and player-visible evaluation](NEXT_RESEARCH.md). The role-context ablation is complete.
 
 ![Whether role-distance features improve the ten-second event model](docs/figures/event_context_ablation.png)
 
 An equal-capacity ablation on the KR development split found **no gain** from the current minute-spaced ally/opponent distance proxies for the ward-heavy ten-second event target. The full model scores **F1 = 0** on Faker kills, Faker deaths and objectives: global accuracy mostly reflects wards. That result does not establish the roles' strategic importance; [see the numbers and limits](NEXT_RESEARCH.md#first-completed-experiment-role-context-ablation).
+
+```mermaid
+flowchart LR
+  A["Now: 465 KR timelines<br/>positions ~60 s"] --> B["One matched Faker replay<br/>verify clock and map alignment"]
+  B --> C["Five-game pilot<br/>positions + visible context"]
+  C --> D["New match-level split<br/>10-second spatial baseline"]
+  A --> E["Existing event clock<br/>rare-class precision / recall"]
+  E --> F["New prospective event cohort"]
+```
+
+The [site's research panel](#visual-dashboard) plots **all nine event classes**, including the 3,934 ward-placement targets out of 7,480 KR validation windows. It loads only [published aggregates](docs/data/public_event_ablation.json). A replay pilot needs an authorized matched file; no such replay has been acquired yet.
 
 **Measured status:** 465 usable ranked matches and 12,510 observations were collected from the available 470 match IDs. The selected model predicts the exact next 16×16 region in 11.28% of held-out test observations, versus 11.61% for a train-only role/phase prior. The requested clear exact-region baseline win has **not** been demonstrated. An exploratory pooling of predictions into 8×8 and 4×4 macro regions shows a positive signal that requires a fresh confirmatory test. Purchases and skill upgrades exceed their no-event baselines after validation calibration. Exact figures and limits are in [RESULTS.md](RESULTS.md).
 
@@ -111,6 +122,8 @@ The public figures and README banners use [published aggregate counts and metric
 ## Visual dashboard
 
 Run the local dashboard after setup, then open [http://127.0.0.1:8008/](http://127.0.0.1:8008/). It shows the **observed account, Shadow and evidence side by side** in French or English. It uses the published aggregates for its public views. If the full pipeline has run, a held-out match replay and GIF are served locally from ignored files.
+
+Opening [dashboard/index.html](dashboard/index.html) as a `file://` page now acts as a **launcher**: it redirects to the running local server or displays the start command. The interactive dashboard needs that server for its allowlisted aggregate JSON and optional private replay. The research panel explains the current rare-event failure and links the next evidence protocol.
 
 ```bash
 .venv/bin/python scripts/serve_dashboard.py
