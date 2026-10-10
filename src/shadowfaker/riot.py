@@ -23,8 +23,14 @@ class RiotError(RuntimeError):
 
 class RiotClient:
     BASE = "https://asia.api.riotgames.com"
+    ROUTES = {"asia", "europe", "americas", "sea"}
 
-    def __init__(self, key: str | None = None, raw: Path | None = None, spacing: float = 1.3):
+    def __init__(self, key: str | None = None, raw: Path | None = None, spacing: float = 1.3,
+                 routing: str = "asia"):
+        if routing not in self.ROUTES:
+            raise ValueError(f"Unknown Riot regional routing: {routing}")
+        self.routing = routing
+        self.base = f"https://{routing}.api.riotgames.com"
         self.key = key or os.getenv("RIOT_API_KEY", "")
         if not self.key:
             raise RiotError(0, f"RIOT_API_KEY absent. Add it to {CONFIG.root / '.env'} and rerun.")
@@ -61,7 +67,7 @@ class RiotClient:
         for attempt in range(7):
             self._pace()
             try:
-                response = self.session.get(self.BASE + path, params=params, timeout=(8, 30))
+                response = self.session.get(self.base + path, params=params, timeout=(8, 30))
             except requests.RequestException as exc:
                 if attempt == 6:
                     raise RiotError(0, f"Network failure after retries: {exc}") from exc
@@ -104,6 +110,8 @@ class RiotClient:
         if snapshot is not None and not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", snapshot):
             raise ValueError("snapshot must contain only letters, digits, underscores or hyphens")
         cache_dir = self.raw / "ids" / identity
+        if self.routing != "asia":
+            cache_dir = cache_dir / "routes" / self.routing
         if queue is None:
             cache_dir = cache_dir / "all_queues"
         if snapshot is not None:

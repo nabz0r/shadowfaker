@@ -177,6 +177,22 @@ The interaction candidate (540,196 parameters, seed 42, 25 epochs, CPU chosen af
 
 The first same-PUUID all-queue audit found **519 match IDs**: 470 queue-420 ranked and 49 other-mode games. The latter are excluded from ranked model scores. The published event atlas and chart use only aggregate ranked counts; raw match detail and per-game traces remain local.
 
+## New ten-second event target and added games (2026-10-10)
+
+![Three separate game sources, ten-second event rates and held-out validation](docs/figures/corpus_event_clock.png)
+
+The renewed KR snapshot still has **470 ranked IDs / 465 usable games**, with zero additional matches. A [Worlds 2024 EUW account attribution](https://www.sheepesports.com/de/all/articles/lol-2024-worlds-players-accounts-on-euw-server/en) led to **31/31 queue-420 EUW timelines**. Three other community-listed EUW/NA aliases resolved by Riot but yielded zero available ranked IDs. A separately labelled, unverified [public mirror of professional match summaries](https://github.com/twodotone/finalLOL/tree/main/data/csv) supplied **671 Faker/T1/mid game rows** from 2022–2026; its 2026 file ends in April and contains no trajectory. The private local catalog stores source hashes and dates. The corresponding [source and identity audit](DATA_EXPANSION.md) explains why these domains are not pooled as 1,167 spatial games.
+
+A new 22,537-parameter model predicts the **first marked macro event during the next 10 seconds** using only the latest available player frame and past event timestamps. The task has **73,482 KR windows** (58,974 train / 7,480 validation / 7,028 historical test, with test **unread** here), plus **5,383 EUW training-only windows**. Event locations can refer to a victim, monster or structure and are **not** extra measurements of Faker's position. The original 512×512 destination model is unchanged.
+
+| Same 46 KR validation matches | 10 s log loss ↓ | Top-1 | Macro F1 |
+|---|---:|---:|---:|
+| Train-only phase frequency | 1.4472 | 52.59% | 7.66% |
+| KR-only event model | 1.3923 | 53.98% | 12.33% |
+| KR + EUW auxiliary training | **1.3847** | **54.44%** | **13.16%** |
+
+The 2024 EUW supplement improves development log loss by **0.00765**, match-bootstrap 95% interval **[0.00294, 0.01264]**. This interval uses the same validation matches that selected epochs and compared models; it is not prospective confirmation. **37,171 KR windows (50.6%)** have `ward_placed` as their first marked event, so a 54.44% top-1 number alone says little about kills or objective timing. The figure shows observed versus predicted event risk in two-minute bins; it is a population aggregate, not a live Faker POV or play-by-play.
+
 ### Time-linked visual audit
 
 The public 64×64 test histograms are now split by starting minute: **460** decisions at 0–10 min, **437** at 10–20 min, and **300** at 20+ min. They sum to the same 1,197 test decisions and reproduce the original observed and predicted all-phase histogram **cell by cell**. The sticky dashboard scrubber synchronizes these aggregates with observed opponent pressure, five-minute tempo, one selected game and a clearly synthetic scenario marker. These are different cohorts and resolutions, so a cursor at minute 13 means *the 10–20 minute aggregate* on the atlas and *the nearest available frame* in the open game. It is not a second-by-second reconstruction.

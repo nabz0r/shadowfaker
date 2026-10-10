@@ -4,9 +4,17 @@
 
 [**Open the visual dashboard locally**](#visual-dashboard) · [**Explore the 512×512 atlas**](#a-512512-atlas-and-its-accuracy-limit) · [**Read the evidence**](RESULTS.md) · [**Français**](README.fr.md)
 
-**A reproducible, local research pipeline for Faker-style macro decisions in League of Legends.** It currently predicts the next 16×16 map region, first item purchase, and skill upgrade from ranked solo-queue timelines sampled roughly **once per minute**. The research target is prediction at **less than a minute**, which requires higher-frequency replay or player-view evidence and a new benchmark. Only actions of the account resolved as `Hide on bush#KR1` are targets; the other nine players provide context. Riot account-v1 confirms the Riot ID and PUUID, but cannot establish a person's identity by itself.
+**A reproducible, local research pipeline for Faker-style macro decisions in League of Legends.** Its spatial model predicts the next 16×16 map region, first item purchase, and skill upgrade from ranked solo-queue timelines sampled roughly **once per minute**. A separate ten-second head predicts event types; predicting Faker's **position or decision** below a minute still requires higher-frequency replay or player-view evidence and a new benchmark. Only actions of the account resolved as `Hide on bush#KR1` are targets in the original spatial model; the other nine players provide context. Riot account-v1 confirms the Riot ID and PUUID, but cannot establish a person's identity by itself.
 
 The longer-term goal is a **Shadow Plus** policy that could improve on this behavioral prior. Prediction accuracy on old matches does not establish stronger play. [SHADOW_PLUS.md](SHADOW_PLUS.md) defines the evidence needed for that claim. [Version française](README.fr.md).
+
+### New: more games, a faster prediction target
+
+![Separate game domains, ten-second event frequencies and validation scores](docs/figures/corpus_event_clock.png)
+
+The latest refresh still returns **465 usable KR ranked timelines**. A historically attributed EUW Worlds 2024 alias adds **31 ranked timelines**; a public, unverified and partly stale professional-data mirror adds **671 match summaries without trajectories**. The database now distinguishes these sources instead of treating all **1,167 game records** as equivalent. A second model predicts the **first macro event in the next 10 seconds** from the latest frame and past events: **73,482 KR windows**, plus **5,383 EUW training windows**. On 46 KR validation matches, its log loss is **1.3847** with EUW auxiliary training versus **1.4472** for a train-only phase rule. This is event prediction, not 10-second Faker position tracking; the original exact 512×512 position result remains unchanged. [Evidence, aliases, scientific basis and caveats](DATA_EXPANSION.md).
+
+Run the new expansion from a prepared local pipeline with one command: `.venv/bin/python scripts/run_expansion.py`. It caches Riot and CSV inputs, pilots five games first, trains both event variants and renders the aggregate figure. The pro CSV mirror is labelled separately and never enters the event model.
 
 **Measured status:** 465 usable ranked matches and 12,510 observations were collected from the available 470 match IDs. The selected model predicts the exact next 16×16 region in 11.28% of held-out test observations, versus 11.61% for a train-only role/phase prior. The requested clear exact-region baseline win has **not** been demonstrated. An exploratory pooling of predictions into 8×8 and 4×4 macro regions shows a positive signal that requires a fresh confirmatory test. Purchases and skill upgrades exceed their no-event baselines after validation calibration. Exact figures and limits are in [RESULTS.md](RESULTS.md).
 

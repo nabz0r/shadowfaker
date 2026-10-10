@@ -104,10 +104,16 @@ The all-queue PUUID listing reached **519 IDs**, but the 49 additional matches a
 
 | Next research gate | Required evidence | Current status |
 |---|---|---|
-| Comparable game growth | New verified queue-420 games for the same PUUID or separately evaluated accounts/domains | Same PUUID has **0 fresh ranked**; 49 other modes must remain separate. |
+| Comparable game growth | New verified queue-420 games for the same PUUID or separately evaluated accounts/domains | Same KR PUUID has **0 fresh ranked**; **31 EUW** historically attributed ranked timelines are isolated; **671 pro summaries** have no trajectories; 49 other modes remain separate. |
 | Observed opponent response | Enemy trajectories, objective trades and exposure at matched states | Proximity and arrivals indexed; no causal resource-spend claim. |
 | Better predictive interactions | Validation gain over frozen model, followed by a new future lockbox | First 13-channel candidate is **8.71%** 16×16 validation versus frozen **10.59%**. Hierarchical global-field proxy: **17.49%** 8×8 validation, versus old frozen **17.33%** on the same split; visibility proxy **16.86%**. Differences are tiny and adaptively selected. No M3 test score. |
 | Sub-minute temporal model | Lawfully sourced replay/POV positions and timestamps with perspective provenance | Riot timelines still sample positions about every 60 seconds. Events alone cannot infer every-second positions. |
 | Strategy challenge | A calibrated environment or comparable played-game outcomes, with opponent adaptation and uncertainty | Five formation curves are synthetic, not win probabilities. |
 
 Future high-elo pretraining, professional match annotation, video transcription and multilingual public analysis require source rights, domain labels, match alignment and separate validation. The 2013 Nidalee–Kha'Zix debut case is a **professional spring game**, not a Worlds sample; it is a documented historical study, not an extra ranked training observation. An offline state vector or full-match summary may aid retrieval but cannot be silently injected into `state_t` when it contains later information.
+
+### M4 delivered: event clock and three-domain catalog
+
+See [DATA_EXPANSION.md](DATA_EXPANSION.md) for the source table, 10-second causal target, validation chart and reproducibility command. The event model has **73,482 KR** and **5,383 attributed EUW** ten-second windows, versus **12,510 KR minute-to-minute spatial targets**. On the development KR validation set, KR+EUW reaches **1.3847 log loss** versus **1.4472** for a train-only phase-frequency rule. The 671 professional records contribute **metadata only**. No new exact spatial labels were created by interpolation.
+
+The next gates are (1) a provider-original professional feed or legally sourced, time-aligned replay with exact positions and visibility; (2) a fresh event-model test cohort frozen before collection; (3) ablation of dynamic jungle/support/bot/opponent neighborhoods at equal capacity; (4) a [When Agents Rule-inspired](https://github.com/asp67/when-agents-rule) challenge protocol with identical scenarios, explicit action budget, latency, legal-action validator and JSONL transcript. A scenario harness must remain labelled synthetic until calibrated against played League matches. Multi-region account attribution must be refreshed when an alias changes hands; PUUID equality and dates are logged locally, and an external source is still needed to link a person to an account.

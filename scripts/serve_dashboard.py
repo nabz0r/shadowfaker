@@ -23,7 +23,8 @@ FIGURES = frozenset({"faker_vs_shadow_minimap.png", "benchmark_scales.png",
 FIGURES = FIGURES | frozenset({"grid64_observed_vs_predicted.png", "event_atlas64.png",
                                "enemy_pressure.png", "challenge_scenarios.png",
                                "predictability_gap.png", "hierarchical_ablation.png",
-                               "atlas512_validation.png", "atlas512_events.png"})
+                               "atlas512_validation.png", "atlas512_events.png",
+                               "corpus_event_clock.png"})
 ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/app.js": ROOT / "dashboard" / "app.js",
           "/style.css": ROOT / "dashboard" / "style.css",
