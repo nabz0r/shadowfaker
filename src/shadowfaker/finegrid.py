@@ -159,13 +159,20 @@ class Grid64Transformer(nn.Module):
         yy, xx = torch.meshgrid(torch.arange(GRID), torch.arange(GRID), indexing="ij")
         self.register_buffer("centers", torch.stack(((xx.flatten() + .5) / GRID, (yy.flatten() + .5) / GRID), dim=1).float())
 
-    def forward(self, x, champion):
+    def encode(self, x, champion):
         h = self.numeric(x) + self.champion(champion.clamp(0, 999))[:, None, :]
         h = h + self.time(torch.arange(x.shape[1], device=x.device))[None]
         h = self.norm(self.encoder(h)[:, -1])
         next_xy = (x[:, -1, 17:19] + .35 * torch.tanh(self.xy(h))).clamp(0, 1)
+        return h, next_xy
+
+    def forward(self, x, champion):
+        h, next_xy = self.encode(x, champion)
+        return self.logits_from_encoded(h, next_xy), next_xy
+
+    def logits_from_encoded(self, h, next_xy):
         dist = ((next_xy[:, None] - self.centers[None]) ** 2).sum(-1)
-        return self.region(h) - F.softplus(self.distance_scale) * 18 * dist, next_xy
+        return self.region(h) - F.softplus(self.distance_scale) * 18 * dist
 
 
 def coarse_logits(logits: torch.Tensor, grid: int = 16) -> torch.Tensor:

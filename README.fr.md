@@ -2,7 +2,7 @@
 
 # Shadow Faker
 
-[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Explorer la surface 3D**](#le-paysage-des-prochains-mouvements) · [**Lire les résultats**](RESULTS.md) · [**English**](README.md)
+[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Explorer l'atlas 512×512**](#atlas-512512--résultat-mesuré) · [**Lire les résultats**](RESULTS.md) · [**English**](README.md)
 
 La [documentation anglaise](README.md) est la version internationale de référence pour les résultats et la calibration les plus récents.
 
@@ -22,7 +22,17 @@ Un modèle avec trois têtes spécialisées début/milieu/fin a aussi été entr
 
 ## Ce qui est mesuré aujourd'hui
 
-### Atlas 64×64 et écosystème des dix joueurs
+### Atlas 512×512 : résultat mesuré
+
+![Destinations observées et prédites à 512×512 sur les parties de validation](docs/figures/atlas512_validation.png)
+
+La grille principale contient **512×512 vraies cases**, soit 262 144 destinations possibles. Une tête conditionnelle de 25 280 paramètres choisit une des 64 sous-cases d'un parent 64×64 gelé. Un pilote de cinq parties a validé l'alignement des labels. Sur **46 parties / 1 275 transitions de validation**, elle obtient **0,00 % de case exacte**, contre **0,63 %** en copiant la position précédente et **0,31 %** pour la case la plus fréquente du train. À 16 cases fines de distance, Shadow atteint **8,94 %** contre **7,29 %** pour la copie. L'intervalle bootstrap par match du gain exact contre la meilleure règle simple est **−1,04 à −0,32 point**. Ce modèle reste un candidat de développement : ni l'ancien test ni le futur lockbox ne sont évalués. Chaque case mesure environ 29 unités de jeu de côté ; les positions restent observées à ~60 s.
+
+![Géographie agrégée des événements classés sur une toile 512×512](docs/figures/atlas512_events.png)
+
+L'atlas interactif local conserve les comptes *sparse* 512 des destinations, des dix joueurs et des événements pour **465 ranked**. La figure publique regroupe les événements rares en blocs **16×16**, masque les blocs contenant moins de trois événements, puis les lisse pour l'affichage. Le JSON d'atlas local, les parties, les poids et les traces restent exclus du dépôt. [Protocole et diagnostic](RESULTS.md#512512-development-atlas-and-prediction).
+
+### Archive 64×64 et écosystème des dix joueurs
 
 ![Destinations réelles et prédites sur la grille historique 64×64](docs/figures/grid64_observed_vs_predicted.png)
 
@@ -86,9 +96,9 @@ Après installation, lancer le serveur local et ouvrir [http://127.0.0.1:8008/](
 .venv/bin/python -m shadowfaker.demo --max-frames 30
 ```
 
-Une **frise commune** reste visible pendant le défilement de la page. Son curseur (ou les flèches du clavier et la molette sur ce curseur) synchronise l'atlas 64×64, la surface 3D, le tempo, la pression adverse, la minute du rejeu et le repère du scénario synthétique. Le code couleur reste affiché. Les cartes Faker/Shadow agrègent **46 parties du test** par phase : **460 destinations entre 0 et 10 min, 437 entre 10 et 20 min, 300 après 20 min**. Les couches de joueurs et événements agrègent **465 ranked** ; le rejeu correspond à **une partie** et s'arrête à sa dernière frame. Les anciens visuels 16×16 et les scores historiques sont signalés comme fixes, car leur évolution par minute n'a pas été conservée. Le curseur ne crée pas de positions intermédiaires à la seconde.
+Une **frise commune** reste visible pendant le défilement de la page. Son curseur (ou les flèches du clavier et la molette sur ce curseur) synchronise l'atlas **512×512 local**, la surface 3D, le tempo, la pression adverse, la minute du rejeu et le repère du scénario synthétique. Le code couleur reste affiché. Les destinations Faker/Shadow de cette nouvelle carte agrègent **46 parties de validation** par phase : **460 destinations entre 0 et 10 min, 443 entre 10 et 20 min, 372 après 20 min**. Les couches de joueurs et événements agrègent **465 ranked** ; le rejeu correspond à **une partie avec l'ancien modèle 16×16** et s'arrête à sa dernière frame. Le champ géométrique local garde sa grille historique 64×64, explicitement nommée. Sans l'atlas local, l'interface indique son repli 64×64 historique. Les anciens scores restent fixes. Le curseur ne crée pas de positions intermédiaires à la seconde.
 
-Dans « Ce qu'on sait vraiment prédire », le nouveau panneau **8×8 de validation** montre la précision exacte, le coût spatial de 90 % de couverture et trois candidats par phase. Les barres suivent la frise commune. Elles proviennent de **46 parties de validation distinctes** et ne doivent pas être mélangées aux **46 parties du test historique** affichées dans l'atlas.
+Dans « Ce qu'on sait vraiment prédire », le panneau 512 donne le résultat exact et ses baselines. Le panneau **8×8 de validation** montre la précision exacte, le coût spatial de 90 % de couverture et trois candidats par phase. Les barres suivent la frise commune. Ces métriques de développement ne doivent pas être mélangées aux **46 parties du test historique** affichées dans les archives 16/64.
 
 Le serveur écoute sur `127.0.0.1` et ne sert que les visuels publics et les fichiers de rejeu locaux autorisés. Les traces par partie restent exclues de Git. [Code de l'interface](dashboard/), [générateur des visuels](scripts/render_results.py), [analyse des résultats](RESULTS.md).
 
@@ -110,7 +120,7 @@ cp .env.example .env
 .venv/bin/python scripts/run_next_level.py --limit 1000 --epochs 25
 ```
 
-Si `pip` n'est pas disponible dans le venv, utiliser `uv pip install --python .venv/bin/python -r requirements.txt -e .`. La commande unique exécute d'abord **toutes les phases sur cinq parties**, puis la collecte cible, le parsing, l'entraînement, l'évaluation et le GIF. Elle construit ensuite l'atlas 64×64, la matrice des dix joueurs, les variables d'interaction entraînables, l'index vectoriel, les résumés bilingues et les visuels. Elle reprend les JSON, les NPZ et les checkpoints déjà écrits. On peut la relancer après une interruption ou après avoir remplacé une clé expirée dans `.env`. Le test 64×64 historique est documenté comme déjà examiné ; la nouvelle variante d'interaction n'est évaluée que sur validation.
+Si `pip` n'est pas disponible dans le venv, utiliser `uv pip install --python .venv/bin/python -r requirements.txt -e .`. La commande unique exécute d'abord **toutes les phases sur cinq parties**, puis la collecte cible, le parsing, l'entraînement, l'évaluation et le GIF. Elle construit ensuite les atlas 64×64 et **512×512**, la matrice des dix joueurs, les variables d'interaction entraînables, l'index vectoriel, les résumés bilingues et les visuels. Après entraînement du parent 64, elle teste l'adaptateur 512 sur cinq parties avant de passer à 373 parties de train et 46 de validation. Elle reprend les JSON, les NPZ et les checkpoints déjà écrits. On peut la relancer après une interruption ou après avoir remplacé une clé expirée dans `.env`. Le test 64×64 historique est déjà examiné ; les variantes 512 et d'interaction ne sont évaluées que sur validation.
 
 Pour un essai réel limité à cinq parties :
 

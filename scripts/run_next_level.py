@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resume the local ranked pipeline and its 64x64 ecosystem in one command.
+"""Resume the local ranked pipeline and its high-resolution ecosystem in one command.
 
 Raw Riot files, per-match traces, indexes, and checkpoints stay in ignored paths.
 The historical 64x64 test is descriptive; the interaction candidate is scored
@@ -17,6 +17,8 @@ from shadowfaker.demo import export_trace
 from shadowfaker.events64 import aggregate
 from shadowfaker.finegrid import ROOT64, MODELS64, ARTIFACTS64
 from shadowfaker.finegrid import prepare as prepare64, train as train64, evaluate as evaluate64
+from shadowfaker.fine512 import train as train512, evaluate as evaluate512
+from shadowfaker.atlas512 import build as build_atlas512
 from shadowfaker.hierarchical import run as run_hierarchical
 from shadowfaker.transition_probe import run as run_transition_probe
 from shadowfaker.interaction_core import ROOT as INTERACTION
@@ -99,6 +101,17 @@ def main() -> None:
     test64 = evaluate64("test")
     stage(f"64x64 historical test: {test64['model_top1']:.4f} exact, best baseline {max(test64['baseline'].values()):.4f}; prospective claim pending.")
     command(sys.executable, CONFIG.root / "scripts" / "build_public_grid64.py")
+
+    pilot512 = train512(epochs=2, pilot=True)
+    pilot512_score = evaluate512(pilot=True)
+    stage(f"512x512 five-game pilot: {pilot512['train_matches']} train + {pilot512['val_matches']} val games, {pilot512_score['samples']} targets; parent-label alignment passed.")
+    training512 = train512(epochs=min(args.epochs, 12))
+    score512 = evaluate512()
+    stage(f"512x512 development validation: {score512['matches']} games, {score512['samples']} targets; exact model={score512['model_top1']:.4f}, copy={score512['copy_previous_top1']:.4f}; test untouched.")
+    atlas512 = build_atlas512()
+    stage(f"512x512 sparse atlas: {atlas512['ranked_matches']} ranked games, {len(atlas512['errors'])} errors; sparse cells stay local.")
+    command(sys.executable, CONFIG.root / "scripts" / "build_public_grid512.py")
+    command(sys.executable, CONFIG.root / "scripts" / "render_atlas512.py")
 
     interaction = prepare_interaction()
     stage(f"Interaction training states: {interaction['observations']} pairs, {len(interaction['errors'])} errors.")

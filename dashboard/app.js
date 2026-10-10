@@ -1,8 +1,8 @@
 const copy = {
   fr: {
-    nav_atlas: "Atlas 64×64", nav_map: "16×16 historique", nav_replay: "Évolution", nav_tempo: "Tempo", nav_strategy: "Stratégies", nav_challenge: "Challenge", nav_library: "Archives", nav_evidence: "Preuves",
+    nav_atlas: "Atlas 512×512", nav_map: "16×16 historique", nav_replay: "Évolution", nav_tempo: "Tempo", nav_strategy: "Stratégies", nav_challenge: "Challenge", nav_library: "Archives", nav_evidence: "Preuves",
     time_title: "CHRONOLOGIE · FAIRE DÉFILER", key_faker: "Faker à t", key_real: "arrivée réelle", key_shadow: "choix Shadow", key_ally: "alliés", key_enemy: "adversaires", key_objective: "objectifs",
-    fixed_16: "Archive fixe : ancien modèle 16×16, toutes phases réunies. Sa prédiction par phase n'a pas été conservée ; la frise anime les vues 64×64 ci-dessus.",
+    fixed_16: "Archive fixe : ancien modèle 16×16, toutes phases réunies. Sa prédiction par phase n'a pas été conservée ; la frise anime les vues 512×512 de validation ci-dessus.",
     hero_eyebrow: "Laboratoire de décisions macro · KR ranked solo",
     hero_title: "Observer Faker.<br>Tester Shadow.",
     hero_copy: "Un modèle local prédit la prochaine décision du compte « Hide on bush#KR1 » à partir de l'état de la partie. Les autres joueurs, la vision approximée et les objectifs façonnent le contexte. L'objectif infra-minute reste une étape de recherche : les données actuelles sont espacées d'environ 60 secondes.",
@@ -13,22 +13,23 @@ const copy = {
     observed: "FAKER · OBSERVÉ", predicted: "SHADOW · PRÉDIT", less: "rare", more: "fréquent",
     map_insight: "Shadow sur-prédit une case centrale : 39,43 % de ses choix, contre 11,28 % des destinations réelles. La carte révèle une faiblesse concrète du modèle actuel.",
     atlas_title: "Le jeu, case par case et événement par événement", atlas_intro: "Choisis une couche et une phase. La couleur indique où se concentrent les positions ou les événements observés dans les ranked : kills, morts, Dragon, Nashor, Herald, Grubs, bâtiments et wards. Les wards sans coordonnées sont comptées mais pas placées sur la carte.",
-    atlas_layer: "Couche", atlas_phase: "Phase", atlas_positions_real: "Destinations observées", atlas_positions_model: "Destinations prédites", atlas_positions_enemy: "Positions adverses", atlas_positions_allies: "Positions alliées", atlas_faker_kill: "Kills du compte", atlas_faker_death: "Morts du compte", atlas_ally_kill: "Kills alliés", atlas_enemy_kill: "Kills adverses", atlas_building: "Bâtiments", atlas_ward: "Wards posées", atlas_early: "0–10 min", atlas_middle: "10–20 min", atlas_late: "20+ min", atlas_total: "Événements dans la phase", atlas_unplaced: "Sans position connue", atlas_note: "Les positions de la carte sont échantillonnées ~60 s ; les événements portent un timestamp plus précis. Cette carte agrège des parties, elle ne reconstitue ni la vision du joueur ni une partie unique.", atlas_hover: "Survole une case", atlas_cell: (x,y,n) => `Case ${x},${y} : ${n.toLocaleString("fr")} événements ou positions`,
-    surface_title: "La minimap devient une surface de choix", surface_intro: "Les axes au sol sont les coordonnées de la carte ; la hauteur est la fréquence d'une prochaine position. Tourne la surface et compare la distribution réelle à Shadow. La troisième dimension est une probabilité, pas le relief réel de LoL ni une preuve de stratégie gagnante.",
+    atlas_layer: "Couche", atlas_phase: "Phase", atlas_positions_real: "Destinations observées", atlas_positions_model: "Destinations prédites", atlas_positions_enemy: "Positions adverses", atlas_positions_allies: "Positions alliées", atlas_faker_kill: "Kills du compte", atlas_faker_death: "Morts du compte", atlas_ally_kill: "Kills alliés", atlas_enemy_kill: "Kills adverses", atlas_building: "Bâtiments", atlas_ward: "Wards posées", atlas_early: "0–10 min", atlas_middle: "10–20 min", atlas_late: "20+ min", atlas_total: "Événements dans la phase", atlas_unplaced: "Sans position connue", atlas_note: "Positions échantillonnées ~60 s ; événements horodatés plus finement. Les destinations 512×512 viennent de 46 parties de validation ; joueurs et événements de 465 ranked. Le halo rend les points visibles à l'écran, sans créer de mesures : le survol lit la case exacte. Cette carte agrège des parties, sans reconstituer la vision du joueur.", atlas_hover: "Survole une case", atlas_cell: (x,y,n) => `Case ${x},${y} : ${n.toLocaleString("fr")} ${n === 1 ? "événement ou position" : "événements ou positions"}`,
+    surface_title: "La minimap devient une surface de choix", surface_intro: "Les axes au sol sont les coordonnées de la carte ; la hauteur est la fréquence d'une prochaine position. Tourne la surface et compare la distribution réelle à Shadow. La troisième dimension est une fréquence agrégée, pas le relief réel de LoL ni une preuve de stratégie gagnante.",
     surface_actual: "Observé", surface_shadow: "Shadow", surface_rotate: "Angle de vue",
-    replay_title: "Une décision change le prochain état", replay_step: "Échantillonné chaque ~60 s",
-    replay_intro: "Une seule question par image : depuis la position du compte à la minute affichée, dans quelle case sera-t-il environ une minute plus tard ? Le fond coloré est la probabilité prédite ; les anneaux montrent la réponse et le choix le plus probable du modèle.",
+    replay_title: "Une décision change le prochain état", replay_step: "Rejeu historique 16×16 · ~60 s",
+    replay_intro: "Cette vue par partie utilise encore le modèle historique 16×16. À chaque frame : depuis la position actuelle, où sera le compte environ une minute plus tard ? Le fond coloré est sa probabilité prédite ; les anneaux montrent la réponse et son choix le plus probable. L'atlas 512×512 ci-dessus est un agrégat distinct de validation.",
     replay_now: "Départ : compte à la minute affichée", replay_team: "Contexte : autres alliés au départ", replay_real: "Arrivée réelle une minute après", replay_guess: "Case prévue par Shadow", replay_minute: "Minute de départ",
     replay_gold: "Écart d'or équipe", replay_xp: "Écart d'XP", replay_level: "Niveau", replay_uncertainty: "Dispersion de prédiction",
     replay_play: "▶ Rejouer", replay_pause: "Ⅱ Pause", replay_trend_note: "Courbe rétrospective de l'écart d'or ; elle n'entre jamais dans l'état passé du modèle.",
     game_picker: "Ouvrir une des 465 parties indexées", game_open: "Ouvrir la partie", ecosystem_title: "Écosystème des dix joueurs · projection 3D", ecosystem_intro: "Le sol est la carte. La hauteur est le niveau observé. Les traits relient Faker aux joueurs proches ; les points montrent l'état à t, les contours leur position suivante. Le losange blanc est le choix du modèle. Proximité et réaction visible ne prouvent pas une influence causale.",
-    geometry_title: "Champ local des possibilités · autour de Faker", geometry_intro: "Couleur des cases voisines à t selon un tenseur métrique positif, orienté par le mouvement passé de Faker et la position actuelle des alliés proches. L'arrivée réelle et les événements après t sont affichés pour lire la transition, jamais pour calculer ce champ.",
+    geometry_title: "Champ local 64×64 · autour de Faker", geometry_intro: "Cette géométrie historique 64×64 colore les cases voisines à t selon un tenseur métrique positif, orienté par le mouvement passé de Faker et les alliés proches. L'arrivée réelle et les événements après t servent à lire la transition, jamais à calculer ce champ.",
     geometry_legend: "Turquoise : Faker à t · rose : arrivée à t+1 · bleu : alliés · rouge : adversaires et leurs déplacements. Le champ coloré est une hypothèse géométrique, pas la probabilité prédite par Shadow.", state_actor: "Acteur",
     accuracy_title: "Ce qu'on sait vraiment prédire", exploratory: "8×8 / 4×4 exploratoires",
     exact_explain: "<strong>16×16 :</strong> Shadow 11,28 %, baseline 11,61 %. Le critère initial n'est pas atteint.",
     metric_exact: "64×64 · CASE EXACTE", metric_exact_note: "Shadow sur 1 197 décisions test", metric_baseline: "BASELINE · CASE FRÉQUENTE", metric_baseline_note: "Meilleure règle simple sur les mêmes décisions", metric_radius: "À 4 CASES PRÈS", metric_radius_note: "Shadow · copie de la position précédente : 16,88 %", metric_coverage: "ZONE QUI COUVRE 91,9 %", metric_coverage_note: "Part moyenne de la carte proposée · seuil ajusté en validation", metric_context: "Ces chiffres viennent d'un test historique déjà inspecté. « 91,9 % » n'est pas une prédiction exacte : la zone couvre en moyenne 1 791 cases sur 4 096. Aucune amélioration prospective ni capacité de jeu supérieure n'est démontrée.",
     predictability_kicker: "LABORATOIRE · 46 PARTIES DE VALIDATION", predictability_title: "Une case exacte, ou presque toute la carte ?", predictability_intro: "Sur la même grille 8×8, agrandir la liste des cases candidates augmente la couverture. Le seuil de 90 % n'est franchi qu'avec 41 cases sur 64.", predictability_badge: "PAS UN TEST FUTUR", predictability_exact: "1 case · précision exacte", predictability_coverage: "41 cases · couverture", predictability_area: "surface de carte proposée", predictability_phase: "Prédire une seule case dans la phase choisie par la chronologie", predictability_limit: "Ces chiffres viennent de la validation de développement, pas du test futur. La visibilité ennemie est une approximation. La chronologie change les barres par tranche de temps ; elle n'invente pas une précision à la seconde.", predictability_full: "Proxy + stats globales", predictability_visible: "Vision approximée", predictability_expert: "Expert par phase", predictability_samples: n => `${n} décisions de validation · même grille 8×8 pour les trois candidats. Aucun ne démontre 90 % de précision exacte.`,
     coarse_explain: "<strong>8×8 et 4×4 :</strong> un signal de rotations plus larges apparaît, mais il a été examiné après lecture du test. Il faut des parties futures.",
+    grid512_kicker: "512×512 · 46 PARTIES DE VALIDATION · 1 275 TRANSITIONS", grid512_title: "Plus de pixels. Pas plus de certitude.", grid512_intro: "L'adaptateur 512 choisit une sous-case dans les prédictions 64×64 gelées. Sur validation, il ne trouve aucune case exacte. Copier la position précédente reste meilleur ; la grille plus fine révèle surtout la limite des données à une minute.", grid512_model: "Shadow · case 512 exacte", grid512_copy: "Copier la position précédente", grid512_near: "Shadow · rayon de 16 cases 512", grid512_limit: "Candidat de développement, test historique non consulté et aucune preuve prospective. Les cases 512 font environ 29 unités de carte de côté ; les positions restent observées toutes les ~60 s.", grid64_archive: "Archive séparée ci-dessous : ancien candidat 64×64 sur test historique déjà inspecté. Ses scores ne sont pas les scores du modèle 512×512.",
     tempo_title: "Une équipe qui chauffe et se refroidit", tempo_interactive: "Explorer une tranche de temps", tempo_overview: "Vue d'ensemble fixe des 40 premières minutes. Le graphique coloré ci-dessous réagit au curseur.",
     tempo_interactive_help: "Pourcentage de minutes où Faker se rapproche d'un allié déjà positionné.", minute: "Minute",
     tempo_explain: "Ce sont des rapprochements géométriques, pas des preuves d'aide ou de communication. Le top évolue aussi : aucun rôle n'a un poids constant de 20 %.",
@@ -49,9 +50,9 @@ const copy = {
     load_error: "Les chiffres agrégés sont indisponibles. Lance le serveur du dashboard depuis le dépôt."
   },
   en: {
-    nav_atlas: "64×64 atlas", nav_map: "Legacy 16×16", nav_replay: "Evolution", nav_tempo: "Tempo", nav_strategy: "Strategies", nav_challenge: "Challenge", nav_library: "Archive", nav_evidence: "Evidence",
+    nav_atlas: "512×512 atlas", nav_map: "Legacy 16×16", nav_replay: "Evolution", nav_tempo: "Tempo", nav_strategy: "Strategies", nav_challenge: "Challenge", nav_library: "Archive", nav_evidence: "Evidence",
     time_title: "TIMELINE · SCRUB TO EXPLORE", key_faker: "Faker at t", key_real: "observed arrival", key_shadow: "Shadow choice", key_ally: "allies", key_enemy: "opponents", key_objective: "objectives",
-    fixed_16: "Fixed archive: the earlier 16×16 model across all phases. Its per-phase predictions were not retained; the timeline animates the 64×64 views above.",
+    fixed_16: "Fixed archive: the earlier 16×16 model across all phases. Its per-phase predictions were not retained; the timeline animates the 512×512 validation views above.",
     hero_eyebrow: "Macro decision lab · KR ranked solo", hero_title: "Observe Faker.<br>Test Shadow.",
     hero_copy: "A local model predicts the next decision of the account “Hide on bush#KR1” from the evolving game state. Other players, an approximate view of vision and objectives provide context. Sub-minute prediction is the next research target: current timelines are roughly 60 seconds apart.",
     explore: "Explore the maps", evidence: "See the evidence", stat_games: "usable matches",
@@ -61,22 +62,23 @@ const copy = {
     observed: "FAKER · OBSERVED", predicted: "SHADOW · PREDICTED", less: "rare", more: "frequent",
     map_insight: "Shadow overpredicts one central cell: 39.43% of its choices versus 11.28% of real destinations. The map exposes a concrete weakness of the current model.",
     atlas_title: "The game, cell by cell and event by event", atlas_intro: "Choose a layer and phase. Colour shows where observed positions or ranked events concentrate: kills, deaths, Dragon, Baron, Herald, Grubs, buildings and wards. Wards without coordinates are counted but not placed on the map.",
-    atlas_layer: "Layer", atlas_phase: "Phase", atlas_positions_real: "Observed destinations", atlas_positions_model: "Predicted destinations", atlas_positions_enemy: "Enemy positions", atlas_positions_allies: "Ally positions", atlas_faker_kill: "Account kills", atlas_faker_death: "Account deaths", atlas_ally_kill: "Ally kills", atlas_enemy_kill: "Enemy kills", atlas_building: "Buildings", atlas_ward: "Wards placed", atlas_early: "0–10 min", atlas_middle: "10–20 min", atlas_late: "20+ min", atlas_total: "Events in this phase", atlas_unplaced: "Without known position", atlas_note: "Map positions are sampled roughly every 60 s; events have finer timestamps. This map aggregates matches, not the player's vision or a single game.", atlas_hover: "Hover over a cell", atlas_cell: (x,y,n) => `Cell ${x},${y}: ${n.toLocaleString("en")} events or positions`,
-    surface_title: "The minimap becomes a surface of choices", surface_intro: "The ground axes are map coordinates; height is how often a next position occurs. Rotate the surface and compare reality with Shadow. The third dimension is probability, not LoL terrain or proof of a winning strategy.",
+    atlas_layer: "Layer", atlas_phase: "Phase", atlas_positions_real: "Observed destinations", atlas_positions_model: "Predicted destinations", atlas_positions_enemy: "Enemy positions", atlas_positions_allies: "Ally positions", atlas_faker_kill: "Account kills", atlas_faker_death: "Account deaths", atlas_ally_kill: "Ally kills", atlas_enemy_kill: "Enemy kills", atlas_building: "Buildings", atlas_ward: "Wards placed", atlas_early: "0–10 min", atlas_middle: "10–20 min", atlas_late: "20+ min", atlas_total: "Events in this phase", atlas_unplaced: "Without known position", atlas_note: "Positions are sampled about every 60 s; event timestamps are finer. The 512×512 destinations use 46 validation games; players/events use 465 ranked. A display halo makes points visible without inventing measurements: hover reads the exact cell. This aggregate map is not player vision.", atlas_hover: "Hover over a cell", atlas_cell: (x,y,n) => `Cell ${x},${y}: ${n.toLocaleString("en")} ${n === 1 ? "event or position" : "events or positions"}`,
+    surface_title: "The minimap becomes a surface of choices", surface_intro: "The ground axes are map coordinates; height is how often a next position occurs. Rotate the surface and compare reality with Shadow. The third dimension is aggregate frequency, not LoL terrain or proof of a winning strategy.",
     surface_actual: "Observed", surface_shadow: "Shadow", surface_rotate: "View angle",
-    replay_title: "A decision changes the next state", replay_step: "Sampled every ~60 s",
-    replay_intro: "One question per frame: from this account's position at the displayed minute, which cell will it occupy roughly one minute later? Background colour is predicted probability; rings mark the observed answer and the model's most likely choice.",
+    replay_title: "A decision changes the next state", replay_step: "Legacy 16×16 replay · ~60 s",
+    replay_intro: "This individual-game replay still uses the historical 16×16 model. At each frame, it asks where the account will be about one minute later. The background is its predicted probability; rings mark the observed arrival and model choice. The 512×512 atlas above is a separate validation aggregate.",
     replay_now: "Start: account at displayed minute", replay_team: "Context: other allies at the start", replay_real: "Observed arrival one minute later", replay_guess: "Cell predicted by Shadow", replay_minute: "Starting minute",
     replay_gold: "Team gold difference", replay_xp: "XP difference", replay_level: "Level", replay_uncertainty: "Forecast spread",
     replay_play: "▶ Play", replay_pause: "Ⅱ Pause", replay_trend_note: "Retrospective gold difference; future values never enter the model's past state.",
     game_picker: "Open one of 465 indexed games", game_open: "Open game", ecosystem_title: "Ten-player ecosystem · 3D projection", ecosystem_intro: "The floor is the map. Height is observed level. Links connect Faker to nearby players; dots show state at t and rings their next positions. The white diamond is the model's choice. Proximity and visible reactions do not prove causal influence.",
-    geometry_title: "Local possibility field · centred on Faker", geometry_intro: "Neighbouring cells at t are coloured by a positive metric tensor oriented by Faker's past movement and nearby allies' current positions. The observed arrival and later events explain the transition; they never construct this field.",
+    geometry_title: "Legacy 64×64 local field · centred on Faker", geometry_intro: "This historical 64×64 geometry colours nearby cells at t with a positive metric tensor oriented by Faker's past movement and nearby allies. The observed arrival and later events explain the transition; they never construct the field.",
     geometry_legend: "Teal: Faker at t · pink: arrival at t+1 · blue: allies · red: opponents and their movements. The coloured field is a geometric hypothesis, not Shadow's predicted probability.", state_actor: "Actor",
     accuracy_title: "What we can really predict", exploratory: "8×8 / 4×4 exploratory",
     exact_explain: "<strong>16×16:</strong> Shadow 11.28%, baseline 11.61%. The original gate is not met.",
     metric_exact: "64×64 · EXACT CELL", metric_exact_note: "Shadow across 1,197 test decisions", metric_baseline: "BASELINE · MOST FREQUENT CELL", metric_baseline_note: "Best simple rule on the same decisions", metric_radius: "WITHIN 4 CELLS", metric_radius_note: "Shadow · copy previous location: 16.88%", metric_coverage: "SET COVERING 91.9%", metric_coverage_note: "Mean share of the proposed map · threshold fitted on validation", metric_context: "These figures come from a previously inspected historical test. ‘91.9%’ is not an exact prediction: the set spans 1,791 of 4,096 cells on average. No prospective improvement or superior playing ability has been shown.",
     predictability_kicker: "LAB · 46 VALIDATION MATCHES", predictability_title: "One exact cell, or almost the whole map?", predictability_intro: "On the same 8×8 grid, a longer shortlist covers more destinations. Reaching 90% coverage takes 41 of 64 cells.", predictability_badge: "NOT A FUTURE TEST", predictability_exact: "1 cell · exact accuracy", predictability_coverage: "41 cells · coverage", predictability_area: "proposed share of map", predictability_phase: "One-cell prediction in the phase selected on the timeline", predictability_limit: "These are development validation figures, not a future test. Enemy visibility is approximated. The timeline switches phase bins; it does not invent second-by-second accuracy.", predictability_full: "Proxy + global stats", predictability_visible: "Vision proxy", predictability_expert: "Phase expert", predictability_samples: n => `${n} validation decisions · same 8×8 grid for all three candidates. None shows 90% exact accuracy.`,
     coarse_explain: "<strong>8×8 and 4×4:</strong> a broader rotation signal appears, but it was explored after seeing the test. Future games are needed.",
+    grid512_kicker: "512×512 · 46 VALIDATION GAMES · 1,275 TRANSITIONS", grid512_title: "More pixels. No extra certainty.", grid512_intro: "The 512 adapter selects a subcell within frozen 64×64 predictions. On validation, it finds no exact cells. Copying the previous position remains stronger; the finer grid mainly exposes the limit of one-minute observations.", grid512_model: "Shadow · exact 512 cell", grid512_copy: "Copy previous position", grid512_near: "Shadow · within 16 cells", grid512_limit: "Development candidate; historical test untouched and no prospective evidence. A 512 cell is about 29 map units wide; positions are still observed only about every 60 seconds.", grid64_archive: "Separate archive below: the older 64×64 candidate on an already inspected historical test. Those are not 512×512 model scores.",
     tempo_title: "A team that heats up and cools down", tempo_interactive: "Explore a time slice", tempo_overview: "Fixed overview of the first 40 minutes. The coloured chart below responds to the slider.",
     tempo_interactive_help: "Share of minutes when the account moves closer to an ally already positioned at time t.", minute: "Minute",
     tempo_explain: "These are geometric approaches, not proof of help or communication. Top changes too: no role has a fixed 20% weight.",
@@ -101,6 +103,9 @@ const copy = {
 let language = "fr";
 let summary = null;
 let grid64 = null;
+let atlas512 = null;
+let atlasGrid = 64;
+let grid512Score = null;
 let events64 = null;
 let challengeData = null;
 let pressureData = null;
@@ -122,9 +127,12 @@ function showSharedMinute() {
   $("#time-scrubber").value = sharedMinute;
   $("#time-current").textContent = `${sharedMinute} MIN`;
   $("#time-phase").textContent = `${phaseLabel(phase)} MIN`;
+  const cohort = atlas512 ? (language === "fr" ? "46 parties de validation pour Faker/Shadow en 512×512" :
+    "46 validation games for Faker/Shadow at 512×512") :
+    (language === "fr" ? "46 parties test pour Faker/Shadow en 64×64" : "46 test games for Faker/Shadow at 64×64");
   $("#time-interpretation").textContent = language === "fr" ?
-    `Cartes : phase ${phaseLabel(phase)} min (46 parties test pour Faker/Shadow, 465 pour joueurs et événements) · rejeu : une partie, minute ${trace?.rows?.[Number($("#replay-slider").value)]?.minute.toFixed(0) ?? "—"} · simulation : hypothèse.` :
-    `Maps: ${phaseLabel(phase)} min phase (46 test games for Faker/Shadow, 465 for players/events) · replay: one game, minute ${trace?.rows?.[Number($("#replay-slider").value)]?.minute.toFixed(0) ?? "—"} · simulation: hypothetical.`;
+    `Cartes : phase ${phaseLabel(phase)} min (${cohort}, 465 ranked pour joueurs/événements) · rejeu : une partie, minute ${trace?.rows?.[Number($("#replay-slider").value)]?.minute.toFixed(0) ?? "—"} · simulation : hypothèse.` :
+    `Maps: ${phaseLabel(phase)} min phase (${cohort}, 465 ranked games for players/events) · replay: one game, minute ${trace?.rows?.[Number($("#replay-slider").value)]?.minute.toFixed(0) ?? "—"} · simulation: hypothetical.`;
 }
 
 function setSharedMinute(minute) {
@@ -139,11 +147,12 @@ function setSharedMinute(minute) {
   }
   showSharedMinute();
   if (summary) updateTempo();
-  if (events64) renderAtlas();
-  if (grid64 || summary) renderSurface();
+  if (atlas512 || events64) renderAtlas();
+  if (atlas512 || grid64 || summary) renderSurface();
   if (pressureData) renderPressure();
   if (challengeData) renderChallenge();
   if (predictabilityData) renderPredictability();
+  if (grid512Score) renderGrid512Score();
 }
 
 function translate() {
@@ -158,10 +167,11 @@ function translate() {
     updateReadout(7, 7);
     renderSurface();
   }
-  if (events64) renderAtlas();
+  if (atlas512 || events64) renderAtlas();
   if (challengeData) renderChallenge();
   if (pressureData) renderPressure();
   if (predictabilityData) renderPredictability();
+  if (grid512Score) renderGrid512Score();
   if (trace) updateReplay();
   showSharedMinute();
 }
@@ -206,6 +216,13 @@ function renderPredictability() {
   $("#predictability-phase-note").textContent = copy[language].predictability_samples(data.full[phase].samples);
 }
 
+function renderGrid512Score() {
+  const fmt = (value) => `${(100 * value).toLocaleString(language, {minimumFractionDigits: 2, maximumFractionDigits: 2})} %`;
+  $("#grid512-model").textContent = fmt(grid512Score.model_top1);
+  $("#grid512-copy").textContent = fmt(grid512Score.copy_previous_top1);
+  $("#grid512-near").textContent = fmt(grid512Score.within_radius_cells["16"].model);
+}
+
 function bindMap(mapImage) {
   mapImage.addEventListener("mousemove", (event) => {
     const bounds = mapImage.getBoundingClientRect();
@@ -222,42 +239,58 @@ function renderAtlas() {
   const modelPositions = layer === "positions_real" || layer === "positions_model";
   const teamPositions = layer === "positions_enemy" || layer === "positions_allies";
   const positions = modelPositions || teamPositions;
-  const record = positions ? null : events64.phases[phase][layer];
-  const modelPhase = grid64?.phases?.[phase] || grid64;
-  const values = modelPositions ? modelPhase?.[layer === "positions_real" ? "observed_density" : "predicted_density"] :
-    teamPositions ? pressureData?.phases[phase][layer === "positions_enemy" ? "enemy_density" : "ally_density"] : record.cells;
   const canvas = $("#atlas-canvas"), ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#091526"; ctx.fillRect(0, 0, 640, 640);
-  if (!values) {
-    $("#atlas-readout").textContent = language === "fr" ? "La carte 64×64 du modèle est en cours de calcul." : "The model's 64×64 map is being computed.";
+  ctx.fillStyle = "#091526"; ctx.fillRect(0, 0, 512, 512);
+  const modelPhase = grid64?.phases?.[phase] || grid64;
+  const fallback = modelPositions ? modelPhase?.[layer === "positions_real" ? "observed_density" : "predicted_density"] :
+    teamPositions ? pressureData?.phases[phase][layer === "positions_enemy" ? "enemy_density" : "ally_density"] : events64?.phases?.[phase]?.[layer]?.cells;
+  const local = atlas512?.phases?.[phase]?.[layer];
+  if (!local && !fallback) {
+    $("#atlas-readout").textContent = language === "fr" ? "L'atlas est en cours de calcul." : "The atlas is being computed.";
     return;
   }
-  atlasValues = values;
+  atlasGrid = local ? 512 : 64;
+  const entries = local ? local.cells : fallback.flatMap((count, index) => count ? [[index, count]] : []);
+  atlasValues = new Map(entries);
+  $("#atlas-resolution").textContent = `${atlasGrid} × ${atlasGrid} · ${(atlasGrid ** 2).toLocaleString(language)} ${language === "fr" ? "CASES" : "CELLS"}`;
   const colors = {positions_real:[72,228,210],positions_model:[255,145,193],positions_enemy:[255,79,112],positions_allies:[106,165,255],faker_kill:[255,186,111],
     faker_death:[255,92,122],ally_kill:[105,169,255],enemy_kill:[221,93,162],dragon:[247,170,74],
     baron:[182,121,255],herald:[114,213,225],grubs:[174,246,112],building:[243,239,172],ward_placed:[87,225,225]};
   const rgb = colors[layer] || [130,170,220];
   $("#atlas-layer-swatch").style.background = `rgb(${rgb.join(",")})`;
   $("#atlas-layer-meaning").textContent = `${$("#atlas-layer").selectedOptions[0].textContent} · ${phaseLabel(phase)} min`;
-  const max = Math.max(1, ...values);
-  for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
-    const count = values[y * 64 + x];
-    if (!count) continue;
+  const max = entries.reduce((value, row) => Math.max(value, row[1]), 1);
+  const scale = 512 / atlasGrid;
+  if (atlasGrid === 512 && entries.length < 5000) {
+    ctx.globalAlpha = .20;
+    ctx.fillStyle = `rgb(${rgb.join(",")})`;
+    for (const [index] of entries) {
+      const x = index % atlasGrid, y = atlasGrid - 1 - Math.floor(index / atlasGrid);
+      ctx.fillRect(x - 3, y - 3, 7, 7);
+    }
+    ctx.globalAlpha = 1;
+  }
+  for (const [index, count] of entries) {
+    const x = index % atlasGrid, y = Math.floor(index / atlasGrid);
     const strength = Math.pow(count / max, .42);
     const channel = (n) => Math.round(8 + (n - 8) * (.18 + .82 * strength));
     ctx.fillStyle = `rgb(${channel(rgb[0])},${channel(rgb[1])},${channel(rgb[2])})`;
-    ctx.fillRect(x * 10, (63 - y) * 10, 10, 10);
+    ctx.fillRect(x * scale, (atlasGrid - 1 - y) * scale, scale, scale);
   }
   ctx.strokeStyle = "rgba(190,218,240,.13)"; ctx.lineWidth = 1;
-  for (let i = 0; i <= 64; i += 8) {
-    ctx.beginPath(); ctx.moveTo(i * 10 + .5, 0); ctx.lineTo(i * 10 + .5, 640); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, i * 10 + .5); ctx.lineTo(640, i * 10 + .5); ctx.stroke();
+  for (let i = 0; i <= 8; i++) {
+    const pixel = i * 64 + .5;
+    ctx.beginPath(); ctx.moveTo(pixel, 0); ctx.lineTo(pixel, 512); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, pixel); ctx.lineTo(512, pixel); ctx.stroke();
   }
   $("#atlas-total").previousElementSibling.textContent = modelPositions ?
-    (language === "fr" ? "Destinations du test historique" : "Historical test destinations") :
+    (local ? (language === "fr" ? "Destinations de validation" : "Validation destinations") :
+             (language === "fr" ? "Destinations du test historique" : "Historical test destinations")) :
     teamPositions ? (language === "fr" ? "Positions des 465 parties" : "Positions across 465 games") : copy[language].atlas_total;
-  $("#atlas-total").textContent = (modelPositions ? modelPhase.samples : teamPositions ? values.reduce((a,b)=>a+b,0) : record.total).toLocaleString(language);
-  $("#atlas-unplaced").textContent = positions ? "—" : record.without_position.toLocaleString(language);
+  const oldRecord = events64?.phases?.[phase]?.[layer];
+  const total = local ? local.total : modelPositions ? modelPhase.samples : teamPositions ? entries.reduce((n, row) => n + row[1], 0) : oldRecord.total;
+  $("#atlas-total").textContent = total.toLocaleString(language);
+  $("#atlas-unplaced").textContent = positions ? "—" : (local?.without_position ?? oldRecord?.without_position ?? 0).toLocaleString(language);
   $("#atlas-readout").textContent = copy[language].atlas_hover;
 }
 
@@ -358,15 +391,18 @@ function renderSurface() {
   svg.replaceChildren();
   const phase = phaseAt(sharedMinute);
   const modelPhase = grid64?.phases?.[phase] || grid64;
-  const density = grid64 ? {actual: modelPhase.observed_density, predicted: modelPhase.predicted_density,
-                            samples: modelPhase.samples} : summary.test_map_density;
-  const grid = grid64 ? 64 : 16;
+  const local = atlas512?.phases?.[phase];
+  const density = local ? {actual: local.positions_real.cells, predicted: local.positions_model.cells,
+                           samples: local.positions_real.total} : grid64 ?
+    {actual: modelPhase.observed_density, predicted: modelPhase.predicted_density, samples: modelPhase.samples} : summary.test_map_density;
+  const grid = local ? 512 : grid64 ? 64 : 16;
   $("#surface-resolution").textContent = `${grid} × ${grid} × P · ${phaseLabel(phase)} MIN`;
   $("#surface-time").textContent = language === "fr" ?
-    `${phaseLabel(phase)} min · ${density.samples.toLocaleString(language)} destinations de 46 parties test · turquoise = observé, rose = Shadow` :
-    `${phaseLabel(phase)} min · ${density.samples.toLocaleString(language)} destinations from 46 test games · teal = observed, pink = Shadow`;
-  const maximum = Math.max(1, ...density.actual, ...density.predicted);
+    `${phaseLabel(phase)} min · ${density.samples.toLocaleString(language)} destinations de 46 parties ${local ? "de validation" : "test"} · turquoise = observé, rose = Shadow` :
+    `${phaseLabel(phase)} min · ${density.samples.toLocaleString(language)} destinations from 46 ${local ? "validation" : "test"} games · teal = observed, pink = Shadow`;
   const values = density[surfaceMode];
+  const maximum = local ? Math.max(1, ...density.actual.map(row => row[1]), ...density.predicted.map(row => row[1])) :
+    Math.max(1, ...density.actual, ...density.predicted);
   const radians = Number($("#angle-slider").value) * Math.PI / 180;
   $("#angle-label").textContent = `${$("#angle-slider").value}°`;
   const project = (x, y, z) => {
@@ -378,7 +414,12 @@ function renderSurface() {
   const base = [project(0, 0, 0), project(grid, 0, 0), project(grid, grid, 0), project(0, grid, 0)];
   svg.append(svgNode("polygon", {points: points(...base), fill: "#132c42", stroke: "#3a667b", "stroke-width": 1.5}));
   const cells = [];
-  for (let y = 0; y < grid; y++) for (let x = 0; x < grid; x++) {
+  if (local) {
+    for (const [index, count] of values) {
+      const x = index % grid, y = Math.floor(index / grid);
+      cells.push({x, y, count, depth: x * Math.sin(radians) + y * Math.cos(radians)});
+    }
+  } else for (let y = 0; y < grid; y++) for (let x = 0; x < grid; x++) {
     const count = values[y * grid + x];
     if (count) cells.push({x, y, count, depth: x * Math.sin(radians) + y * Math.cos(radians)});
   }
@@ -698,15 +739,16 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
-  [grid64, events64, challengeData, pressureData, predictabilityData] = payloads;
-  if (summary && grid64) renderSurface();
-  if (events64) renderAtlas();
+  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score] = payloads;
+  if (summary && (atlas512 || grid64)) renderSurface();
+  if (atlas512 || events64) renderAtlas();
   if (challengeData) renderChallenge();
   if (pressureData) renderPressure();
   if (predictabilityData) renderPredictability();
+  if (grid512Score) renderGrid512Score();
   showSharedMinute();
   await loadGameList();
   try {
@@ -751,16 +793,16 @@ $("#game-picker").addEventListener("keydown",event=>{if(event.key==="Enter")open
 $("#time-scrubber").addEventListener("input",event=>setSharedMinute(event.target.value));
 $("#time-scrubber").addEventListener("wheel",event=>{event.preventDefault();setSharedMinute(sharedMinute+(event.deltaY>0?1:-1));},{passive:false});
 $("#minute-slider").addEventListener("input", () => setSharedMinute(Number($("#minute-slider").value)*5));
-$("#atlas-layer").addEventListener("change", () => { if (events64) renderAtlas(); });
+$("#atlas-layer").addEventListener("change", () => { if (atlas512 || events64) renderAtlas(); });
 $("#atlas-phase").addEventListener("change", () => setSharedMinute(({early:0,middle:10,late:20})[$("#atlas-phase").value]));
 $("#atlas-canvas").addEventListener("mousemove", (event) => {
   if (!atlasValues) return;
   const bounds = event.target.getBoundingClientRect();
-  const x = Math.min(63, Math.max(0, Math.floor((event.clientX - bounds.left) / bounds.width * 64)));
-  const y = Math.min(63, Math.max(0, 63 - Math.floor((event.clientY - bounds.top) / bounds.height * 64)));
-  $("#atlas-readout").textContent = copy[language].atlas_cell(x,y,atlasValues[y*64+x]);
+  const x = Math.min(atlasGrid - 1, Math.max(0, Math.floor((event.clientX - bounds.left) / bounds.width * atlasGrid)));
+  const y = Math.min(atlasGrid - 1, Math.max(0, atlasGrid - 1 - Math.floor((event.clientY - bounds.top) / bounds.height * atlasGrid)));
+  $("#atlas-readout").textContent = copy[language].atlas_cell(x,y,atlasValues.get(y*atlasGrid+x) || 0);
 });
-$("#atlas-canvas").addEventListener("mouseleave", () => { if (events64) $("#atlas-readout").textContent = copy[language].atlas_hover; });
+$("#atlas-canvas").addEventListener("mouseleave", () => { if (atlas512 || events64) $("#atlas-readout").textContent = copy[language].atlas_hover; });
 $("#challenge-response").addEventListener("input", () => { if (challengeData) renderChallenge(); });
 $("#challenge-sharing").addEventListener("input", () => { if (challengeData) renderChallenge(); });
 $("#surface-actual").addEventListener("click", () => { surfaceMode = "actual"; if (summary) renderSurface(); });

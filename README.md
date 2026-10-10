@@ -2,7 +2,7 @@
 
 # Shadow Faker
 
-[**Open the visual dashboard locally**](#visual-dashboard) · [**Explore the 64×64 atlas**](#a-higher-resolution-but-harder-question) · [**Read the evidence**](RESULTS.md) · [**Français**](README.fr.md)
+[**Open the visual dashboard locally**](#visual-dashboard) · [**Explore the 512×512 atlas**](#a-512512-atlas-and-its-accuracy-limit) · [**Read the evidence**](RESULTS.md) · [**Français**](README.fr.md)
 
 **A reproducible, local research pipeline for Faker-style macro decisions in League of Legends.** It currently predicts the next 16×16 map region, first item purchase, and skill upgrade from ranked solo-queue timelines sampled roughly **once per minute**. The research target is prediction at **less than a minute**, which requires higher-frequency replay or player-view evidence and a new benchmark. Only actions of the account resolved as `Hide on bush#KR1` are targets; the other nine players provide context. Riot account-v1 confirms the Riot ID and PUUID, but cannot establish a person's identity by itself.
 
@@ -22,7 +22,17 @@ The exact next **one** of 64 broad cells remains **17.49%**. On this already-use
 
 A targeted three-head model for early, middle and late game was also trained. It scored **16.39% overall and 5.91% late**, below the simpler model's **17.49% overall and 7.53% late**; it was kept as a documented negative experiment. This is why the next work focuses on better observation and fresh matches, not a larger phase head.
 
-### A higher resolution, but harder question
+### A 512×512 atlas and its accuracy limit
+
+![Observed and predicted next-minute destinations across the 512×512 validation grid](docs/figures/atlas512_validation.png)
+
+The new atlas uses **512×512 actual spatial cells**, or 262,144 possible destinations. It is not an enlarged 64×64 image: a 25,280-parameter conditional head selects one of 64 subcells inside a frozen 64×64 parent, then combines the parent and subcell at inference. A five-game pilot checked label alignment before full training. The **46-match / 1,275-transition development validation** shows **0.00% exact-cell accuracy**, versus **0.63%** for copying the current position and **0.31%** for the most frequent training cell. Shadow lands within 16 fine cells in **8.94%** of transitions, versus **7.29%** for copying. The paired match-bootstrap 95% interval for exact-cell gain over the best simple baseline is **−1.04 to −0.32 percentage points**. This candidate is not promoted; its historical test split and the future-game lockbox were not scored. A fine cell is about 29 map units wide, while observations remain roughly one minute apart.
+
+![Smoothed, privacy-preserving geography of ranked match events on the 512×512 canvas](docs/figures/atlas512_events.png)
+
+The local interactive atlas keeps sparse 512-cell counts for destinations, ten-player positions and events from the 465 ranked games. The public event figure first groups rare events into **16×16 coarse bins**, hides bins with fewer than three events, then smooths them for display. It does not expose exact rare-event coordinates. The downloadable repository contains only aggregate scores and figures; raw games, sparse local atlas, weights and per-game traces stay outside Git. [Full 512 experiment and limits](RESULTS.md#512512-development-atlas-and-prediction).
+
+### A higher resolution, but harder question: the 64×64 archive
 
 ![Observed and predicted next locations in a 64×64 historical map](docs/figures/grid64_observed_vs_predicted.png)
 
@@ -82,7 +92,7 @@ The lines follow *observed* movement toward jungle, bot carry and support in fiv
 
 Only **one early minute in one match** places all five allied champions within 2,500 units of the bot carry. This proximity audit cannot tell whether a deliberate five-bot lane would work; it says the current corpus gives almost no examples of that shape. [GAME_THEORY_LAB.md](GAME_THEORY_LAB.md) turns unconventional strategies into testable questions with explicit costs and played-game evidence.
 
-The public figures and README banners use [published aggregate counts and metrics](docs/data/public_summary.json), so they can be read without downloading or distributing Riot match data. Regenerate the original figures with `.venv/bin/python scripts/render_results.py --from-summary`, the model ablation with `.venv/bin/python scripts/render_hierarchical.py --from-summary`, and the 90% coverage audit with `.venv/bin/python scripts/render_predictability.py --from-summary`.
+The public figures and README banners use [published aggregate counts and metrics](docs/data/public_summary.json), so they can be read without downloading or distributing Riot match data. Regenerate the original figures with `.venv/bin/python scripts/render_results.py --from-summary`, the model ablation with `.venv/bin/python scripts/render_hierarchical.py --from-summary`, and the 90% coverage audit with `.venv/bin/python scripts/render_predictability.py --from-summary`. The 512 event/destination figures require the ignored local atlas: `.venv/bin/python scripts/render_atlas512.py`.
 
 ## Visual dashboard
 
@@ -94,7 +104,7 @@ Run the local dashboard after setup, then open [http://127.0.0.1:8008/](http://1
 .venv/bin/python -m shadowfaker.demo --max-frames 30
 ```
 
-The dashboard server binds to `127.0.0.1` and serves an allowlist of public visuals plus optional local replay files. A sticky **shared timeline** lets you scrub minute 0–39 with a slider, keyboard or mouse wheel over the slider. It synchronizes the 64×64 atlas, 3D frequency surface, five-minute team tempo, opponent pressure, one-game replay and synthetic scenario cursor. The colour key travels with the timeline. Atlas and surface show **phase aggregates** (0–10, 10–20, 20+ minutes): the observed/modelled destination layers use 46 historical test games, while player/event layers use 465 ranked games. The replay shows **one selected game**, sampled about every minute; it stops at that game's final frame. Fixed historical score figures and the older 16×16 model remain labelled as fixed rather than pretending to change with the slider. The public phase counts are 460, 437 and 300 test destinations, summing to 1,197.
+The dashboard server binds to `127.0.0.1` and serves an allowlist of public visuals plus optional local replay files. A sticky **shared timeline** lets you scrub minute 0–39 with a slider, keyboard or mouse wheel over the slider. It synchronizes the local **512×512 atlas**, sparse 3D frequency surface, five-minute team tempo, opponent pressure, one-game replay and synthetic scenario cursor. The colour key travels with the timeline. Atlas and surface show **phase aggregates** (0–10, 10–20, 20+ minutes): the 512 observed/modelled destinations use 46 **validation** games (460, 443 and 372 transitions by phase), while player/event layers use 465 ranked games. If the local 512 atlas is absent, the page labels its 64×64 historical fallback. The replay shows **one selected game with the legacy 16×16 model**, sampled about every minute; it stops at that game's final frame. The local metric field remains an explicitly labelled 64×64 historical view. Fixed historical score figures remain labelled as such rather than pretending to change with the slider.
 
 The score section now includes an **8×8 development validation** panel: exact-cell accuracy, the map area needed for 90% candidate-set coverage, and three candidate models by game phase. Its bars respond to the shared timeline. Its **46 validation matches are separate from the 46 historical test matches** shown in the atlas.
 
@@ -121,14 +131,14 @@ python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt -e .
 cp .env.example .env
 # Set RIOT_API_KEY in .env to the current Riot developer key.
-# Full five-game pilot → ranked pipeline → 64×64, ten-player warehouse,
+# Full five-game pilot → ranked pipeline → 64×64 and 512×512, ten-player warehouse,
 # interaction training, validation, vectors, summaries, charts and replay:
 .venv/bin/python scripts/run_next_level.py --limit 1000 --epochs 25
 ```
 
 If `pip` is unavailable in the virtual environment, use `uv pip install --python .venv/bin/python -r requirements.txt -e .`. The base ranked pipeline validates **every stage on five games first**, then collects all available games up to the target, parses, analyzes, trains, selects on validation, evaluates on held-out test games, and exports a GIF. JSON and match-level NPZ files are cached; rerun the same command after a crash or key renewal. For a five-game base smoke run: `.venv/bin/python scripts/run_pipeline.py --limit 5 --epochs 3`.
 
-`run_next_level.py` also works as the one-command entry point on a fresh checkout: it invokes the base pipeline if the ranked dataset or checkpoint is missing, then validates its new stages on five games and builds the full local research extension. A rerun reuses matching checkpoints and cached source data. Its interaction candidate is scored on validation only; its 64×64 historical test report is explicitly marked as previously inspected. The local text index and per-game media are ignored by Git. Use `--pilot-only` to check five games without scaling.
+`run_next_level.py` also works as the one-command entry point on a fresh checkout: it invokes the base pipeline if the ranked dataset or checkpoint is missing, then validates its new stages on five games and builds the full local research extension. After the 64×64 parent exists, it pilots the 512 adapter on five games before full training and validation. A rerun reuses matching checkpoints and cached source data. Its 512 and interaction candidates are scored on validation only; its 64×64 historical test report is explicitly marked as previously inspected. The local text index and per-game media are ignored by Git. Use `--pilot-only` to check the base extensions on five games without scaling.
 
 Use `--game-name "Name" --tag-line TAG` for another account, with a separate `data/raw/` directory if its PUUID differs. The collector uses the `asia` route for KR, filters queue 420 (ranked solo), skips remakes shorter than five minutes and missing timelines, and paginates without duplicates. A persistent 1.3-second interval between requests respects the 100 requests per two minutes development quota. It also handles `Retry-After`, backoff, timeouts, and clear 401/403 key errors. At two requests per match, 1,000 games require **at least about 43 minutes**, excluding pagination and retries. The actual account history may contain fewer.
 

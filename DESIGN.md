@@ -23,11 +23,11 @@ flowchart LR
   T --> B[Tempo: 5-minute bin]
   T --> R[One game's nearest sampled frame]
   T --> S[Synthetic challenge cursor]
-  P --> A[64×64 atlas and frequency surface]
+  P --> A[512×512 local atlas and frequency surface]
   P --> E[Observed opponent pressure]
 ```
 
-The linked views **do not share one cohort**: 46 historical test games produce the Faker/Shadow destination densities; 465 ranked games produce player, event and pressure aggregates; replay is one local game; challenge is an explicit hypothetical. The 16×16 legacy comparison and exported score figures are fixed historical summaries. Nothing in the scrubber interpolates seconds between Riot timeline frames or creates unseen player POV. The 64×64 public JSON includes three phase histograms whose per-cell sums exactly equal the previously published all-phase histograms; phase sample counts are 460, 437, 300.
+The linked views **do not share one cohort**: 46 **development validation** games produce the local 512×512 Faker/Shadow destination densities (460, 443, 372 transitions by phase); 465 ranked games produce player, event and pressure aggregates; replay is one local game with the **legacy 16×16 model**; challenge is an explicit hypothetical. Its adjacent-cell metric field is the separately labelled historical 64×64 view. The 16×16 comparison and the 64×64 test score remain fixed historical summaries. The older public 64×64 JSON is still available for its archived 460/437/300 test-phase histograms. The 512 canvas draws exact sparse cells and a low-opacity display halo for visibility; hover reads the exact cell count. The public event figure groups exact cells into 16×16 bins and hides bins with fewer than three events before smoothing. Nothing in the scrubber interpolates seconds between Riot timeline frames or creates unseen player POV.
 
 ```mermaid
 flowchart LR

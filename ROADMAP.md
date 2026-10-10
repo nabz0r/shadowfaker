@@ -58,6 +58,12 @@ The second live snapshot (`20261010`) again returned **470 unique ranked-solo ID
 
 The next model is a **development candidate**; it cannot replace the M0 frozen checkpoint in the existing prospective protocol. Its own later-game confirmation requires a new untouched lockbox. No claim of stronger play follows from offline imitation accuracy.
 
+### 512×512 resolution gate (2026-10-10)
+
+The sparse local atlas, five-game pilot, frozen-parent conditional model, validation report and public figures are implemented. The 512 candidate scores **0.00% exact** on **1,275 transitions / 46 validation games**; copying the current position scores **0.63%**. Its match-bootstrap exact gain interval is **−1.04 to −0.32 percentage points**. The historical test and future lockbox were not opened for this candidate. The 512-cell atlas is useful for *inspecting where* positions and events concentrate, but this candidate fails as an exact predictor.
+
+Next gate: obtain lawfully sourced observations materially faster than 60 seconds and a verified player-visible perspective, align them to the same game and timestamps, and test a predeclared target on later **independent games**. More grid cells with the same 12,510 minute transitions cannot manufacture sub-minute labels. Keep the 512 candidate as a negative control and the 64/16 results as separate archived cohorts. [Measured 512 result](RESULTS.md#512512-development-atlas-and-prediction).
+
 The sub-minute goal is a separate data milestone: align lawful replay/POV material, verify timestamps and perspective, create higher-frequency causal labels, and define a new later-game benchmark. The current API timeline and dashboard replay advance about once per minute; rendering more frames would not create new evidence.
 
 ## Reproduce the current stage

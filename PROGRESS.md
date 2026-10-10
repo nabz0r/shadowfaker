@@ -389,3 +389,53 @@
 - [2026-10-10T13:29:23+00:00] Re-ran the frozen prospective protocol offline: still `pending`, 0/100 new eligible matches. A named `20261010` ID snapshot was already cached, so no duplicate same-day Riot request was needed.
 - [2026-10-10T13:29:23+00:00] Added the public 8×8 predictability JSON and figures to the dashboard allowlist, with a bilingual score panel showing 17.49% one-cell accuracy, 90.12% top-41 coverage and the 64.1% map area that entails. Its three validation-model bars follow the shared phase scrubber. Kept the 46 development-validation matches distinct from the 46 historical-test matches elsewhere on the page.
 - [2026-10-10T13:29:23+00:00] Browser QA: saw early 29.8/29.6/29.8% bars change to late 7.5/7.0/5.9% at minute 25; checked the rendered chart. Local dashboard on port 8008 now serves both new public assets (HTTP 200); 22 tests passed, JS syntax and Python compilation passed, `git diff --check` clean.
+
+## Extension 512×512 — livrée localement (2026-10-10)
+
+- [2026-10-10] Plan 512×512 écrit avant implémentation dans `PLAN.md`. Résolution spatiale cible : 262 144 cases. Conserver les modèles/scores 16 et 64 comme archives ; entraîner un sous-modèle 64→8×8 pour avoir de vraies prédictions 512 sans tête dense. Les positions Riot restent à ~60 s ; l'objectif de 90 % de case exacte n'est pas établi.
+- [2026-10-10] Pilote cinq ranked (4 train, 1 validation) : alignement 512→64 vérifié dans chaque batch ; adaptateur conditionnel de 25 280 paramètres entraîné deux époques. Benchmark d'un batch : CPU 0,0026 s contre MPS 0,5708 s, donc CPU choisi. Sur les 26 observations de l'unique partie de validation pilote, 0 case exacte pour le modèle et les baselines ; échantillon trop petit pour conclure. Passage au train complet autorisé.
+- [2026-10-10] Entraînement complet : parent 64 gelé (SHA-256 `afe342ace77a2faf3de4cf9098b88e558641f80d500478a2c2a828f753f5b9c6`), 373 parties train et 46 validation, meilleur adaptateur choisi à l'époque 2 sur perte conditionnelle. La tête 512 a 25 280 paramètres ; top 16 parents à l'inférence. Le vieux test et le lockbox futur ne sont pas lus.
+- [2026-10-10] Validation 512 : 1 275 transitions, **0/1 275 case exacte** pour Shadow, **8/1 275 = 0,63 %** pour copie de position, **4/1 275 = 0,31 %** pour case fréquente train. Rayon 16 cases fines : 8,94 % Shadow contre 7,29 % copie. Bootstrap apparié par match, gain exact contre meilleure baseline : [−1,04 ; −0,32] points à 95 %. Choix du parent 64 du modèle joint exact 0,94 % ; sous-case exacte avec parent oracle 2,12 % (diagnostic uniquement). Le modèle échoue au critère exact et reste un candidat de développement.
+- [2026-10-10] Atlas local 512 : 465 ranked traitées, 0 erreur de parsing ; 46 parties de validation pour les destinations prédites/réelles, 465 ranked pour positions des joueurs et événements. Phases 460 / 443 / 372 = 1 275 destinations. JSON local `artifacts/grid512/atlas.json` ignoré par Git. Export public : métriques agrégées et deux figures. Les événements rares de la figure publique sont d'abord groupés en blocs 16×16 et les blocs à moins de trois événements sont masqués, puis lissés pour la lecture ; les cellules exactes ne sont pas publiées.
+- [2026-10-10] Pipeline une commande mis à jour : pilote 512 puis train/validation/atlas/figures ; relance complète idempotente passée avec caches. README FR/EN, RESULTS, ROADMAP et PLAN alignés sur la nouvelle cohorte et la limite de précision. 25 tests Python passent ; syntaxe JS/Python et `git diff --check` passent.
+- [2026-10-10] QA navigateur du tableau de bord local : **42 combinaisons** (14 couches × 3 phases) affichent badge 512 et total lisible, 0 erreur console ; la frise change bien les comptes 460→443→372 et la surface 3D, rotation 45→53°, bascule FR/EN et résultat 512 0,00 % / copie 0,63 %. Halo de présentation ajouté pour rendre les cellules isolées visibles ; le survol donne toujours le compte exact de la cellule.
+
+- [2026-10-10T15:01:25+00:00] Next-level five-game pilot reused from checkpoint.
+
+- [2026-10-10T15:01:28+00:00] 64x64 labels: 465 matches, 12510 pairs, 0 errors.
+
+- [2026-10-10T15:01:31+00:00] Event atlas: 465 ranked matches, 0 errors.
+
+- [2026-10-10T15:01:32+00:00] Warehouse: 12975 states, 12510 transitions, 353409 events.
+
+- [2026-10-10T15:01:32+00:00] Enemy pressure: 12975 positional frames.
+
+- [2026-10-10T15:02:14+00:00] Text: 930 EN/FR summaries, 0 errors.
+
+- [2026-10-10T15:02:14+00:00] Vectors: 12510 states; kNN val exact64=0.0094.
+
+- [2026-10-10T15:02:15+00:00] 64x64 historical test: 0.0109 exact, best baseline 0.0192; prospective claim pending.
+
+- [2026-10-10T15:02:15+00:00] 512x512 five-game pilot: 4 train + 1 val games, 26 targets; parent-label alignment passed.
+
+- [2026-10-10T15:02:15+00:00] 512x512 development validation: 46 games, 1275 targets; exact model=0.0000, copy=0.0063; test untouched.
+
+- [2026-10-10T15:02:19+00:00] 512x512 sparse atlas: 465 ranked games, 0 errors; sparse cells stay local.
+
+- [2026-10-10T15:02:22+00:00] Interaction training states: 12510 pairs, 0 errors.
+
+- [2026-10-10T15:02:22+00:00] Interaction candidate validation exact16=0.0871; test intentionally unscored.
+
+- [2026-10-10T15:02:23+00:00] Hierarchical pilot: 3 train + 2 val games; validation only.
+
+- [2026-10-10T15:02:26+00:00] Hierarchical ablations: selected full on validation 8x8=0.1749; historical test unscored.
+
+- [2026-10-10T15:02:27+00:00] Phase-expert pilot: 3 train + 2 val games; validation only.
+
+- [2026-10-10T15:02:28+00:00] Phase-expert candidate: validation 8x8=0.1639; historical test unscored.
+
+- [2026-10-10T15:02:29+00:00] Transition geometry pilot: 4 train + 1 val games; alignment checked.
+
+- [2026-10-10T15:02:30+00:00] Transition geometry: 0.1569 validation top-1; 0 alignment mismatches.
+
+- [2026-10-10T15:02:31+00:00] Dashboard aggregates, replay and public figures refreshed. Open http://127.0.0.1:8008/ with serve_dashboard.py.

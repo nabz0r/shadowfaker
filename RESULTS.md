@@ -2,6 +2,25 @@
 
 ![Shadow Faker visual research dashboard](docs/figures/readme_hero_en.svg)
 
+## 512×512 development atlas and prediction
+
+![Observed destinations versus the conditional 512 adapter](docs/figures/atlas512_validation.png)
+
+The new target is the account's **next observed position at the 512×512 spatial resolution**, still about one minute later. It has 262,144 possible cells, each about 29 map units wide. A 25,280-parameter conditional head chooses an 8×8 subcell inside a frozen 64×64 parent; inference compares the joint scores of the top 16 parent candidates. This is a genuinely finer label and prediction, not a resized 64×64 plot. Inputs use only state at or before `t`. A five-match pilot (four train, one validation) checked that every 512 target maps back to its stored 64 parent before the full 373-train / 46-validation run. CPU was faster than MPS on the mini-benchmark, so the small adapter trained on CPU. The existing 16/64 checkpoints and prospective protocol were not replaced.
+
+| Validation metric, 46 matches / 1,275 transitions | 512 adapter | Simple reference |
+|---|---:|---:|
+| Exact 512 cell | **0.00%** | Copy position at `t`: **0.63%**; train frequent cell: **0.31%** |
+| Within 16 fine cells | **8.94%** | Copy position at `t`: **7.29%** |
+| Exact parent 64 cell chosen by joint 512 decision | **0.94%** | Different from the separate 64 model's original top-1 |
+| Subcell correct *if given the true 64 parent* | **2.12%** | Diagnostic with an oracle parent, not deployable accuracy |
+
+The paired match-bootstrap interval for exact-cell gain against the better simple baseline is **−1.04 to −0.32 percentage points**. The model fails the exact-location gate. The near-location result uses a wide radius and is exploratory; it does not rescue exact precision. Phase counts are **460 early, 443 middle and 372 late** (sum 1,275). The historical test and future-game lockbox remain unscored for this adapter. With so many cells and minute-spaced observations, reaching 90% exact accuracy is not supported by these data. More pixels do not create intermediate observations.
+
+![Ranked event geography, aggregated before public export](docs/figures/atlas512_events.png)
+
+The **local** atlas contains sparse 512-cell counts for destinations, allies, enemies and event positions across 465 ranked games. Event timestamps are finer than player-position frames. Events without position are counted but unplaced. The public event figure bins exact cells into 16×16 blocks, hides bins with fewer than three events and smooths only for display; it cannot be used as a precise event replay. The raw Riot JSON, match IDs, local sparse atlas, checkpoint and per-game traces are excluded from Git. [Public aggregate metrics](docs/data/public_grid512.json) and [the implementation plan](PLAN.md#extension-512512--2026-10-10) make the cohort and limits explicit.
+
 ## New development experiment — a decision-shaped Shadow (2026-10-10)
 
 ![Faker-only, team, visibility-proxy and global-field model ablation on historical validation](docs/figures/hierarchical_ablation.png)
