@@ -96,6 +96,8 @@ Run the local dashboard after setup, then open [http://127.0.0.1:8008/](http://1
 
 The dashboard server binds to `127.0.0.1` and serves an allowlist of public visuals plus optional local replay files. A sticky **shared timeline** lets you scrub minute 0–39 with a slider, keyboard or mouse wheel over the slider. It synchronizes the 64×64 atlas, 3D frequency surface, five-minute team tempo, opponent pressure, one-game replay and synthetic scenario cursor. The colour key travels with the timeline. Atlas and surface show **phase aggregates** (0–10, 10–20, 20+ minutes): the observed/modelled destination layers use 46 historical test games, while player/event layers use 465 ranked games. The replay shows **one selected game**, sampled about every minute; it stops at that game's final frame. Fixed historical score figures and the older 16×16 model remain labelled as fixed rather than pretending to change with the slider. The public phase counts are 460, 437 and 300 test destinations, summing to 1,197.
 
+The score section now includes an **8×8 development validation** panel: exact-cell accuracy, the map area needed for 90% candidate-set coverage, and three candidate models by game phase. Its bars respond to the shared timeline. Its **46 validation matches are separate from the 46 historical test matches** shown in the atlas.
+
 The dashboard can open any **locally indexed ranked game** by match ID and search 930 locally generated English/French summaries plus separately sourced multilingual case studies. The replay remains local and is excluded from Git. [Dashboard source](dashboard/), [reproducible aggregate renderer](scripts/render_results.py), and [research evidence](RESULTS.md) are in the repository.
 
 ## Where 470, 465, and 12,510 come from

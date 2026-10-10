@@ -27,6 +27,7 @@ const copy = {
     accuracy_title: "Ce qu'on sait vraiment prédire", exploratory: "8×8 / 4×4 exploratoires",
     exact_explain: "<strong>16×16 :</strong> Shadow 11,28 %, baseline 11,61 %. Le critère initial n'est pas atteint.",
     metric_exact: "64×64 · CASE EXACTE", metric_exact_note: "Shadow sur 1 197 décisions test", metric_baseline: "BASELINE · CASE FRÉQUENTE", metric_baseline_note: "Meilleure règle simple sur les mêmes décisions", metric_radius: "À 4 CASES PRÈS", metric_radius_note: "Shadow · copie de la position précédente : 16,88 %", metric_coverage: "ZONE QUI COUVRE 91,9 %", metric_coverage_note: "Part moyenne de la carte proposée · seuil ajusté en validation", metric_context: "Ces chiffres viennent d'un test historique déjà inspecté. « 91,9 % » n'est pas une prédiction exacte : la zone couvre en moyenne 1 791 cases sur 4 096. Aucune amélioration prospective ni capacité de jeu supérieure n'est démontrée.",
+    predictability_kicker: "LABORATOIRE · 46 PARTIES DE VALIDATION", predictability_title: "Une case exacte, ou presque toute la carte ?", predictability_intro: "Sur la même grille 8×8, agrandir la liste des cases candidates augmente la couverture. Le seuil de 90 % n'est franchi qu'avec 41 cases sur 64.", predictability_badge: "PAS UN TEST FUTUR", predictability_exact: "1 case · précision exacte", predictability_coverage: "41 cases · couverture", predictability_area: "surface de carte proposée", predictability_phase: "Prédire une seule case dans la phase choisie par la chronologie", predictability_limit: "Ces chiffres viennent de la validation de développement, pas du test futur. La visibilité ennemie est une approximation. La chronologie change les barres par tranche de temps ; elle n'invente pas une précision à la seconde.", predictability_full: "Proxy + stats globales", predictability_visible: "Vision approximée", predictability_expert: "Expert par phase", predictability_samples: n => `${n} décisions de validation · même grille 8×8 pour les trois candidats. Aucun ne démontre 90 % de précision exacte.`,
     coarse_explain: "<strong>8×8 et 4×4 :</strong> un signal de rotations plus larges apparaît, mais il a été examiné après lecture du test. Il faut des parties futures.",
     tempo_title: "Une équipe qui chauffe et se refroidit", tempo_interactive: "Explorer une tranche de temps", tempo_overview: "Vue d'ensemble fixe des 40 premières minutes. Le graphique coloré ci-dessous réagit au curseur.",
     tempo_interactive_help: "Pourcentage de minutes où Faker se rapproche d'un allié déjà positionné.", minute: "Minute",
@@ -74,6 +75,7 @@ const copy = {
     accuracy_title: "What we can really predict", exploratory: "8×8 / 4×4 exploratory",
     exact_explain: "<strong>16×16:</strong> Shadow 11.28%, baseline 11.61%. The original gate is not met.",
     metric_exact: "64×64 · EXACT CELL", metric_exact_note: "Shadow across 1,197 test decisions", metric_baseline: "BASELINE · MOST FREQUENT CELL", metric_baseline_note: "Best simple rule on the same decisions", metric_radius: "WITHIN 4 CELLS", metric_radius_note: "Shadow · copy previous location: 16.88%", metric_coverage: "SET COVERING 91.9%", metric_coverage_note: "Mean share of the proposed map · threshold fitted on validation", metric_context: "These figures come from a previously inspected historical test. ‘91.9%’ is not an exact prediction: the set spans 1,791 of 4,096 cells on average. No prospective improvement or superior playing ability has been shown.",
+    predictability_kicker: "LAB · 46 VALIDATION MATCHES", predictability_title: "One exact cell, or almost the whole map?", predictability_intro: "On the same 8×8 grid, a longer shortlist covers more destinations. Reaching 90% coverage takes 41 of 64 cells.", predictability_badge: "NOT A FUTURE TEST", predictability_exact: "1 cell · exact accuracy", predictability_coverage: "41 cells · coverage", predictability_area: "proposed share of map", predictability_phase: "One-cell prediction in the phase selected on the timeline", predictability_limit: "These are development validation figures, not a future test. Enemy visibility is approximated. The timeline switches phase bins; it does not invent second-by-second accuracy.", predictability_full: "Proxy + global stats", predictability_visible: "Vision proxy", predictability_expert: "Phase expert", predictability_samples: n => `${n} validation decisions · same 8×8 grid for all three candidates. None shows 90% exact accuracy.`,
     coarse_explain: "<strong>8×8 and 4×4:</strong> a broader rotation signal appears, but it was explored after seeing the test. Future games are needed.",
     tempo_title: "A team that heats up and cools down", tempo_interactive: "Explore a time slice", tempo_overview: "Fixed overview of the first 40 minutes. The coloured chart below responds to the slider.",
     tempo_interactive_help: "Share of minutes when the account moves closer to an ally already positioned at time t.", minute: "Minute",
@@ -102,6 +104,7 @@ let grid64 = null;
 let events64 = null;
 let challengeData = null;
 let pressureData = null;
+let predictabilityData = null;
 let challengeScenario = "five_faker";
 let atlasValues = null;
 let trace = null;
@@ -140,6 +143,7 @@ function setSharedMinute(minute) {
   if (grid64 || summary) renderSurface();
   if (pressureData) renderPressure();
   if (challengeData) renderChallenge();
+  if (predictabilityData) renderPredictability();
 }
 
 function translate() {
@@ -157,6 +161,7 @@ function translate() {
   if (events64) renderAtlas();
   if (challengeData) renderChallenge();
   if (pressureData) renderPressure();
+  if (predictabilityData) renderPredictability();
   if (trace) updateReplay();
   showSharedMinute();
 }
@@ -168,6 +173,37 @@ function updateReadout(col, row) {
     col, row, percent(density.actual[index], density.samples),
     percent(density.predicted[index], density.samples)
   );
+}
+
+function renderPredictability() {
+  const phase = phaseAt(sharedMinute);
+  const data = predictabilityData.by_phase;
+  const k = predictabilityData.first_listed_k_at_90_coverage;
+  const formatPercent = (value, digits) => `${(100 * value).toLocaleString(language, {minimumFractionDigits: digits, maximumFractionDigits: digits})} %`;
+  $("#predictability-exact").textContent = formatPercent(predictabilityData.location_topk8["1"], 2);
+  $("#predictability-coverage").textContent = formatPercent(predictabilityData.location_topk8[String(k)], 2);
+  $("#predictability-area").textContent = formatPercent(k / 64, 1);
+  $("#predictability-coverage-label").textContent = language === "fr" ? `${k} cases · couverture` : `${k} cells · coverage`;
+  const rows = [
+    ["full", "predictability_full", "#ff536b"],
+    ["visible_proxy", "predictability_visible", "#ffd895"],
+    ["phase_expert", "predictability_expert", "#90a9ff"]
+  ];
+  const bars = $("#predictability-phase-bars");
+  bars.replaceChildren();
+  $("#predictability-phase-label").textContent = `${phaseLabel(phase)} MIN`;
+  for (const [key, title, color] of rows) {
+    const rate = 100 * data[key][phase].top1_8;
+    const bar = document.createElement("div"); bar.className = "predictability-bar";
+    const name = document.createElement("span"); name.textContent = copy[language][title];
+    const track = document.createElement("div"); track.className = "predictability-bar-track";
+    const fill = document.createElement("span"); fill.className = "predictability-bar-fill";
+    fill.style.width = `${Math.min(100, rate / 35 * 100)}%`; fill.style.background = color;
+    track.append(fill);
+    const value = document.createElement("b"); value.textContent = `${rate.toLocaleString(language, {minimumFractionDigits: 1, maximumFractionDigits: 1})} %`;
+    bar.append(name, track, value); bars.append(bar);
+  }
+  $("#predictability-phase-note").textContent = copy[language].predictability_samples(data.full[phase].samples);
 }
 
 function bindMap(mapImage) {
@@ -662,14 +698,15 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
-  [grid64, events64, challengeData, pressureData] = payloads;
+  [grid64, events64, challengeData, pressureData, predictabilityData] = payloads;
   if (summary && grid64) renderSurface();
   if (events64) renderAtlas();
   if (challengeData) renderChallenge();
   if (pressureData) renderPressure();
+  if (predictabilityData) renderPredictability();
   showSharedMinute();
   await loadGameList();
   try {

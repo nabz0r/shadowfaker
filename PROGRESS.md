@@ -383,3 +383,9 @@
 - [2026-10-10T13:23:37+00:00] Published the 21-file predictability/visibility audit to GitHub `main` at `454a4775e0d00f0fc81fb0839300096161430d32`; remote tree `e3df92e96df1ebd16e5c372f6194fac2696f1b60` equals the locally tested tree. Synced local `main` to the remote commit with a clean worktree.
 - [2026-10-10T13:23:37+00:00] Current best 8×8 validation top-1 remains 17.49%. Its top-41 set covers 90.12% of next cells but occupies 41/64 cells. The visible-proxy audit is inconclusive and the phase-expert and transition candidates did not improve top-1. No new candidate has been evaluated on the historical test; the prospective lockbox is still 0/100 games.
 - [2026-10-10T13:23:37+00:00] Next evidence gate: collect independent future games and player-visible or replay-derived subminute observations before making a 90% exact-location claim. Preserve the frozen historical model and match-level isolation.
+
+## Tableau de bord du diagnostic — 2026-10-10
+
+- [2026-10-10T13:29:23+00:00] Re-ran the frozen prospective protocol offline: still `pending`, 0/100 new eligible matches. A named `20261010` ID snapshot was already cached, so no duplicate same-day Riot request was needed.
+- [2026-10-10T13:29:23+00:00] Added the public 8×8 predictability JSON and figures to the dashboard allowlist, with a bilingual score panel showing 17.49% one-cell accuracy, 90.12% top-41 coverage and the 64.1% map area that entails. Its three validation-model bars follow the shared phase scrubber. Kept the 46 development-validation matches distinct from the 46 historical-test matches elsewhere on the page.
+- [2026-10-10T13:29:23+00:00] Browser QA: saw early 29.8/29.6/29.8% bars change to late 7.5/7.0/5.9% at minute 25; checked the rendered chart. Local dashboard on port 8008 now serves both new public assets (HTTP 200); 22 tests passed, JS syntax and Python compilation passed, `git diff --check` clean.

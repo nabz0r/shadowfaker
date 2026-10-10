@@ -88,6 +88,8 @@ Après installation, lancer le serveur local et ouvrir [http://127.0.0.1:8008/](
 
 Une **frise commune** reste visible pendant le défilement de la page. Son curseur (ou les flèches du clavier et la molette sur ce curseur) synchronise l'atlas 64×64, la surface 3D, le tempo, la pression adverse, la minute du rejeu et le repère du scénario synthétique. Le code couleur reste affiché. Les cartes Faker/Shadow agrègent **46 parties du test** par phase : **460 destinations entre 0 et 10 min, 437 entre 10 et 20 min, 300 après 20 min**. Les couches de joueurs et événements agrègent **465 ranked** ; le rejeu correspond à **une partie** et s'arrête à sa dernière frame. Les anciens visuels 16×16 et les scores historiques sont signalés comme fixes, car leur évolution par minute n'a pas été conservée. Le curseur ne crée pas de positions intermédiaires à la seconde.
 
+Dans « Ce qu'on sait vraiment prédire », le nouveau panneau **8×8 de validation** montre la précision exacte, le coût spatial de 90 % de couverture et trois candidats par phase. Les barres suivent la frise commune. Elles proviennent de **46 parties de validation distinctes** et ne doivent pas être mélangées aux **46 parties du test historique** affichées dans l'atlas.
+
 Le serveur écoute sur `127.0.0.1` et ne sert que les visuels publics et les fichiers de rejeu locaux autorisés. Les traces par partie restent exclues de Git. [Code de l'interface](dashboard/), [générateur des visuels](scripts/render_results.py), [analyse des résultats](RESULTS.md).
 
 ### D'où viennent les 470, 465 et 12 510 ?

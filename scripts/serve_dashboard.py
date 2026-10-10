@@ -21,7 +21,8 @@ FIGURES = frozenset({"faker_vs_shadow_minimap.png", "benchmark_scales.png",
                      "actual_minimap.png", "predicted_minimap.png",
                      "probability_surface_3d.png", "readme_hero_en.svg", "readme_hero_fr.svg"})
 FIGURES = FIGURES | frozenset({"grid64_observed_vs_predicted.png", "event_atlas64.png",
-                               "enemy_pressure.png", "challenge_scenarios.png"})
+                               "enemy_pressure.png", "challenge_scenarios.png",
+                               "predictability_gap.png", "hierarchical_ablation.png"})
 ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/app.js": ROOT / "dashboard" / "app.js",
           "/style.css": ROOT / "dashboard" / "style.css",
@@ -30,6 +31,7 @@ ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/events64.json": ROOT / "docs" / "data" / "public_events64.json",
           "/challenge.json": ROOT / "docs" / "data" / "challenge_scenarios.json",
           "/pressure.json": ROOT / "docs" / "data" / "public_pressure.json",
+          "/predictability.json": ROOT / "docs" / "data" / "public_predictability.json",
           "/replay.json": ROOT / "artifacts" / "replay_trace.json",
           "/demo.gif": ROOT / "artifacts" / "predicted_vs_actual.gif"}
 
