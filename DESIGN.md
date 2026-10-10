@@ -1,6 +1,32 @@
-# Five Star Research Edition — visual system
+# Six Star Research Edition — visual system
 
-The dashboard and README share one fan-made identity: five stars for the user's T1-era inspiration; black-plum ground, scarlet motion and warm gold for evidence markers. It is **not official T1 or Riot branding**. The stars express fandom, never a claim of five titles, affiliation, or access to team data. The README hero is generated as SVG by `scripts/render_identity.py`, using the same colours and typography as `dashboard/style.css`.
+The dashboard and README share one fan-made identity: six stars referring to T1's sixth League of Legends World Championship, won in 2025. [Comcast Spectacor, a T1 co-owner, confirms the sixth title](https://comcastspectacor.com/news/2025/12/t1-entertainment-sports-wins-2025-league-of-legends-world-championship/). Black-plum ground, scarlet motion and warm gold identify the research interface. This is **not official T1 or Riot branding**. The stars refer to esports history, never to Shadow Faker's model quality, team affiliation, or access to team data. The README hero is generated as SVG by `scripts/render_identity.py`, using the same colours and typography as `dashboard/style.css`.
+
+![Live dashboard home with six-star mark](docs/figures/dashboard_hero.png)
+
+## Dynamic chapter tabs
+
+The main navigation uses URL hashes (`#atlas`, `#surface`, `#research`, `#finals`, etc.) and displays one chapter at a time. Back/forward navigation restores the selected chapter. The shared clock remains above it. On narrow screens, the tabs remain horizontally scrollable instead of disappearing; the active tab is marked by border, colour and `aria-current`. A 390-pixel mobile check captured the Finals tab:
+
+![Mobile tab navigation and six-finals selector](docs/figures/dashboard_mobile.png)
+
+![Six winning finals, selected year and game cards](docs/figures/dashboard_finals.png)
+
+The [animated six-finals walkthrough](docs/figures/six_finals.gif) is made from six checked-in public-data screenshots by `scripts/render_finale_gif.py`. Historical professional match summaries in this chapter are sourced, isolated from the ranked training set and never displayed as a private replay.
+
+## Readable pressure and game cards
+
+![Selectable radius, scale diagram and measured phase bars](docs/figures/dashboard_pressure.png)
+
+![Pressure scale and control at the 390-pixel mobile breakpoint](docs/figures/dashboard_pressure_mobile.png)
+
+The pressure control offers five **measured** radii. Its SVG circle only explains scale against the approximate 15,000-unit map width; it never draws invented enemy coordinates. The red bars count mean nearby opponents per sampled frame (0–5 possible), gold bars count net entries per frame, and the readout states radius, phase, denominator and source matches. A global time change selects a different aggregate phase; changing radius switches to counts recomputed from the warehouse. [The complete measurement contract](PRESSURE.md) separates observable proximity from causal influence.
+
+![Data inventory with positioned-event coverage](docs/figures/dashboard_corpus.png)
+
+![Private ranked cards, with local champion and item sprite atlases](docs/figures/dashboard_library.png)
+
+The Corpus tab makes data availability inspectable before making a model claim. Archive cards put UTC time, score and both team compositions before item icons; each icon also has a readable name. `scripts/build_sprites.py` crops only observed champions/items into two local atlases using the pinned Data Dragon static version. The generated coordinate manifest is public; private match facts are served only on loopback. [The ledger and temporal firewall](CORPUS.md) explain why final-game fields cannot become time-`t` model features.
 
 | Token | Colour | Meaning |
 |---|---|---|

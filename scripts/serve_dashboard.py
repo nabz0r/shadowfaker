@@ -12,6 +12,7 @@ from urllib.parse import urlsplit, parse_qs
 from shadowfaker.text_index import search
 from shadowfaker.demo import export_trace
 from shadowfaker.state_matrix import DB
+from shadowfaker.game_facts import DB as FACTS_DB
 from shadowfaker.util import read_json
 from shadowfaker.config import CONFIG
 
@@ -35,6 +36,11 @@ ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/pressure.json": ROOT / "docs" / "data" / "public_pressure.json",
           "/predictability.json": ROOT / "docs" / "data" / "public_predictability.json",
           "/event-ablation.json": ROOT / "docs" / "data" / "public_event_ablation.json",
+          "/world-finals.json": ROOT / "docs" / "data" / "world_finals.json",
+          "/corpus.json": ROOT / "docs" / "data" / "public_corpus_inventory.json",
+          "/sprites.json": ROOT / "docs" / "data" / "sprites.json",
+          "/assets/champions.png": ROOT / "dashboard" / "assets" / "champions.png",
+          "/assets/items.png": ROOT / "dashboard" / "assets" / "items.png",
           "/atlas512.json": ROOT / "artifacts" / "grid512" / "atlas.json",
           "/grid512.json": ROOT / "docs" / "data" / "public_grid512.json",
           "/replay.json": ROOT / "artifacts" / "replay_trace.json",
@@ -69,9 +75,16 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         if urlsplit(self.path).path == "/api/games":
-            with sqlite3.connect(DB) as database:
-                rows = database.execute("SELECT match_id,champion_id,state_count FROM matches ORDER BY match_id").fetchall()
-            self._json([{"match_id": mid,"champion_id": champ,"states": states} for mid,champ,states in rows])
+            if not FACTS_DB.is_file():
+                self._json([])
+                return
+            with sqlite3.connect(FACTS_DB) as database:
+                database.row_factory = sqlite3.Row
+                rows = database.execute("SELECT match_id,started_utc,duration_seconds,patch,champion,side,won,kills,deaths,assists,cs,damage_champions,vision_score,items_json,allies_json,enemies_json FROM games ORDER BY started_utc DESC").fetchall()
+            self._json([{**{k: row[k] for k in row.keys() if not k.endswith("_json")},
+                         "items": json.loads(row["items_json"]),
+                         "allies": json.loads(row["allies_json"]),
+                         "enemies": json.loads(row["enemies_json"])} for row in rows])
             return
         if urlsplit(self.path).path == "/api/replay":
             mid = (parse_qs(urlsplit(self.path).query).get("match") or [""])[0]

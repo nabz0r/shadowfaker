@@ -2,6 +2,10 @@
 
 ![Shadow Faker visual research dashboard](docs/figures/readme_hero_en.svg)
 
+![Research tab: the measurable next evidence gates](docs/figures/dashboard_research.png)
+
+The screenshot shows the **interactive research chapter**, not an additional model result. The six-star identity and the separate 25-game Worlds-finals archive are explained in [WORLD_FINALS.md](WORLD_FINALS.md); public match summaries from that archive have not entered the ranked training or evaluation cohorts.
+
 ## 512×512 development atlas and prediction
 
 ![Observed destinations versus the conditional 512 adapter](docs/figures/atlas512_validation.png)
@@ -172,6 +176,8 @@ The coverage threshold was fitted on the **46 validation matches** and applied t
 ![Enemy proximity summary](docs/figures/enemy_pressure.png)
 
 The local state warehouse records **12,975 observed frames, 12,510 transitions and 353,409 categorized events**. Enemy proximity around Faker is measured as a phase-dependent observation, not attention or resources spent. A separate training candidate appends 13 causal-at-time-t interaction proxies. Its selection is based on validation; see [STATE_ECOSYSTEM.md](STATE_ECOSYSTEM.md). A memory-mapped 128-D state vector index covers all 12,510 examples; k=25 retrieval reaches **0.94% exact 64×64 validation accuracy**, below a **1.25%** frequent-cell baseline. Completed-game vectors contain future information and are excluded from prediction inputs.
+
+The [selectable pressure-zone audit](PRESSURE.md) recomputed proximity for five map-unit radii over **all 465 games and 12,975 positional frames**. Mean nearby opponents per frame for early/middle/late are **0.37/0.36/0.53 at 1,000 units**, **0.88/1.15/1.75 at 2,500**, and **1.58/2.06/3.03 at 5,000**. These are observed counts, not win rates, predictions or causal estimates. Net entries require known enemy positions outside then inside the circle on consecutive frames; the exact second is unobserved. The 0/1 and 0/2 strata mix game times and contexts.
 
 The interaction candidate (540,196 parameters, seed 42, 25 epochs, CPU chosen after a 0.108 s versus 0.631 s MPS mini-benchmark) obtained **8.71% exact 16×16 on 46 validation matches**, versus its most-frequent-region baseline **8.08%**. The frozen 16×16 model scores **10.59% on that validation split**. The interaction candidate was **not promoted or evaluated on test**. This establishes a trained feature path, not an improvement; further work needs better visibility, objectives, history and an independent future evaluation.
 

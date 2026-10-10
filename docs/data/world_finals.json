@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "status": "curated_public_match_facts",
+  "verified_on": "2026-10-10",
+  "finals": [
+    {
+      "year": 2013,
+      "team": "SK Telecom T1",
+      "opponent": "Royal Club",
+      "date": "2013-10-04",
+      "tournament": "Worlds 2013",
+      "score": "3–0",
+      "note": "First world title",
+      "note_fr": "Premier titre mondial",
+      "games": [
+        {
+          "number": 1,
+          "result": "W",
+          "duration": "30:07",
+          "source": "https://gol.gg/game/stats/383/page-game/"
+        },
+        {
+          "number": 2,
+          "result": "W",
+          "duration": "38:21",
+          "source": "https://gol.gg/game/stats/384/page-game/"
+        },
+        {
+          "number": 3,
+          "result": "W",
+          "duration": "20:41",
+          "source": "https://gol.gg/game/stats/385/page-game/"
+        }
+      ],
+      "source": "https://gol.gg/game/stats/383/page-summary/",
+      "domain": "professional_public_summary"
+    },
+    {
+      "year": 2015,
+      "team": "SK Telecom T1",
+      "opponent": "KOO Tigers",
+      "date": "2015-10-31",
+      "tournament": "Worlds 2015",
+      "score": "3–1",
+      "note": "Faker's Ryze closes game 4",
+      "note_fr": "Le Ryze de Faker conclut la manche 4",
+      "games": [
+        {
+          "number": 1,
+          "result": "W",
+          "duration": "42:41",
+          "source": "https://gol.gg/game/stats/2257/page-game/"
+        },
+        {
+          "number": 2,
+          "result": "W",
+          "duration": "38:15",
+          "source": "https://gol.gg/game/stats/2258/page-game/"
+        },
+        {
+          "number": 3,
+          "result": "L",
+          "duration": "37:50",
+          "source": "https://gol.gg/game/stats/2259/page-game/"
+        },
+        {
+          "number": 4,
+          "result": "W",
+          "duration": "34:34",
+          "source": "https://gol.gg/game/stats/2260/page-game/"
+        }
+      ],
+      "source": "https://gol.gg/game/stats/2257/page-summary/",
+      "domain": "professional_public_summary"
+    },
+    {
+      "year": 2016,
+      "team": "SK Telecom T1",
+      "opponent": "Samsung Galaxy",
+      "date": "2016-10-30",
+      "tournament": "Worlds 2016",
+      "score": "3–2",
+      "note": "Five games; game 3 lasts 71 minutes",
+      "note_fr": "Cinq manches ; la troisième dure 71 minutes",
+      "games": [
+        {
+          "number": 1,
+          "result": "W",
+          "duration": "54:41",
+          "source": "https://gol.gg/game/stats/4701/page-game/"
+        },
+        {
+          "number": 2,
+          "result": "W",
+          "duration": "31:26",
+          "source": "https://gol.gg/game/stats/4702/page-game/"
+        },
+        {
+          "number": 3,
+          "result": "L",
+          "duration": "71:20",
+          "source": "https://gol.gg/game/stats/4703/page-game/"
+        },
+        {
+          "number": 4,
+          "result": "L",
+          "duration": "46:01",
+          "source": "https://gol.gg/game/stats/4704/page-game/"
+        },
+        {
+          "number": 5,
+          "result": "W",
+          "duration": "49:11",
+          "source": "https://gol.gg/game/stats/4705/page-game/"
+        }
+      ],
+      "source": "https://gol.gg/game/stats/4701/page-summary/",
+      "domain": "professional_public_summary"
+    },
+    {
+      "year": 2023,
+      "team": "T1",
+      "opponent": "Weibo Gaming",
+      "date": "2023-11-19",
+      "tournament": "Worlds 2023",
+      "score": "3–0",
+      "note": "Return to the title after seven years",
+      "note_fr": "Retour au sommet après sept ans",
+      "games": [
+        {
+          "number": 1,
+          "result": "W",
+          "duration": "30:31",
+          "source": "https://gol.gg/game/stats/53622/page-game/"
+        },
+        {
+          "number": 2,
+          "result": "W",
+          "duration": "29:57",
+          "source": "https://gol.gg/game/stats/53623/page-game/"
+        },
+        {
+          "number": 3,
+          "result": "W",
+          "duration": "25:47",
+          "source": "https://gol.gg/game/stats/53624/page-game/"
+        }
+      ],
+      "source": "https://gol.gg/game/stats/53622/page-summary/",
+      "domain": "professional_public_summary"
+    },
+    {
+      "year": 2024,
+      "team": "T1",
+      "opponent": "Bilibili Gaming",
+      "date": "2024-11-02",
+      "tournament": "Worlds 2024",
+      "score": "3–2",
+      "note": "Five-game final; Faker's Galio in game 5",
+      "note_fr": "Cinq manches ; Faker joue Galio dans la dernière",
+      "games": [
+        {
+          "number": 1,
+          "result": "L",
+          "duration": "27:09",
+          "source": "https://gol.gg/game/stats/62816/page-game/"
+        },
+        {
+          "number": 2,
+          "result": "W",
+          "duration": "27:25",
+          "source": "https://gol.gg/game/stats/62817/page-game/"
+        },
+        {
+          "number": 3,
+          "result": "L",
+          "duration": "27:35",
+          "source": "https://gol.gg/game/stats/62818/page-game/"
+        },
+        {
+          "number": 4,
+          "result": "W",
+          "duration": "31:42",
+          "source": "https://gol.gg/game/stats/62819/page-game/"
+        },
+        {
+          "number": 5,
+          "result": "W",
+          "duration": "32:13",
+          "source": "https://gol.gg/game/stats/62820/page-game/"
+        }
+      ],
+      "source": "https://gol.gg/game/stats/62816/page-summary/",
+      "domain": "professional_public_summary"
+    },
+    {
+      "year": 2025,
+      "team": "T1",
+      "opponent": "KT Rolster",
+      "date": "2025-11-09",
+      "tournament": "Worlds 2025",
+      "score": "3–2",
+      "note": "Sixth title; five-game Telecom War",
+      "note_fr": "Sixième titre ; Telecom War en cinq manches",
+      "games": [
+        {
+          "number": 1,
+          "result": "W",
+          "duration": "36:10",
+          "source": "https://gol.gg/game/stats/72980/page-game/"
+        },
+        {
+          "number": 2,
+          "result": "L",
+          "duration": "42:32",
+          "source": "https://gol.gg/game/stats/72981/page-game/"
+        },
+        {
+          "number": 3,
+          "result": "L",
+          "duration": "36:52",
+          "source": "https://gol.gg/game/stats/72982/page-game/"
+        },
+        {
+          "number": 4,
+          "result": "W",
+          "duration": "29:40",
+          "source": "https://gol.gg/game/stats/72983/page-game/"
+        },
+        {
+          "number": 5,
+          "result": "W",
+          "duration": "36:47",
+          "source": "https://gol.gg/game/stats/72984/page-game/"
+        }
+      ],
+      "source": "https://gol.gg/game/stats/72980/page-summary/",
+      "domain": "professional_public_summary"
+    }
+  ],
+  "extra_games": [
+    {
+      "id": "2016-rox-sf-g4",
+      "year": 2016,
+      "label": "ROX Tigers · semifinal G4",
+      "result": "W",
+      "duration": "42:57",
+      "focus": "Bengi's Nidalee and a series rescue at 1–2",
+      "source": "https://gol.gg/game/stats/4696/page-game/",
+      "domain": "professional_public_summary",
+      "focus_fr": "La Nidalee de Bengi permet de revenir à 2–2 dans la série"
+    },
+    {
+      "id": "2017-rng-sf-g5",
+      "year": 2017,
+      "label": "Royal Never Give Up · semifinal G5",
+      "result": "W",
+      "duration": "41:03",
+      "focus": "Faker's Galio in the deciding game of a five-game semifinal",
+      "source": "https://gol.gg/game/stats/9070/page-game/",
+      "domain": "professional_public_summary",
+      "focus_fr": "Le Galio de Faker dans la manche décisive d'une demi-finale en cinq actes"
+    },
+    {
+      "id": "2023-jdg-sf-g3",
+      "year": 2023,
+      "label": "JD Gaming · semifinal G3",
+      "result": "W",
+      "duration": null,
+      "focus": "Faker on Azir; inspect the VOD before annotating the decisive engage",
+      "source": "https://gol.gg/game/stats/53620/page-fullstats/",
+      "domain": "professional_public_summary",
+      "focus_fr": "Faker joue Azir ; annoter l'engagement décisif seulement après examen de la VOD"
+    }
+  ],
+  "title_source": "https://comcastspectacor.com/news/2025/12/t1-entertainment-sports-wins-2025-league-of-legends-world-championship/",
+  "method": "Series result, T1 game result and duration transcribed from linked public match pages. No licensed VOD or timeline copied; no Faker click, POV, causal annotation, training label or Riot match ID is inferred."
+}

@@ -100,7 +100,7 @@ flowchart LR
   V --> Y
 ```
 
-The all-queue PUUID listing reached **519 IDs**, but the 49 additional matches are other modes. Their timelines are cached for local study and excluded from the ranked predictor. The event atlas, ten-player warehouse, pressure proxies, local geometric field, multilingual index, synthetic formation simulator and fan-made dashboard are implemented. `scripts/run_next_level.py` reproduces the five-game pilot and full extension from the cached ranked pipeline. See [STATE_ECOSYSTEM.md](STATE_ECOSYSTEM.md), [DESIGN.md](DESIGN.md) and [RESULTS.md](RESULTS.md).
+The all-queue PUUID listing reached **519 IDs**, but the 49 additional matches are other modes. Their timelines are cached for local study and excluded from the ranked predictor. The event atlas, ten-player warehouse, five-radius pressure audit, local geometric field, multilingual index, synthetic formation simulator and fan-made dashboard are implemented. A private 465-game facts index makes timestamp, K/D/A, damage, vision, compositions and final items searchable with local champion/item sprites; the final-game fields cannot enter a time-`t` model. `scripts/run_next_level.py` reproduces the five-game pilot and full extension from the cached ranked pipeline; `scripts/refresh_catalog.py` refreshes cards, static art, search and the public inventory without retraining. See [CORPUS.md](CORPUS.md), [PRESSURE.md](PRESSURE.md), [DESIGN.md](DESIGN.md) and [RESULTS.md](RESULTS.md).
 
 | Next research gate | Required evidence | Current status |
 |---|---|---|
@@ -121,3 +121,7 @@ The next gates are (1) a provider-original professional feed or legally sourced,
 The [next research gate](NEXT_RESEARCH.md) now orders those tasks by evidence gain: one matched replay alignment pilot, the completed equal-capacity role-context ablation, rare-event failure analysis, player-visible observation audit and a reproducible scenario contract. It records why public older replay tools and the current GRID offer cannot silently become fresh Faker trajectories.
 
 The local [dashboard](dashboard/index.html#research) now has a research gate showing the **nine class counts and F1 scores** for the KR-only validation ablation from aggregate JSON. It highlights the 52.6% ward-placement share and zero F1 on Faker kills, deaths and objectives. Direct `file://` opening serves as a launcher for the required localhost dashboard; it is not an offline data viewer. This surface changes the clarity of the evidence, not the model or the locked test status.
+
+### M6 delivered: public Worlds finals catalogue
+
+The dashboard now has chapter tabs and a [Finals BO5 tab](dashboard/index.html#finals). It carries **six winning series, 25 final games and three landmark semifinal games**, with a public source on each game and a separate multilingual local search index. [WORLD_FINALS.md](WORLD_FINALS.md) and the animated tour show the exact scope. These professional match facts add **zero** spatial or event labels to the ranked model. The next acquisition step is a rights-cleared, matched replay or POV record for one of these games, with clock/map alignment tested before any training use.

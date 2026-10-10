@@ -299,45 +299,10 @@ def render_tempo(summary: dict) -> None:
 
 
 def render_readme_hero(summary: dict, language: str) -> None:
-    density = summary["test_map_density"]
-    maximum = max(*density["actual"], *density["predicted"])
-    translations = {
-        "en": ("OBSERVE FAKER.", "TEST SHADOW.", "A visual lab for macro decisions, team tempo and future-game proof.",
-               "MATCHES", "MINUTE PAIRS", "EXACT 16×16", "FUTURE GAMES", "OBSERVED", "PREDICTED"),
-        "fr": ("OBSERVER FAKER.", "TESTER SHADOW.", "Un labo visuel des décisions macro, du tempo et des preuves futures.",
-               "PARTIES", "PAIRES DE MINUTES", "PRÉCISION 16×16", "PARTIES FUTURES", "OBSERVÉ", "PRÉDIT")}
-    title1, title2, subtitle, *labels = translations[language]
-    status = "16×16 BASELINE: NOT BEATEN" if language == "en" else "16×16 : BASELINE PAS ENCORE BATTUE"
-    parts = [
-        '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img">',
-        '<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#091526"/><stop offset="1" stop-color="#173651"/></linearGradient><pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M 34 0 L 0 0 0 34" fill="none" stroke="#29465f" stroke-width="1" opacity=".35"/></pattern></defs>',
-        '<rect width="1200" height="500" fill="url(#bg)"/><rect x="680" y="35" width="485" height="315" fill="url(#grid)" opacity=".65"/>',
-        '<rect x="43" y="39" width="38" height="38" rx="9" fill="none" stroke="#62e4d8"/><text x="62" y="63" fill="#62e4d8" font-family="Arial,sans-serif" font-size="13" font-weight="700" text-anchor="middle">SF</text>',
-        '<text x="96" y="64" fill="#e6f0fa" font-family="Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="3">SHADOW <tspan fill="#62e4d8">FAKER</tspan></text>',
-        '<text x="45" y="172" fill="#f5f8fc" font-family="Arial,sans-serif" font-size="61" font-weight="800" letter-spacing="-2">'+escape(title1)+'</text>',
-        '<text x="45" y="240" fill="#62e4d8" font-family="Arial,sans-serif" font-size="61" font-weight="800" letter-spacing="-2">'+escape(title2)+'</text>',
-        '<text x="47" y="285" fill="#b4c9db" font-family="Arial,sans-serif" font-size="18">'+escape(subtitle)+'</text>',
-        '<rect x="45" y="316" width="307" height="31" rx="15" fill="#17394a" stroke="#356b76"/><text x="198" y="336" text-anchor="middle" fill="#62e4d8" font-family="Arial,sans-serif" font-size="12">'+escape(status)+'</text>',
-    ]
-    for j, (key, label) in enumerate((("actual", labels[4]), ("predicted", labels[5]))):
-        x0 = 806 + j * 177
-        parts.append(f'<text x="{x0}" y="98" fill="{"#62e4d8" if j == 0 else "#ffa1c9"}" font-family="Arial,sans-serif" font-size="13" font-weight="700" letter-spacing="2">{escape(label)}</text>')
-        for region, count in enumerate(density[key]):
-            column, row = region % 16, region // 16
-            rgb = plt.get_cmap("magma")((count / maximum) ** .55)
-            colour = "#%02x%02x%02x" % tuple(int(channel * 255) for channel in rgb[:3])
-            parts.append(f'<rect x="{x0 + column * 10}" y="{108 + (15 - row) * 10}" width="10" height="10" fill="{colour}" stroke="#34465a" stroke-width=".3"/>')
-    card_values = (str(summary["source_matches"]), f'{summary["source_observations"]:,}', f'{100 * summary["exact_16x16"]["model_top1"]:.2f}%',
-                   f'{summary["prospective_new_matches"]}/{summary["prospective_minimum_matches"]}')
-    if language == "fr":
-        card_values = (card_values[0], card_values[1].replace(",", " "), card_values[2], card_values[3])
-    for i, (value, label) in enumerate(zip(card_values, labels[:4])):
-        x = 44 + 287 * i
-        parts += [f'<rect x="{x}" y="374" width="270" height="91" rx="12" fill="#10233b" stroke="#36516d"/>',
-                  f'<text x="{x + 20}" y="416" fill="{"#ffbc77" if i == 3 else "#f5f8fc"}" font-family="Arial,sans-serif" font-size="31" font-weight="700">{escape(value)}</text>',
-                  f'<text x="{x + 20}" y="445" fill="#aebed2" font-family="Arial,sans-serif" font-size="12" letter-spacing="1">{escape(label)}</text>']
-    parts.append('</svg>')
-    (FIGURES / f"readme_hero_{language}.svg").write_text("".join(parts), encoding="utf-8")
+    # Keep the report pipeline aligned with the dashboard identity.
+    from render_identity import poster
+
+    (FIGURES / f"readme_hero_{language}.svg").write_text(poster(language), encoding="utf-8")
 
 
 def render_probability_surface(summary: dict) -> None:

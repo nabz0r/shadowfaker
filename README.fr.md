@@ -2,11 +2,52 @@
 
 # Shadow Faker
 
-[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Explorer l'atlas 512×512**](#atlas-512512--résultat-mesuré) · [**Lire les résultats**](RESULTS.md) · [**English**](README.md)
+[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Explorer l'atlas 512×512**](#atlas-512512--résultat-mesuré) · [**Six finales mondiales**](WORLD_FINALS.md) · [**Lire les résultats**](RESULTS.md) · [**English**](README.md)
 
 La [documentation anglaise](README.md) est la version internationale de référence pour les résultats et la calibration les plus récents.
 
 Pipeline de recherche local visant à modéliser **les décisions macro de Faker à moins d'une minute** à partir du compte Riot ID « Hide on bush#KR1 ». **Les positions Riot disponibles restent échantillonnées à environ 60 secondes : le modèle spatial prédit la minute suivante.** Une tête distincte prédit les types d'événements dans les dix secondes suivantes, sans connaître la position ou le clic de Faker à cette fréquence. Prédire ses déplacements sous la minute demandera des replays ou vidéos alignés et un nouveau benchmark. Les actions cibles du modèle spatial appartiennent uniquement au joueur de ce PUUID ; les neuf autres joueurs fournissent un contexte de partie. Le code récupère des parties ranked solo KR (queue 420), transforme les timelines en observations causales, entraîne un petit transformer multi-têtes et compare ses prédictions à quatre baselines régionales. Le clone fidèle est le premier étage d'un objectif plus ambitieux : rechercher une politique meilleure en jeu, selon les étapes et critères de [SHADOW_PLUS.md](SHADOW_PLUS.md). **L'identité réelle du joueur ne peut pas être établie par l'API seule.**
+
+## Le site, en images
+
+La page fonctionne désormais par **onglets dynamiques** : une vue à la fois, avec une chronologie commune. Les six étoiles évoquent le sixième titre mondial de T1 en 2025, [confirmé par son copropriétaire Comcast Spectacor](https://comcastspectacor.com/news/2025/12/t1-entertainment-sports-wins-2025-league-of-legends-world-championship/). Shadow Faker est un laboratoire de fans indépendant ; ces étoiles ne représentent ni la précision du modèle ni une affiliation à T1.
+
+| Onglets du site | Équivalent dans ce README |
+|---|---|
+| **Atlas 512×512** | Cases et événements observés, puis [échec de la case exacte](#atlas-512512--résultat-mesuré) |
+| **16×16 historique / 3D** | [Carte observée contre prédite et surface](#le-paysage-des-prochains-mouvements) |
+| **Évolution / Tempo / Pression** | Chronologie d'une partie, [fonctionnement](#fonctionnement) et [zone adverse réglable](PRESSURE.md) |
+| **Scores / Recherche / Preuves** | Baselines, échecs par classe et [prochains tests](NEXT_RESEARCH.md) |
+| **Stratégies / Challenge** | [Hypothèses et critères d'un jeu meilleur](SHADOW_PLUS.md) ; la simulation est illustrative |
+| **Finales BO5 / Corpus / Archives** | [Six finales sourcées, 25 manches](WORLD_FINALS.md), [inventaire de la base](CORPUS.md) et fiches ranked privées |
+
+La barre d'onglets reste accessible sur mobile : [capture à 390 pixels](DESIGN.md#dynamic-chapter-tabs). La chronologie commune synchronise des vues de cohortes différentes ; elle n'invente pas de positions entre les frames Riot espacées d'environ une minute.
+
+![Accueil Shadow Faker à six étoiles et chronologie partagée](docs/figures/dashboard_hero.png)
+
+**La carte, puis les choix possibles.** L'atlas 512×512 colore les destinations et événements agrégés. Dans la vue 3D, la hauteur indique une fréquence observée, pas le relief de LoL ni une stratégie gagnante.
+
+![Onglet atlas interactif 512×512](docs/figures/dashboard_atlas.png)
+
+![Onglet surface tridimensionnelle des destinations observées](docs/figures/dashboard_surface.png)
+
+**Une zone de pression qu'on peut changer.** De 1 000 à 5 000 unités autour de Faker, le cercle explique l'échelle et les barres recalculent adversaires proches, entrées nettes et états 0/1 ou 0/2 pour les 465 parties. C'est une proximité observée à environ une minute, pas une lecture de l'intention adverse. [Définitions, unités et limites](PRESSURE.md).
+
+![Zone de pression interactive avec barres par phase](docs/figures/dashboard_pressure.png)
+
+**Le corpus devient lisible.** L'onglet Corpus distingue 470 IDs ranked KR de 465 parties utilisables et explique pourquoi seuls 33 329 des 353 409 événements portent une coordonnée. L'onglet Archives montre date UTC, compositions, K/D/A, dégâts, vision et objets finaux avec des sprites locaux pour les 169 champions et 160 objets observés. Ces statistiques finales ne sont jamais des entrées au temps `t`. [Inventaire détaillé](CORPUS.md).
+
+![Inventaire visuel des données indexées](docs/figures/dashboard_corpus.png)
+
+![Parties ranked consultables avec sprites champions et objets](docs/figures/dashboard_library.png)
+
+**Les preuves, puis l'histoire.** L'onglet recherche montre les événements que le modèle reconnaît mal. Le nouvel [atlas des finales BO5](WORLD_FINALS.md) contient **25 manches réparties sur les six finales mondiales gagnées**, plus trois demi-finales marquantes et sourcées. Chaque manche a son résultat, sa durée et un lien vers la source ; ce corpus professionnel reste séparé des données ranked d'entraînement.
+
+![Onglet recherche et prochains tests mesurables](docs/figures/dashboard_research.png)
+
+![Animation des six finales mondiales gagnées par Faker et T1](docs/figures/six_finals.gif)
+
+[Direction visuelle et capture mobile](DESIGN.md) · [Sources des finales](WORLD_FINALS.md) · [Résultats chiffrés](RESULTS.md).
 
 ### Nouveau : plus de parties, une cible à dix secondes
 
@@ -127,7 +168,7 @@ Une **frise commune** reste visible pendant le défilement de la page. Son curse
 
 Dans « Ce qu'on sait vraiment prédire », le panneau 512 donne le résultat exact et ses baselines. Le panneau **8×8 de validation** montre la précision exacte, le coût spatial de 90 % de couverture et trois candidats par phase. Les barres suivent la frise commune. Ces métriques de développement ne doivent pas être mélangées aux **46 parties du test historique** affichées dans les archives 16/64.
 
-Le serveur écoute sur `127.0.0.1` et ne sert que les visuels publics et les fichiers de rejeu locaux autorisés. Les traces par partie restent exclues de Git. [Code de l'interface](dashboard/), [générateur des visuels](scripts/render_results.py), [analyse des résultats](RESULTS.md).
+Le serveur écoute sur `127.0.0.1` et ne sert que les visuels publics, les fiches privées indexées et les fichiers de rejeu locaux autorisés. Les traces par partie restent exclues de Git. Les sprites et noms d'objets proviennent des données statiques [Riot Data Dragon](https://developer.riotgames.com/docs/lol#data-dragon), version épinglée et expliquée dans [CORPUS.md](CORPUS.md). [Code de l'interface](dashboard/), [générateur des visuels](scripts/render_results.py), [analyse des résultats](RESULTS.md).
 
 ### D'où viennent les 470, 465 et 12 510 ?
 
@@ -148,6 +189,8 @@ cp .env.example .env
 ```
 
 Si `pip` n'est pas disponible dans le venv, utiliser `uv pip install --python .venv/bin/python -r requirements.txt -e .`. La commande unique exécute d'abord **toutes les phases sur cinq parties**, puis la collecte cible, le parsing, l'entraînement, l'évaluation et le GIF. Elle construit ensuite les atlas 64×64 et **512×512**, la matrice des dix joueurs, les variables d'interaction entraînables, l'index vectoriel, les résumés bilingues et les visuels. Après entraînement du parent 64, elle teste l'adaptateur 512 sur cinq parties avant de passer à 373 parties de train et 46 de validation. Elle reprend les JSON, les NPZ et les checkpoints déjà écrits. On peut la relancer après une interruption ou après avoir remplacé une clé expirée dans `.env`. Le test 64×64 historique est déjà examiné ; les variantes 512 et d'interaction ne sont évaluées que sur validation.
+
+Pour refaire uniquement les **fiches privées, la recherche, les sprites locaux et l'inventaire agrégé** depuis les caches existants : `.venv/bin/python scripts/refresh_catalog.py`. Le pilote cinq parties passe d'abord ; les checkpoints du modèle ne sont pas modifiés. Les images statiques Data Dragon sont téléchargées uniquement si leur cache local est vide.
 
 Pour un essai réel limité à cinq parties :
 

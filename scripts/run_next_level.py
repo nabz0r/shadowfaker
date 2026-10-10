@@ -27,10 +27,13 @@ from shadowfaker.pressure import summarize as summarize_pressure
 from shadowfaker.pvectors import ROOT as PVECTORS
 from shadowfaker.pvectors import build as build_vectors, validate_knn
 from shadowfaker.state_matrix import DB, TRANSITIONS, build as build_warehouse
-from shadowfaker.text_index import INDEX, generate as generate_text, import_note
+from shadowfaker.game_facts import build as build_game_facts
+from shadowfaker.text_index import INDEX, generate as generate_text, import_note, import_world_finals
 from shadowfaker.train import train as train_interaction
 from shadowfaker.evaluate import evaluate as evaluate_interaction
 from shadowfaker.util import atomic_json, read_json
+from build_sprites import build as build_sprites
+from build_corpus_inventory import build as build_inventory
 
 
 def stage(message: str) -> None:
@@ -84,11 +87,22 @@ def main() -> None:
     stage(f"Event atlas: {report['source_matches']} ranked matches, {report['parse_errors']} errors.")
     warehouse = build_warehouse(db_path=DB, matrix_path=TRANSITIONS)
     stage(f"Warehouse: {warehouse['states']} states, {warehouse['transitions']} transitions, {warehouse['events']} events.")
+    fact_ids = sorted(read_json(CONFIG.processed / "meta.json")["counts"])
+    fact_puuid = read_json(CONFIG.raw / "resolved_account.json")["puuid"]
+    fact_pilot = build_game_facts(fact_ids[:5], fact_puuid, CONFIG.raw / "matches")
+    if fact_pilot["errors"]: raise RuntimeError(f"Five-game facts pilot failed: {fact_pilot['errors']}")
+    facts = build_game_facts(fact_ids, fact_puuid, CONFIG.raw / "matches")
+    stage(f"Post-game facts: {facts['total']} private ranked cards; {len(facts['errors'])} errors. These are retrospective, not time-t model inputs.")
+    sprites = build_sprites()
+    stage(f"Data Dragon sprites: {sprites['champions']} champions, {sprites['items']} items; pinned static version.")
+    inventory = build_inventory()
+    stage(f"Corpus inventory: {inventory['warehouse']['events']} events, {inventory['warehouse']['events_with_coordinates']} positioned.")
     pressure = summarize_pressure()
     stage(f"Enemy pressure: {pressure['states_with_faker_position']} positional frames.")
     generate_challenges()
     summaries = generate_text(index=INDEX, state_db=DB)
     stage(f"Text: {summaries['generated_documents']} EN/FR summaries, {len(summaries['errors'])} errors.")
+    import_world_finals(index=INDEX)
     for path in sorted((CONFIG.root / "docs" / "cases").glob("*.txt")):
         import_note(path, index=INDEX)
 

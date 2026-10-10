@@ -1,6 +1,7 @@
 const copy = {
   fr: {
-    nav_atlas: "Atlas 512×512", nav_map: "16×16 historique", nav_replay: "Évolution", nav_research: "Recherche", nav_tempo: "Tempo", nav_strategy: "Stratégies", nav_challenge: "Challenge", nav_library: "Archives", nav_evidence: "Preuves",
+    nav_atlas: "Atlas 512×512", nav_map: "16×16 historique", nav_replay: "Évolution", nav_accuracy: "Scores", nav_research: "Recherche", nav_tempo: "Tempo", nav_pressure: "Pression", nav_strategy: "Stratégies", nav_challenge: "Challenge", nav_finals: "Finales BO5", nav_library: "Archives", nav_evidence: "Preuves",
+    finals_title: "Six étoiles. Vingt-cinq manches de finale.", finals_intro: "Explore les six finales mondiales gagnées par Faker et T1/SKT. Chaque manche a son résultat, sa durée et une source vérifiable. Les parties professionnelles restent un corpus distinct : ici, pas de replay Riot, de clics ni de trajectoire inventée.", finals_epic: "Autres parties marquantes à étudier", finals_limit: "Fiches factuelles publiques indexées séparément des 465 timelines ranked KR. Les liens pointent vers les statistiques de Games of Legends ; le titre 2025 est confirmé par le copropriétaire de T1. Ce catalogue guide une future annotation de VOD, il n'entraîne pas Shadow.",
     time_title: "CHRONOLOGIE · FAIRE DÉFILER", key_faker: "Faker à t", key_real: "arrivée réelle", key_shadow: "choix Shadow", key_ally: "alliés", key_enemy: "adversaires", key_objective: "objectifs",
     fixed_16: "Archive fixe : ancien modèle 16×16, toutes phases réunies. Sa prédiction par phase n'a pas été conservée ; la frise anime les vues 512×512 de validation ci-dessus.",
     hero_eyebrow: "Laboratoire de décisions macro · KR ranked solo",
@@ -58,7 +59,8 @@ const copy = {
     load_error: "Les chiffres agrégés sont indisponibles. Lance le serveur du dashboard depuis le dépôt."
   },
   en: {
-    nav_atlas: "512×512 atlas", nav_map: "Legacy 16×16", nav_replay: "Evolution", nav_research: "Research", nav_tempo: "Tempo", nav_strategy: "Strategies", nav_challenge: "Challenge", nav_library: "Archive", nav_evidence: "Evidence",
+    nav_atlas: "512×512 atlas", nav_map: "Legacy 16×16", nav_replay: "Evolution", nav_accuracy: "Scores", nav_research: "Research", nav_tempo: "Tempo", nav_pressure: "Pressure", nav_strategy: "Strategies", nav_challenge: "Challenge", nav_finals: "BO5 finals", nav_library: "Archive", nav_evidence: "Evidence",
+    finals_title: "Six stars. Twenty-five final games.", finals_intro: "Explore Faker and T1/SKT's six winning Worlds finals. Every game has a result, duration and verifiable source. Professional games are a separate corpus: no Riot replay, clicks or invented trajectory appears here.", finals_epic: "Other landmark games to investigate", finals_limit: "Public match facts are indexed separately from the 465 KR ranked timelines. Links lead to Games of Legends statistics; T1's co-owner confirms the 2025 title. This catalogue guides future VOD annotation and does not train Shadow.",
     time_title: "TIMELINE · SCRUB TO EXPLORE", key_faker: "Faker at t", key_real: "observed arrival", key_shadow: "Shadow choice", key_ally: "allies", key_enemy: "opponents", key_objective: "objectives",
     fixed_16: "Fixed archive: the earlier 16×16 model across all phases. Its per-phase predictions were not retained; the timeline animates the 512×512 validation views above.",
     hero_eyebrow: "Macro decision lab · KR ranked solo", hero_title: "Observe Faker.<br>Test Shadow.",
@@ -116,6 +118,29 @@ const copy = {
   }
 };
 
+Object.assign(copy.fr, {
+  nav_corpus:"Corpus", guide_choose:"Choisir une seule couche", guide_choose_copy:"La carte affiche le type sélectionné, pas dix joueurs superposés.", guide_point:"Un carré = une case", guide_point_copy:"Plus il est lumineux, plus cette case contient d'observations. Le halo aide seulement à voir une case isolée.", guide_hover:"Survoler pour compter", guide_hover_copy:"Le panneau donne le type, la phase, la coordonnée et le nombre exact.",
+  map_key_real:"Gauche : arrivées observées", map_key_shadow:"Droite : choix du modèle", map_key_cell:"Une tuile = une région 16×16 ; même coordonnée sur les deux cartes.", surface_key_xy:"Plan X/Y : position sur la minimap", surface_key_z:"Hauteur Z : nombre de destinations dans la case", surface_key_one:"La vue montre une distribution agrégée, jamais dix joueurs à cet instant.",
+  replay_key_now:"Point plein : position à t", replay_key_next:"Anneau : arrivée à t+1", replay_key_model:"Losange : case prédite", replay_key_limit:"Le fond est une probabilité du modèle 16×16 ; les autres joueurs sont des observations Riot à t.",
+  corpus_title:"Qu'avons-nous vraiment en mémoire ?", corpus_intro:"Les fichiers bruts restent sur cette machine. Ici, seuls leurs volumes et leur sens sont publiés : une partie avec une timeline ranked, un résumé professionnel et une fiche de finale ne donnent pas la même résolution.", corpus_cached:"JSON de match en cache", corpus_cached_note:"toutes queues et régions du cache", corpus_timeline:"Timelines JSON", corpus_timeline_note:"les remakes peuvent manquer", corpus_usable:"Ranked KR exploitables", corpus_usable_note:"seules cibles du modèle spatial", corpus_facts:"Fiches de fin de match", corpus_facts_note:"pour explorer, jamais pour prédire à t", corpus_source:"Source", corpus_volume:"Volume", corpus_have:"Ce qu'on observe", corpus_use:"Usage correct", corpus_kr_have:"Positions des dix joueurs ~60 s, économie, niveaux, événements horodatés", corpus_kr_use:"États causaux et labels spatiaux ; split par partie", corpus_euw_have:"Timelines ranked, identité historique attribuée", corpus_euw_use:"Appoint au train d'événements, pas preuve d'identité", corpus_other:"Autres queues KR", corpus_other_have:"Matchs et timelines d'autres modes", corpus_other_use:"Archive locale, hors train ranked", corpus_pro:"Résumés pro 2022–2026", corpus_pro_have:"Score final, patch, champion, ligue ; miroir non vérifié", corpus_pro_use:"Découverte de cas, aucune trajectoire", corpus_finals:"Finales gagnées", corpus_finals_have:"Résultat, durée, lien par manche", corpus_finals_use:"Pistes de VOD, pas de labels de mouvement", corpus_states:"frames d'état", corpus_actors:"observations de joueurs", corpus_transitions:"transitions Faker", corpus_events:"événements indexés", corpus_position_kicker:"POURQUOI DES POINTS MANQUENT SUR LA CARTE", corpus_position_copy:"Achats, points de compétence et beaucoup de wards n'ont pas de coordonnées dans la timeline. Même quand un kill est positionné, le point peut être celui de la victime. Une position d'événement n'est donc jamais automatiquement celle de Faker.", corpus_next_title:"Ce que cet index change, et le prochain verrou", corpus_next_copy:"Date UTC, champion, côté bleu/rouge, score K/D/A, dégâts, vision, objets et compositions rendent les 465 parties retrouvables. Ce sont des données finales : les ajouter aux entrées à t tricherait. Pour viser une prédiction spatiale sous la minute, il faut un replay assorti au match ID, vérifier l'horloge et la vision, puis piloter cinq parties et tester sur des parties futures.", corpus_open_library:"Explorer les fiches de parties ↗",
+  catalog_title:"465 parties, enfin lisibles", catalog_intro:"Recherche par champion, objet, date UTC, patch, ID ou composition. Ces cartes sont des statistiques finales du match et ne servent pas d'entrées au modèle à la minute t.", catalog_more:"Afficher plus", catalog_win:"VICTOIRE", catalog_loss:"DÉFAITE", catalog_unknown:"RÉSULTAT INCONNU", catalog_allies:"Alliés", catalog_enemies:"Adversaires", catalog_items:"Objets finaux", catalog_damage:"Dégâts champions", catalog_vision:"Vision", catalog_cs:"CS", catalog_duration:"Durée", catalog_side_blue:"CÔTÉ BLEU", catalog_side_red:"CÔTÉ ROUGE", catalog_filter_placeholder:"Azir, Sablier, 2026-09, KR_…", catalog_filter_label:"Filtrer les parties ranked", catalog_found:n=>`${n.toLocaleString("fr")} parties trouvées`,
+  pressure_intro:"On compte les adversaires observés autour de Faker à chaque frame Riot (~60 s). Choisis une zone : les moyennes, les entrées et les états 0/1 ou 0/2 sont recalculés pour ce rayon.", pressure_zone:"Rayon autour de Faker", pressure_scheme:"Schéma d'échelle : le cercle suit le rayon choisi, pas une trajectoire ni des positions réelles.", pressure_near:"Adversaires proches", pressure_near_help:"Moyenne de joueurs ennemis avec position connue dans le cercle, sur une frame observée. Unité : joueurs par frame (0 à 5).", pressure_arrivals:"Entrées observées", pressure_arrival_help:"Ennemis positionnés hors du cercle à la frame précédente puis dedans à la suivante. Unité : entrées nettes par frame ; l'instant exact reste inconnu.", pressure_clock:"Tranche temporelle", pressure_clock_help:"Le curseur global choisit 0–10, 10–20 ou 20+ minutes. Les barres restent des moyennes sur toutes les parties.",
+  atlas_point:(label,phase,x,y,count,grid,cohort)=>`${label} · ${phase} min · ${cohort} · case ${x},${y} sur ${grid}×${grid} : ${count.toLocaleString("fr")} observation${count>1?"s":""} exacte${count>1?"s":""}.`,
+  atlas_empty:(label,phase,cohort)=>`${label} · ${phase} min · ${cohort}. Survole une case pour lire son compte exact ; la lueur autour n'ajoute aucun point.`,
+  map_cell:(col,row,actual,shadow)=>`Case ${col},${row} sur 16×16 · Faker observé : ${actual} % des 1 197 arrivées · Shadow : ${shadow} % des 1 197 choix.`
+});
+Object.assign(copy.en, {
+  nav_corpus:"Corpus", guide_choose:"Select one layer", guide_choose_copy:"The map shows the selected type, not ten players overlaid.", guide_point:"One square = one cell", guide_point_copy:"Brighter cells contain more observations. The halo only makes isolated cells visible.", guide_hover:"Hover to count", guide_hover_copy:"The panel identifies type, phase, coordinates and exact count.",
+  map_key_real:"Left: observed arrivals", map_key_shadow:"Right: model choices", map_key_cell:"One tile = one 16×16 region; matching coordinates across the two maps.", surface_key_xy:"X/Y plane: minimap position", surface_key_z:"Z height: number of destinations in the cell", surface_key_one:"An aggregate distribution, never ten players in one instant.",
+  replay_key_now:"Solid dot: position at t", replay_key_next:"Ring: observed arrival at t+1", replay_key_model:"Diamond: predicted cell", replay_key_limit:"The background is a 16×16 model probability; other players are Riot observations at t.",
+  corpus_title:"What do we actually have in memory?", corpus_intro:"Raw files stay on this machine. Only aggregate counts and their meaning are published here: a ranked timeline, a professional summary and a final-game card have different resolution.", corpus_cached:"Cached match JSON", corpus_cached_note:"all queues and regions in the cache", corpus_timeline:"Timeline JSON", corpus_timeline_note:"short remakes can be absent", corpus_usable:"Usable KR ranked", corpus_usable_note:"the spatial model's target cohort", corpus_facts:"Post-game cards", corpus_facts_note:"for exploration, never prediction at t", corpus_source:"Source", corpus_volume:"Volume", corpus_have:"What we observe", corpus_use:"Valid use", corpus_kr_have:"Ten-player positions ~60 s, economy, levels, timestamped events", corpus_kr_use:"Causal states and spatial labels; split by match", corpus_euw_have:"Ranked timelines, historically attributed identity", corpus_euw_use:"Auxiliary event training, not identity proof", corpus_other:"Other KR queues", corpus_other_have:"Matches and timelines from other modes", corpus_other_use:"Local archive, outside ranked training", corpus_pro:"Pro summaries 2022–2026", corpus_pro_have:"Final score, patch, champion, league; unverified mirror", corpus_pro_use:"Case discovery, no trajectories", corpus_finals:"Winning finals", corpus_finals_have:"Result, duration and link per game", corpus_finals_use:"VOD leads, no movement labels", corpus_states:"sampled states", corpus_actors:"player observations", corpus_transitions:"Faker transitions", corpus_events:"indexed events", corpus_position_kicker:"WHY MAP POINTS ARE MISSING", corpus_position_copy:"Purchases, skill points and many wards have no coordinates in the timeline. A positioned kill can be located at the victim. An event position is never automatically Faker's position.", corpus_next_title:"What this index changes, and the next gate", corpus_next_copy:"UTC date, champion, blue/red side, K/D/A, damage, vision, items and compositions make 465 games discoverable. These are final statistics: using them as time-t inputs would leak the future. Spatial prediction below a minute needs a replay matched to a game ID, clock and vision checks, a five-game pilot and a future-game test.", corpus_open_library:"Explore the game cards ↗",
+  catalog_title:"465 games, readable at last", catalog_intro:"Search by champion, item, UTC date, patch, ID or composition. These cards contain final-match statistics, never time-t model inputs.", catalog_more:"Show more", catalog_win:"WIN", catalog_loss:"LOSS", catalog_unknown:"RESULT UNKNOWN", catalog_allies:"Allies", catalog_enemies:"Opponents", catalog_items:"Final items", catalog_damage:"Champion damage", catalog_vision:"Vision", catalog_cs:"CS", catalog_duration:"Duration", catalog_side_blue:"BLUE SIDE", catalog_side_red:"RED SIDE", catalog_filter_placeholder:"Azir, Hourglass, 2026-09, KR_…", catalog_filter_label:"Filter ranked games", catalog_found:n=>`${n.toLocaleString("en")} games found`,
+  pressure_intro:"We count observed opponents near Faker in each Riot frame (~60 s). Select a zone to recalculate averages, entries and 0/1 or 0/2 states for that radius.", pressure_zone:"Radius around Faker", pressure_scheme:"Scale diagram: the circle follows your chosen radius, not real player locations or paths.", pressure_near:"Nearby opponents", pressure_near_help:"Mean enemies with known positions inside the circle per observed frame. Unit: players per frame (0 to 5).", pressure_arrivals:"Observed entries", pressure_arrival_help:"Enemies with known positions outside the circle in one frame and inside it in the next. Unit: net entries per frame; exact timing is unknown.", pressure_clock:"Time slice", pressure_clock_help:"The shared slider selects 0–10, 10–20 or 20+ minutes. Bars remain averages across all games.",
+  atlas_point:(label,phase,x,y,count,grid,cohort)=>`${label} · ${phase} min · ${cohort} · cell ${x},${y} of ${grid}×${grid}: ${count.toLocaleString("en")} exact observation${count===1?"":"s"}.`,
+  atlas_empty:(label,phase,cohort)=>`${label} · ${phase} min · ${cohort}. Hover a cell for its exact count; the display halo adds no data points.`,
+  map_cell:(col,row,actual,shadow)=>`Cell ${col},${row} of 16×16 · Faker observed: ${actual}% of 1,197 arrivals · Shadow: ${shadow}% of 1,197 choices.`
+});
+
 let language = "fr";
 let summary = null;
 let grid64 = null;
@@ -125,6 +150,8 @@ let grid512Score = null;
 let events64 = null;
 let challengeData = null;
 let pressureData = null;
+let spriteManifest = null;
+let pressureRadius = 2500;
 let predictabilityData = null;
 let eventAblation = null;
 let challengeScenario = "five_faker";
@@ -133,11 +160,200 @@ let trace = null;
 let surfaceMode = "actual";
 let replayTimer = null;
 let sharedMinute = 0;
+let worldFinals = null;
+let corpusData = null;
+let gameFacts = [];
+let gameCardsShown = 12;
+let selectedFinalYear = 2025;
 const $ = (selector) => document.querySelector(selector);
 const percent = (count, total) => (100 * count / total).toFixed(2);
 const SVG_NS = "http://www.w3.org/2000/svg";
 const phaseAt = (minute) => minute < 10 ? "early" : minute < 20 ? "middle" : "late";
 const phaseLabel = (phase) => ({early:"0–10",middle:"10–20",late:"20+"})[phase];
+
+function showSection() {
+  const requested = decodeURIComponent(location.hash.slice(1));
+  const ids = [...document.querySelectorAll("main > section[id]")].map(section => section.id);
+  const active = ids.includes(requested) ? requested : "top";
+  document.querySelector(".hero").hidden = active !== "top";
+  document.querySelector(".stats").hidden = active !== "top";
+  for (const section of document.querySelectorAll("main > section[id]")) section.hidden = section.id !== active;
+  for (const link of document.querySelectorAll(".topbar nav a")) {
+    const selected = link.getAttribute("href") === `#${active}`;
+    link.classList.toggle("selected", selected);
+    if (selected) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  }
+  positionActiveTab();
+  requestAnimationFrame(() => window.scrollTo(0, 0));
+}
+
+function positionActiveTab() {
+  const current = document.querySelector('.topbar nav a[aria-current="page"]');
+  if (current) current.scrollIntoView({block: "nearest", inline: "center"});
+}
+
+function renderFinals() {
+  if (!worldFinals) return;
+  const fr = language === "fr";
+  const tabs = $("#finals-tabs"); tabs.replaceChildren();
+  for (const final of worldFinals.finals) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "final-year" + (final.year === selectedFinalYear ? " active" : "");
+    button.textContent = `★ ${final.year}`;
+    button.setAttribute("aria-pressed", String(final.year === selectedFinalYear));
+    button.addEventListener("click", () => {selectedFinalYear = final.year; renderFinals();});
+    tabs.append(button);
+  }
+  const final = worldFinals.finals.find(item => item.year === selectedFinalYear) || worldFinals.finals.at(-1);
+  const detail = $("#finals-detail"); detail.replaceChildren();
+  const heading = document.createElement("div"); heading.className = "final-heading";
+  const title = document.createElement("div");
+  const tag = document.createElement("span"); tag.className = "kicker"; tag.textContent = `${final.tournament.toUpperCase()} · ${final.date}`;
+  const name = document.createElement("h3"); name.textContent = `${final.team}  ·  ${final.opponent}`;
+  const note = document.createElement("p"); note.textContent = fr ? final.note_fr : final.note;
+  title.append(tag, name, note);
+  const score = document.createElement("strong"); score.className = "final-score"; score.textContent = final.score;
+  heading.append(title, score); detail.append(heading);
+  const games = document.createElement("div"); games.className = "final-games";
+  for (const game of final.games) {
+    const link = document.createElement("a");
+    link.href = game.source; link.target = "_blank"; link.rel = "noopener noreferrer";
+    link.className = `final-game ${game.result === "W" ? "win" : "loss"}`;
+    const num = document.createElement("small"); num.textContent = `${fr ? "MANCHE" : "GAME"} ${game.number}`;
+    const outcome = document.createElement("strong"); outcome.textContent = game.result === "W" ? (fr ? "VICTOIRE" : "WIN") : (fr ? "DÉFAITE" : "LOSS");
+    const duration = document.createElement("span"); duration.textContent = `${game.duration} ↗`;
+    link.append(num, outcome, duration); games.append(link);
+  }
+  detail.append(games);
+  const source = document.createElement("a"); source.href = final.source; source.target = "_blank"; source.rel = "noopener noreferrer";
+  source.className = "final-source"; source.textContent = fr ? "Statistiques de la série ↗" : "Series statistics ↗";
+  detail.append(source);
+  const extra = $("#finals-extra"); extra.replaceChildren();
+  for (const game of worldFinals.extra_games) {
+    const link = document.createElement("a"); link.href = game.source; link.target = "_blank"; link.rel = "noopener noreferrer";
+    link.className = "extra-game";
+    const year = document.createElement("strong"); year.textContent = `${game.year} · ${game.label}`;
+    const focus = document.createElement("span"); focus.textContent = (fr ? game.focus_fr : game.focus) + " ↗";
+    link.append(year, focus); extra.append(link);
+  }
+}
+
+function renderCorpus() {
+  if (!corpusData) return;
+  const d = corpusData.domains, r = corpusData.raw_cache, w = corpusData.warehouse;
+  const set = (id, value) => { $(id).textContent = Number(value).toLocaleString(language); };
+  set("#corpus-cached", r.match_json); set("#corpus-timelines", r.timeline_json);
+  set("#corpus-ranked", d.kr_ranked_usable); set("#corpus-facts", corpusData.postgame_facts);
+  $("#corpus-kr").textContent = `${d.kr_ranked_usable.toLocaleString(language)} / ${d.kr_ranked_ids.toLocaleString(language)}`;
+  set("#corpus-euw", d.euw_attributed_ranked); set("#corpus-other", d.kr_other_modes_cached);
+  set("#corpus-pro", d.professional_mirror_summaries); set("#corpus-finals", d.curated_final_games);
+  set("#corpus-states", w.frames); set("#corpus-actors", w.actor_rows);
+  set("#corpus-transitions", w.transitions); set("#corpus-events", w.events);
+  const rate = 100 * w.events_with_coordinates / w.events;
+  $("#corpus-position-head").textContent = language === "fr" ?
+    `${w.events_with_coordinates.toLocaleString(language)} événements localisés / ${w.events.toLocaleString(language)} indexés · ${rate.toFixed(1).replace('.',',')} %` :
+    `${w.events_with_coordinates.toLocaleString(language)} of ${w.events.toLocaleString(language)} events have coordinates · ${rate.toFixed(1)}%`;
+  $("#corpus-position-fill").style.width = `${rate}%`;
+  const categories = $("#corpus-categories"); categories.replaceChildren();
+  for (const [key, count] of Object.entries(w.event_categories).sort((a,b) => b[1]-a[1]).slice(0, 10)) {
+    const label = key === "ITEM_PURCHASED" ? (language === "fr" ? "Achats" : "Purchases") :
+      key === "SKILL_LEVEL_UP" ? (language === "fr" ? "Points de compétence" : "Skill points") :
+      (copy[language].research_classes?.[key] || key.replaceAll("_", " "));
+    const chip = document.createElement("span");
+    const name = document.createTextNode(`${label} · `);
+    const number = document.createElement("b"); number.textContent = count.toLocaleString(language);
+    chip.append(name, number); categories.append(chip);
+  }
+}
+
+function spriteIcon(kind, key, label) {
+  const icon = document.createElement("span"); icon.className = `game-sprite ${kind}`;
+  const spec = spriteManifest?.[kind]?.[String(key)];
+  icon.setAttribute("role", "img"); icon.setAttribute("aria-label", label);
+  if (spec) icon.style.backgroundPosition = `-${spec.x * 48}px -${spec.y * 48}px`;
+  else { icon.classList.add("missing"); icon.textContent = "?"; }
+  return icon;
+}
+
+function gameFactCard(game, interactive = false) {
+  const t = copy[language];
+  const card = document.createElement(interactive ? "button" : "article");
+  if (interactive) card.type = "button";
+  card.className = `game-fact ${game.won === 1 ? "win" : "loss"}`;
+  const date = game.started_utc ? game.started_utc.slice(0,16).replace("T", " ") + " UTC" : "UTC ?";
+  const duration = game.duration_seconds == null ? "—" : `${Math.floor(game.duration_seconds/60)}:${String(game.duration_seconds%60).padStart(2,"0")}`;
+  const head = document.createElement("div"); head.className = "game-fact-head";
+  const title = document.createElement("div"); title.className = "game-fact-title";
+  title.append(spriteIcon("champions",game.champion,game.champion));
+  const titleText = document.createElement("div");
+  const champion = document.createElement("strong"); champion.textContent = game.champion;
+  const side = game.side === "BLUE" ? t.catalog_side_blue : game.side === "RED" ? t.catalog_side_red : game.side;
+  const meta = document.createElement("small"); meta.textContent = `${date} · ${side} · ${game.patch} · ${game.match_id}`;
+  titleText.append(champion, meta); title.append(titleText);
+  const outcome = document.createElement("span"); outcome.className = "game-fact-outcome";
+  outcome.textContent = game.won === 1 ? t.catalog_win : game.won === 0 ? t.catalog_loss : t.catalog_unknown;
+  head.append(title, outcome); card.append(head);
+  const score = document.createElement("div"); score.className = "game-fact-score";
+  for (const [label, value] of [["K / D / A",`${game.kills ?? "—"} / ${game.deaths ?? "—"} / ${game.assists ?? "—"}`],
+    [t.catalog_damage,game.damage_champions?.toLocaleString(language) ?? "—"],
+    [t.catalog_vision,game.vision_score ?? "—"],[t.catalog_cs,game.cs ?? "—"],[t.catalog_duration,duration]]) {
+    const item = document.createElement("span");
+    const valueNode = document.createElement("b"); valueNode.textContent = value;
+    item.append(valueNode, document.createTextNode(label)); score.append(item);
+  }
+  card.append(score);
+  const teams = document.createElement("div"); teams.className = "game-fact-teams";
+  for (const [name, actors] of [[t.catalog_allies,game.allies],[t.catalog_enemies,game.enemies]]) {
+    const item = document.createElement("div");
+    const label = document.createElement("small"); label.textContent = name;
+    const champions = document.createElement("span"); champions.className = "game-champion-row";
+    for (const actor of actors) {
+      const chip = document.createElement("span"); chip.className = `game-champion-chip ${name===t.catalog_allies && actor===game.champion ? "faker" : ""}`;
+      chip.append(spriteIcon("champions",actor,actor),document.createTextNode(actor));
+      champions.append(chip);
+    }
+    item.append(label,champions); teams.append(item);
+  }
+  card.append(teams);
+  const items = document.createElement("div"); items.className = "game-fact-items";
+  const itemLabel = document.createElement("b"); itemLabel.textContent = `${t.catalog_items} · `;
+  items.append(itemLabel);
+  const itemRow = document.createElement("span"); itemRow.className = "game-item-row";
+  for (const id of game.items) {
+    const spec = spriteManifest?.items?.[String(id)];
+    const name = spec?.[language] || `#${id}`;
+    const chip = document.createElement("span"); chip.className = "game-item-chip"; chip.title = `${name} · #${id}`;
+    chip.append(spriteIcon("items",id,name),document.createTextNode(name));
+    itemRow.append(chip);
+  }
+  if (!game.items.length) itemRow.textContent = "—";
+  items.append(itemRow); card.append(items);
+  return card;
+}
+
+function renderGamePreview(mid = $("#game-picker").value.trim()) {
+  const preview = $("#game-fact-preview"); preview.replaceChildren();
+  const game = gameFacts.find(item => item.match_id === mid);
+  if (game) preview.append(gameFactCard(game));
+}
+
+function renderGameCards() {
+  $("#game-filter").placeholder=copy[language].catalog_filter_placeholder;
+  $("#game-filter").setAttribute("aria-label",copy[language].catalog_filter_label);
+  const query = $("#game-filter").value.trim().toLocaleLowerCase();
+  const matches = gameFacts.filter(game => [game.match_id,game.started_utc,game.patch,game.champion,
+    ...game.allies,...game.enemies,...game.items.map(id => `${id} ${spriteManifest?.items?.[String(id)]?.[language] || ""}`)].join(" ").toLocaleLowerCase().includes(query));
+  $("#game-filter-count").textContent = copy[language].catalog_found(matches.length);
+  const list = $("#game-card-list"); list.replaceChildren();
+  for (const game of matches.slice(0, gameCardsShown)) {
+    const card = gameFactCard(game,true);
+    card.addEventListener("click", () => { location.hash = "replay"; openGame(game.match_id); });
+    list.append(card);
+  }
+  $("#game-more").hidden = matches.length <= gameCardsShown;
+}
 
 function showSharedMinute() {
   const phase = phaseAt(sharedMinute);
@@ -198,6 +414,9 @@ function translate() {
   if (predictabilityData) renderPredictability();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
+  if (worldFinals) renderFinals();
+  if (corpusData) renderCorpus();
+  if (gameFacts.length) { renderGameCards(); renderGamePreview(); }
   if (trace) updateReplay();
   showSharedMinute();
 }
@@ -306,6 +525,9 @@ function renderAtlas() {
   const rgb = colors[layer] || [130,170,220];
   $("#atlas-layer-swatch").style.background = `rgb(${rgb.join(",")})`;
   $("#atlas-layer-meaning").textContent = `${$("#atlas-layer").selectedOptions[0].textContent} · ${phaseLabel(phase)} min`;
+  const cohort = modelPositions ? (local ? (language === "fr" ? "46 parties de validation" : "46 validation games") : (language === "fr" ? "test historique" : "historical test")) :
+    (language === "fr" ? "465 ranked KR" : "465 KR ranked games");
+  $("#atlas-canvas").dataset.cohort = cohort;
   const max = entries.reduce((value, row) => Math.max(value, row[1]), 1);
   const scale = 512 / atlasGrid;
   if (atlasGrid === 512 && entries.length < 5000) {
@@ -338,7 +560,7 @@ function renderAtlas() {
   const total = local ? local.total : modelPositions ? modelPhase.samples : teamPositions ? entries.reduce((n, row) => n + row[1], 0) : oldRecord.total;
   $("#atlas-total").textContent = total.toLocaleString(language);
   $("#atlas-unplaced").textContent = positions ? "—" : (local?.without_position ?? oldRecord?.without_position ?? 0).toLocaleString(language);
-  $("#atlas-readout").textContent = copy[language].atlas_hover;
+  $("#atlas-readout").textContent = copy[language].atlas_empty($("#atlas-layer").selectedOptions[0].textContent,phaseLabel(phase),cohort);
 }
 
 function renderChallenge() {
@@ -392,21 +614,40 @@ function renderPressure() {
   const svg=$("#pressure-chart");svg.replaceChildren();
   const phases=[["early","0–10"],["middle","10–20"],["late","20+"]];
   const selectedPhase = phaseAt(sharedMinute);
-  const selectedRow = pressureData.phases[selectedPhase];
+  const profile=pressureData.radius_profiles?.[String(pressureRadius)] || pressureData;
+  const selectedRow = profile.phases[selectedPhase];
+  $("#pressure-radius-label").textContent = `${pressureRadius.toLocaleString(language)} ${language==="fr"?"unités":"units"}`;
+  $("#pressure-radius-scale").textContent = language==="fr" ?
+    `1 000 ─────────── 5 000 unités · côté de la carte ≈ 15 000 unités` :
+    `1,000 ─────────── 5,000 units · map width ≈ 15,000 units`;
   $("#pressure-phase-readout").textContent = language === "fr" ?
-    `${phaseLabel(selectedPhase)} min · ${selectedRow.mean_near_enemies.toFixed(2)} adversaire(s) proches en moyenne · ${selectedRow.arrival_rate_per_frame.toFixed(2)} entrée(s) par frame. Statistiques de 465 parties.` :
-    `${phaseLabel(selectedPhase)} min · ${selectedRow.mean_near_enemies.toFixed(2)} nearby opponents on average · ${selectedRow.arrival_rate_per_frame.toFixed(2)} arrivals per frame. Statistics from 465 games.`;
-  const yAt=v=>260-v*104;
-  for(const mark of [0,.5,1,1.5,2]) {
+    `${phaseLabel(selectedPhase)} min · rayon ${pressureRadius.toLocaleString("fr")} unités · ${(selectedRow.mean_near_enemies??0).toFixed(2)} adversaire(s) par frame · ${(selectedRow.arrival_rate_per_frame??0).toFixed(2)} entrée(s) par frame · ${selectedRow.frames.toLocaleString("fr")} frames / ${pressureData.source_matches} parties.` :
+    `${phaseLabel(selectedPhase)} min · ${pressureRadius.toLocaleString("en")} unit radius · ${(selectedRow.mean_near_enemies??0).toFixed(2)} opponents per frame · ${(selectedRow.arrival_rate_per_frame??0).toFixed(2)} entries per frame · ${selectedRow.frames.toLocaleString("en")} frames / ${pressureData.source_matches} games.`;
+  const zone=$("#pressure-zone");zone.replaceChildren();
+  zone.append(svgNode("rect",{x:20,y:20,width:200,height:200,fill:"#271a24",stroke:"#8a5b6a","stroke-width":2}));
+  for(const xy of [60,100,140,180]) {
+    zone.append(svgNode("line",{x1:xy,y1:20,x2:xy,y2:220,stroke:"#654556","stroke-width":.7}));
+    zone.append(svgNode("line",{x1:20,y1:xy,x2:220,y2:xy,stroke:"#654556","stroke-width":.7}));
+  }
+  zone.append(svgNode("circle",{cx:120,cy:120,r:pressureRadius/15000*200,fill:"#ff536b",opacity:.22,stroke:"#ff8ca1","stroke-width":5}));
+  zone.append(svgNode("circle",{cx:120,cy:120,r:6,fill:"#ffd895",stroke:"#fff"}));
+  const fakerLabel=svgNode("text",{x:131,y:116,fill:"#ffd895","font-size":12,"font-weight":800});fakerLabel.textContent="FAKER";zone.append(fakerLabel);
+  const widthLabel=svgNode("text",{x:230,y:37,fill:"#e8d4db","font-size":11});widthLabel.textContent="≈15 000";zone.append(widthLabel);
+  const radiusLabel=svgNode("text",{x:230,y:61,fill:"#ff91a2","font-size":13,"font-weight":800});radiusLabel.textContent=`R ${pressureRadius.toLocaleString(language)}`;zone.append(radiusLabel);
+  const maximum=Math.max(1,...Object.values(profile.phases).flatMap(row=>[row.mean_near_enemies??0,row.arrival_rate_per_frame??0]));
+  const scale=Math.ceil(maximum*2)/2;
+  const yAt=v=>260-v/scale*180;
+  for(let index=0;index<=4;index++) {
+    const mark=scale*index/4;
     const y=yAt(mark);
     svg.append(svgNode("line",{x1:64,x2:760,y1:y,y2:y,stroke:"#34516a"}));
-    const label=svgNode("text",{x:17,y:y+4,fill:"#a2bbcd","font-size":12});label.textContent=mark.toFixed(1);svg.append(label);
+    const label=svgNode("text",{x:17,y:y+4,fill:"#a2bbcd","font-size":12});label.textContent=mark.toFixed(2);svg.append(label);
   }
   for(const [index,[phase,label]] of phases.entries()) {
-    const row=pressureData.phases[phase],x=140+index*240;
+    const row=profile.phases[phase],x=140+index*240;
     if (phase === selectedPhase) svg.append(svgNode("rect",{x:x-24,y:52,width:155,height:245,rx:9,fill:"#724158",opacity:.42,stroke:"#ffd895"}));
     for(const [j,key,color] of [[0,"mean_near_enemies","#ff637d"],[1,"arrival_rate_per_frame","#ffca77"]]) {
-      const value=row[key],height=104*value;
+      const value=row[key]??0,height=180*value/scale;
       svg.append(svgNode("rect",{x:x+j*54,y:260-height,width:42,height,rx:5,fill:color}));
       const n=svgNode("text",{x:x+j*54+21,y:251-height,fill:color,"font-size":12,"font-weight":700,"text-anchor":"middle"});
       n.textContent=value.toFixed(2);svg.append(n);
@@ -418,7 +659,7 @@ function renderPressure() {
     const t=svgNode("text",{x:100+i*320,y:31,fill:"#dcecf3","font-size":12});t.textContent=label;svg.append(t);
   }
   const cards=$("#pressure-slices");cards.replaceChildren();
-  for(const [key,row] of Object.entries(pressureData.score_slices)) {
+  for(const [key,row] of Object.entries(profile.score_slices)) {
     const card=document.createElement("div");card.className="pressure-slice";
     const title=document.createElement("strong");title.textContent=key==="other" ? (language==="fr"?"Autres scores":"Other scores") : `Faker ${key}`;
     const value=document.createElement("span");value.textContent=row.mean_near_enemies==null?"—":row.mean_near_enemies.toFixed(2);
@@ -689,18 +930,22 @@ function setTrace(data) {
   if (!data.rows?.length || data.source_step_seconds !== 60 || data.schema_version < 3) return;
   stopReplay();trace=data;
   $("#replay-slider").max=trace.rows.length-1;$("#replay-slider").value=0;
-  $("#replay").hidden=false;$("#replay-nav").hidden=false;
+  $("#replay-nav").hidden=false;
   $("#game-picker").value=trace.match_id;
   $("#game-status").textContent=`${trace.match_id} · ${trace.split} · ${trace.rows.length} frames`;
+  renderGamePreview(trace.match_id);
   renderMoments();setSharedMinute(sharedMinute);
 }
 
 async function loadGameList() {
   try {
     const response=await fetch("/api/games");if(!response.ok)return;
-    const games=await response.json(),list=$("#game-options");list.replaceChildren();
-    for(const game of games){const option=document.createElement("option");option.value=game.match_id;
-      option.label=`champion ${game.champion_id} · ${game.states} states`;list.append(option);}
+    gameFacts=await response.json();
+    const list=$("#game-options");list.replaceChildren();
+    for(const game of gameFacts){const option=document.createElement("option");option.value=game.match_id;
+      option.label=`${game.started_utc?.slice(0,10) || "?"} · ${game.champion} · ${game.kills}/${game.deaths}/${game.assists} · ${game.won ? "W" : "L"}`;
+      list.append(option);}
+    renderGameCards();renderGamePreview();
   }catch(_) { /* Local warehouse is optional when viewing published aggregate UI. */ }
 }
 
@@ -786,10 +1031,10 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
-  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation] = payloads;
+  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest] = payloads;
   if (summary && (atlas512 || grid64)) renderSurface();
   if (atlas512 || events64) renderAtlas();
   if (challengeData) renderChallenge();
@@ -797,6 +1042,8 @@ async function start() {
   if (predictabilityData) renderPredictability();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
+  if (worldFinals) renderFinals();
+  if (corpusData) renderCorpus();
   showSharedMinute();
   await loadGameList();
   try {
@@ -834,10 +1081,26 @@ async function searchLibrary() {
 }
 
 $("#language").addEventListener("click", () => { language = language === "fr" ? "en" : "fr"; translate(); });
+window.addEventListener("hashchange", showSection);
+window.addEventListener("resize", positionActiveTab);
+for (const link of document.querySelectorAll('a[href^="#"]')) link.addEventListener("click", event => {
+  event.preventDefault();
+  const target = link.getAttribute("href");
+  if (location.hash === target) showSection();
+  else history.pushState(null, "", target), showSection();
+});
+window.addEventListener("popstate", showSection);
 $("#library-search").addEventListener("click",searchLibrary);
 $("#library-query").addEventListener("keydown",event=>{if(event.key==="Enter")searchLibrary();});
 $("#game-open").addEventListener("click",()=>openGame());
 $("#game-picker").addEventListener("keydown",event=>{if(event.key==="Enter")openGame();});
+$("#game-picker").addEventListener("input",()=>renderGamePreview());
+$("#game-filter").addEventListener("input",()=>{gameCardsShown=12;renderGameCards();});
+$("#game-more").addEventListener("click",()=>{gameCardsShown+=12;renderGameCards();});
+$("#pressure-radius").addEventListener("input",event=>{
+  pressureRadius=(pressureData?.available_radii_units || [1000,1500,2500,3500,5000])[Number(event.target.value)] || 2500;
+  if (pressureData) renderPressure();
+});
 $("#time-scrubber").addEventListener("input",event=>setSharedMinute(event.target.value));
 $("#time-scrubber").addEventListener("wheel",event=>{event.preventDefault();setSharedMinute(sharedMinute+(event.deltaY>0?1:-1));},{passive:false});
 $("#minute-slider").addEventListener("input", () => setSharedMinute(Number($("#minute-slider").value)*5));
@@ -848,7 +1111,8 @@ $("#atlas-canvas").addEventListener("mousemove", (event) => {
   const bounds = event.target.getBoundingClientRect();
   const x = Math.min(atlasGrid - 1, Math.max(0, Math.floor((event.clientX - bounds.left) / bounds.width * atlasGrid)));
   const y = Math.min(atlasGrid - 1, Math.max(0, atlasGrid - 1 - Math.floor((event.clientY - bounds.top) / bounds.height * atlasGrid)));
-  $("#atlas-readout").textContent = copy[language].atlas_cell(x,y,atlasValues.get(y*atlasGrid+x) || 0);
+  $("#atlas-readout").textContent = copy[language].atlas_point($("#atlas-layer").selectedOptions[0].textContent,
+    phaseLabel($("#atlas-phase").value),x,y,atlasValues.get(y*atlasGrid+x) || 0,atlasGrid,$("#atlas-canvas").dataset.cohort);
 });
 $("#atlas-canvas").addEventListener("mouseleave", () => { if (atlas512 || events64) $("#atlas-readout").textContent = copy[language].atlas_hover; });
 $("#challenge-response").addEventListener("input", () => { if (challengeData) renderChallenge(); });
@@ -868,4 +1132,5 @@ $("#replay-play").addEventListener("click", () => {
   }, 750);
   updateReplay();
 });
+showSection();
 start();

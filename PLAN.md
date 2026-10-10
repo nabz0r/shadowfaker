@@ -133,3 +133,26 @@ Risques : forte sparsité (12 510 transitions pour 262 144 cases), exactitude at
 - Exposer exclusivement l'agrégat public de l'ablation via une nouvelle route autorisée. Tracer les neuf classes avec leur fréquence et F1, distinguer le modèle KR seul du modèle avec appoint EUW et nommer la validation réutilisée.
 - Rendre les prochaines preuves visibles : une partie replay assortie, cinq parties alignées, puis baseline spatiale à dix secondes ; en parallèle, mesurer précision/rappel des événements rares et contexte visible par Faker. Garder les hypothèses séparées des résultats.
 - Synchroniser README EN/FR, RESULTS, ROADMAP, NEXT_RESEARCH et PROGRESS. Vérifier serveur, fichier local, langues FR/EN, mobile, absence de fuite brute, tests et `main` distant.
+
+## M6 — six étoiles, onglets dynamiques et archives des finales (2026-10-10)
+
+1. Vérifier le nombre de titres sur une source de T1, corriger le poster SVG, le site et la documentation. Les six étoiles célèbrent l'histoire de l'équipe, pas la précision de Shadow ni une affiliation.
+2. Donner au tableau de bord de vrais onglets URL : une section visible à la fois, retour navigateur et menu horizontal accessible sur mobile. Préserver le curseur temporel commun et les contrôles de chaque vue.
+3. Créer un corpus **professionnel public distinct** : six finales mondiales gagnées, 25 manches avec résultat, durée et lien source, puis quelques demi-finales remarquables. Tester la cohérence des séries, indexer en FR/EN dans la recherche locale sans ajouter ces matchs aux labels ranked.
+4. Capturer l'interface réelle en PNG public et faire un GIF des six finales à partir de frames versionnées. Le README FR/EN doit suivre les chapitres visuels du site ; `WORLD_FINALS.md` documente chaque source et les limites de granularité.
+5. Contrôler visuellement desktop/mobile, année/langue/onglet, route de données et absence d'erreurs console ; lancer les tests. Publier uniquement les faits, les agrégats et les images sans trace privée sur `main`.
+
+Risque principal : les pages de statistiques pro décrivent la fin de chaque manche et non la perception ou les clics de Faker. Aucune fiche de finale ne devient un exemple d'entraînement avant alignement d'un replay autorisé, annotation de son point de vue et validation séparée.
+# M7 — lire les grilles et les parties indexées (2026-10-10)
+
+Les cellules de l'atlas, la carte historique et le rejeu doivent dire explicitement **ce que représente un point** : couche, cohorte, fenêtre de temps, compte et coordonnées. La carte d'événements distingue les événements comptés de ceux dont Riot donne une position. Une vue « Corpus » expose uniquement des **comptes agrégés** et la chaîne raw → états → prédictions, avec les manques et le prochain test. Les données Riot brutes restent locales.
+
+Un index SQLite privé, reconstruit depuis les 465 JSON de match déjà cachés, ajoute à chaque partie ranked une date UTC, patch, durée, champion, côté, victoire, K/D/A, dégâts aux champions, vision, objets finaux et compositions alliée/adverse. Ces statistiques de **fin de partie** servent à explorer/rechercher les parties ; elles ne deviennent jamais des entrées de prédiction à t. Le moteur textuel FR/EN reçoit une fiche rétrospective par partie. Pilote cinq parties, audit des 465, puis interface et tests.
+
+Risques : champs absents selon patch, sens de « équipe » en solo queue (Blue/Red, pas T1), dommages finaux pouvant créer une fuite future, comptage d'événements sans coordonnées, recherche sur 465 parties côté navigateur. Le parseur met `NULL` pour les champs manquants, relance sans doublon, affiche l'horodatage en UTC et limite les cartes visibles tout en gardant la recherche locale. Aucun objectif de 90 % n'est revendiqué à partir d'un enrichissement documentaire ; un nouveau modèle causal et un test futur seraient requis.
+
+# M8 — zone de pression réglable et sprites locaux (2026-10-10)
+
+Le panneau Pression doit exposer l'unité exacte de chaque grandeur et recalculer les agrégats à partir des positions des dix joueurs pour cinq rayons (1 000–5 000 unités). Le cercle est un **schéma d'échelle**, jamais la position réelle d'un ennemi. Une entrée exige deux positions connues consécutives, dehors puis dedans ; première frame et position manquante ne comptent pas. Les vues 0/1 et 0/2 restent descriptives, sans interprétation causale. Piloter cinq parties puis publier l'agrégat des 465, tester invariants et changement réel du curseur/temps en navigateur.
+
+Les fiches privées affichent les champions et objets finaux par sprites générés depuis les métadonnées et feuilles officielles Data Dragon. Version d'art épinglée, manifest de coordonnées public sans match ID, caches CDN locaux, repli visible si icône absente. La version iconographique ne remplace pas le patch historique de chaque partie. L'UI et les README/FR doivent montrer de vraies captures de Pression, Corpus et Archives, et renvoyer vers les définitions et limites. Risques : art CDN temporairement indisponible, noms d'objets historiques divergents, surcharge visuelle mobile et taille des assets Git ; vérifier avant publication.

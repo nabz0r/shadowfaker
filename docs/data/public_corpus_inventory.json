@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "source_snapshot": "20261010_ranked",
+  "raw_cache": {
+    "match_json": 550,
+    "timeline_json": 545,
+    "professional_csv": 5
+  },
+  "domains": {
+    "kr_ranked_ids": 470,
+    "kr_ranked_usable": 465,
+    "kr_short_remakes": 5,
+    "kr_other_modes_cached": 49,
+    "euw_attributed_ranked": 31,
+    "professional_mirror_summaries": 671,
+    "curated_final_games": 25,
+    "curated_landmark_games": 3
+  },
+  "warehouse": {
+    "ranked_matches": 465,
+    "frames": 12975,
+    "actor_rows": 129750,
+    "transitions": 12510,
+    "events": 353409,
+    "events_with_coordinates": 33329,
+    "events_without_coordinates": 320080,
+    "event_categories": {
+      "ITEM_PURCHASED": 115245,
+      "SKILL_LEVEL_UP": 67282,
+      "ally_kill": 9510,
+      "baron": 445,
+      "building": 5076,
+      "dragon": 1540,
+      "enemy_kill": 9994,
+      "faker_death": 2185,
+      "faker_kill": 2767,
+      "grubs": 1395,
+      "herald": 417,
+      "ward_cleared": 26887,
+      "ward_placed": 110666
+    }
+  },
+  "search_index": {
+    "authored_case_note": 2,
+    "professional_public_summary": 56,
+    "riot_timeline_derived": 930
+  },
+  "postgame_facts": 465,
+  "limitations": [
+    "A cached JSON is not an eligible ranked training game. The cache includes other modes, an attributed EUW account and short games.",
+    "Event locations may refer to a victim, ward, monster or structure; they are not Faker positions.",
+    "Professional summaries and final-game cards have no Riot trajectory and may overlap with other sources.",
+    "Post-game KDA, damage and final items are retrospective catalog fields, never features at time t.",
+    "The current ranked timeline samples player positions about once a minute; the ten-second target is an event type, not a position."
+  ]
+}

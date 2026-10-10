@@ -2,11 +2,52 @@
 
 # Shadow Faker
 
-[**Open the visual dashboard locally**](#visual-dashboard) · [**Explore the 512×512 atlas**](#a-512512-atlas-and-its-accuracy-limit) · [**Read the evidence**](RESULTS.md) · [**Français**](README.fr.md)
+[**Open the visual dashboard locally**](#visual-dashboard) · [**Explore the 512×512 atlas**](#a-512512-atlas-and-its-accuracy-limit) · [**Six Worlds finals**](WORLD_FINALS.md) · [**Read the evidence**](RESULTS.md) · [**Français**](README.fr.md)
 
 **A reproducible, local research pipeline for Faker-style macro decisions in League of Legends.** Its spatial model predicts the next 16×16 map region, first item purchase, and skill upgrade from ranked solo-queue timelines sampled roughly **once per minute**. A separate ten-second head predicts event types; predicting Faker's **position or decision** below a minute still requires higher-frequency replay or player-view evidence and a new benchmark. Only actions of the account resolved as `Hide on bush#KR1` are targets in the original spatial model; the other nine players provide context. Riot account-v1 confirms the Riot ID and PUUID, but cannot establish a person's identity by itself.
 
 The longer-term goal is a **Shadow Plus** policy that could improve on this behavioral prior. Prediction accuracy on old matches does not establish stronger play. [SHADOW_PLUS.md](SHADOW_PLUS.md) defines the evidence needed for that claim. [Version française](README.fr.md).
+
+## A visual tour of the site
+
+The dashboard now opens **one dynamic tab at a time**. Its six gold stars refer to T1's sixth Worlds title in 2025, [confirmed by T1 co-owner Comcast Spectacor](https://comcastspectacor.com/news/2025/12/t1-entertainment-sports-wins-2025-league-of-legends-world-championship/). Shadow Faker is an independent fan research project; the stars do not describe model accuracy or team affiliation. The README follows the same visual chapters as the site.
+
+| Site tab | What you can inspect here in the README |
+|---|---|
+| **Atlas 512×512** | Observed cells, event layers and the exact-cell failure in [the atlas result](#a-512512-atlas-and-its-accuracy-limit) |
+| **Legacy 16×16 / 3D** | [Observed versus predicted maps](#faker-on-the-map-shadow-on-the-map) and [the frequency surface](#the-landscape-of-next-moves) |
+| **Evolution / Tempo / Pressure** | A local game clock, [team movement](#the-project-at-a-glance) and [selectable opponent zone](PRESSURE.md) |
+| **Scores / Research / Evidence** | [Measured baselines](#what-we-score), failed rare-event classes and [research gates](NEXT_RESEARCH.md) |
+| **Strategies / Challenge** | [Hypotheses and the standard for stronger play](SHADOW_PLUS.md); the site simulation is illustrative |
+| **Finals BO5 / Corpus / Archives** | [Six sourced Worlds finals and 25 games](WORLD_FINALS.md), [what the database actually contains](CORPUS.md), plus private ranked match cards |
+
+The horizontal tab strip stays available on mobile; [see the 390-pixel capture](DESIGN.md#dynamic-chapter-tabs). The shared clock changes the linked views according to their own cohorts; it does not add observations between one-minute Riot frames.
+
+![Six-star Shadow Faker home screen, with the shared game clock](docs/figures/dashboard_hero.png)
+
+**Map → possible moves.** The atlas colours aggregate observed destinations and match events on a 512×512 canvas. The 3D view raises those frequencies into a surface; its height is an observed frequency, not terrain or a winning strategy.
+
+![Interactive 512×512 atlas tab](docs/figures/dashboard_atlas.png)
+
+![Three-dimensional observed-position surface tab](docs/figures/dashboard_surface.png)
+
+**An opponent zone with units.** On the Pressure tab, change the radius from 1,000 to 5,000 map units. The circle explains the scale; the phase bars, entry rate and 0/1 or 0/2 slices use counts recalculated for that radius across 465 games. They describe observed proximity at roughly one-minute frames. [See the formulas, denominators and limits](PRESSURE.md).
+
+![Interactive pressure zone with measured phase bars](docs/figures/dashboard_pressure.png)
+
+**A visible corpus, readable games.** The Corpus tab separates 470 KR ranked IDs from 465 usable games and explains why just 33,329 of 353,409 events have coordinates. The local Archives tab shows UTC time, team compositions, K/D/A, damage, vision and final items for each indexed game, with 169 champion and 160 item icons packed into two local sprite atlases. These final-game facts support exploration only; they never enter prediction at time `t`. [Open the data ledger](CORPUS.md).
+
+![Auditable corpus inventory](docs/figures/dashboard_corpus.png)
+
+![Searchable ranked games with champion and item sprites](docs/figures/dashboard_library.png)
+
+**Evidence → history.** The research tab shows which event classes the model misses. The new [Finals BO5 archive](WORLD_FINALS.md) covers all **25 games across six winning Worlds finals** plus three sourced landmark semifinals, separately from the ranked training data. Select a year to see every game result, duration and source.
+
+![Research evidence tab with the next measurement gates](docs/figures/dashboard_research.png)
+
+![Animated tour through Faker and T1's six winning Worlds finals](docs/figures/six_finals.gif)
+
+[Open the visual design and mobile view](DESIGN.md) · [Read every final's provenance](WORLD_FINALS.md) · [Inspect exact model results](RESULTS.md).
 
 ### New: more games, a faster prediction target
 
@@ -135,7 +176,7 @@ The dashboard server binds to `127.0.0.1` and serves an allowlist of public visu
 
 The score section now includes an **8×8 development validation** panel: exact-cell accuracy, the map area needed for 90% candidate-set coverage, and three candidate models by game phase. Its bars respond to the shared timeline. Its **46 validation matches are separate from the 46 historical test matches** shown in the atlas.
 
-The dashboard can open any **locally indexed ranked game** by match ID and search 930 locally generated English/French summaries plus separately sourced multilingual case studies. The replay remains local and is excluded from Git. [Dashboard source](dashboard/), [reproducible aggregate renderer](scripts/render_results.py), and [research evidence](RESULTS.md) are in the repository.
+The dashboard can open any **locally indexed ranked game** by match ID and search 930 locally generated English/French summaries plus separately sourced multilingual case studies. A private end-of-game card accompanies the selected replay. [Riot Data Dragon](https://developer.riotgames.com/docs/lol#data-dragon) supplies the champion/item static sprites and bilingual item names; the pinned atlas version is described in [CORPUS.md](CORPUS.md). The replay remains local and is excluded from Git. [Dashboard source](dashboard/), [reproducible aggregate renderer](scripts/render_results.py), and [research evidence](RESULTS.md) are in the repository.
 
 ## Where 470, 465, and 12,510 come from
 
@@ -166,6 +207,8 @@ cp .env.example .env
 If `pip` is unavailable in the virtual environment, use `uv pip install --python .venv/bin/python -r requirements.txt -e .`. The base ranked pipeline validates **every stage on five games first**, then collects all available games up to the target, parses, analyzes, trains, selects on validation, evaluates on held-out test games, and exports a GIF. JSON and match-level NPZ files are cached; rerun the same command after a crash or key renewal. For a five-game base smoke run: `.venv/bin/python scripts/run_pipeline.py --limit 5 --epochs 3`.
 
 `run_next_level.py` also works as the one-command entry point on a fresh checkout: it invokes the base pipeline if the ranked dataset or checkpoint is missing, then validates its new stages on five games and builds the full local research extension. After the 64×64 parent exists, it pilots the 512 adapter on five games before full training and validation. A rerun reuses matching checkpoints and cached source data. Its 512 and interaction candidates are scored on validation only; its 64×64 historical test report is explicitly marked as previously inspected. The local text index and per-game media are ignored by Git. Use `--pilot-only` to check the base extensions on five games without scaling.
+
+To refresh just the **private ranked cards, search index, local sprites and aggregate corpus ledger** from existing caches, run `.venv/bin/python scripts/refresh_catalog.py`. This runs the five-game pilot first and leaves model checkpoints alone. The static Data Dragon art requires CDN access only when its ignored local cache is empty.
 
 Use `--game-name "Name" --tag-line TAG` for another account, with a separate `data/raw/` directory if its PUUID differs. The collector uses the `asia` route for KR, filters queue 420 (ranked solo), skips remakes shorter than five minutes and missing timelines, and paginates without duplicates. A persistent 1.3-second interval between requests respects the 100 requests per two minutes development quota. It also handles `Retry-After`, backoff, timeouts, and clear 401/403 key errors. At two requests per match, 1,000 games require **at least about 43 minutes**, excluding pagination and retries. The actual account history may contain fewer.
 
@@ -219,7 +262,8 @@ Region metrics include top-1/top-5 accuracy and mean distance in grid cells agai
 - [GAME_THEORY_LAB.md](GAME_THEORY_LAB.md): a falsifiable research path for unusual formations and stronger played-game strategies.
 - [DIAMOND.md](DIAMOND.md): a multi-facet model of Faker's decision space, observability, and the route to sub-minute study.
 - [STATE_ECOSYSTEM.md](STATE_ECOSYSTEM.md): ten-player state matrix, enemy-response training channels, vector index, and geometric field.
-- [DESIGN.md](DESIGN.md): fan-made five-star visual system and how to read the two 3D projections.
+- [DESIGN.md](DESIGN.md): fan-made six-star visual system, responsive tabs and how to read the two 3D projections.
+- [WORLD_FINALS.md](WORLD_FINALS.md): six winning Worlds finals, 25 games and three landmark semifinals with per-game sources.
 
 Professional LCK/Worlds games and ranked solo queue differ in roster, draft, communications, and incentives. Any future joint training must identify the domain and report separate held-out results. Reddit/X interpretations and translations are hypotheses until checked against match-specific evidence. No video, voice, or social-media text is silently treated as a numeric label.
 
