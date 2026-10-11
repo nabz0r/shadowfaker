@@ -20,9 +20,23 @@ from .events64 import event_category, position_cell
 from .geometry64 import local_metric
 from .ioc import inventory_snapshots
 
+TRACE_SCHEMA_VERSION = 7
+
+
+def _source_fingerprint(*paths: Path) -> str:
+    """Bind a cached trace to the exact processed and raw files it displays."""
+    digest = hashlib.sha256()
+    for path in paths:
+        digest.update(path.name.encode("utf-8"))
+        digest.update(b"\0")
+        with path.open("rb") as source:
+            for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                digest.update(chunk)
+    return digest.hexdigest()
+
 
 def _observed_context(match: dict, timeline: dict, puuid: str, minute: float,
-                      inventories=None) -> dict:
+                      inventories=None, timed_events=None) -> dict:
     """Display the complete observed transition, keeping the future separate."""
     players = (match.get("info") or {}).get("participants") or []
     own = next(p for p in players if p.get("puuid") == puuid)
@@ -42,11 +56,15 @@ def _observed_context(match: dict, timeline: dict, puuid: str, minute: float,
         for p in sorted(teams,key=lambda p:(0 if p==pid else 1 if teams[p]==team_id else 2,roles[p],p)):
             data=pf.get(str(p)) or pf.get(p) or {}
             xy=position(data)
+            stats=data.get("championStats") or {}
+            max_health=number(stats.get("healthMax"))
+            health=number(stats.get("health"))
             result.append({"participant":p,"side":"faker" if p==pid else "ally" if teams[p]==team_id else "enemy",
                            "role":roles[p],"champion":champions[p],
                            "xy":None if xy is None else [round(float(v),5) for v in xy],
                            "gold":int(number(data.get("totalGold"))),"xp":int(number(data.get("xp"))),
                            "level":int(number(data.get("level"))),
+                           "health_fraction":round(max(0.0,min(1.0,health/max_health)),3) if max_health>0 else None,
                            "items":[item for item, count in sorted(inventories[frame_index][p].items()) for _ in range(count)]})
         return result
     now_actors,next_actors=actors(current,index),actors(next_frame,index+1)
@@ -59,20 +77,29 @@ def _observed_context(match: dict, timeline: dict, puuid: str, minute: float,
     metric=local_metric(own_xy,previous_xy,allies) if own_xy else None
     low=number(current.get("timestamp"),index*60000)
     high=number(next_frame.get("timestamp"),(index+1)*60000)
-    raw_events=[e for e in next_frame.get("events") or [] if low<number(e.get("timestamp"),high)<=high]
-    shown=[]
-    for event in raw_events:
-        category=event_category(event,pid,team_id,teams)
-        if category is None and event.get("type") not in ("ITEM_PURCHASED","SKILL_LEVEL_UP"): continue
-        shown.append({"time_seconds":round(number(event.get("timestamp"),high)/1000,3),
-                      "seconds_after_t":round((number(event.get("timestamp"),high)-low)/1000,1),
-                      "category":category or event.get("type"),"cell64":position_cell(event),
-                      "actor_id":int(event.get("participantId") or event.get("killerId") or event.get("creatorId") or 0),
-                      "item_id":int(event.get("itemId") or 0),"skill_slot":int(event.get("skillSlot") or 0)})
+    # Riot sometimes places a boundary event in the following frame. Assign
+    # events by their own timestamp rather than by their container frame.
+    if timed_events is None:
+        timed_events=[e for frame in frames for e in frame.get("events") or []]
+    raw_events=[e for e in timed_events if low<number(e.get("timestamp"),high)<=high]
+    def display_events(events):
+        shown=[]
+        for event in events:
+            category=event_category(event,pid,team_id,teams)
+            if category is None and event.get("type") not in ("ITEM_PURCHASED","SKILL_LEVEL_UP"): continue
+            shown.append({"time_seconds":round(number(event.get("timestamp"),high)/1000,3),
+                          "seconds_after_t":round((number(event.get("timestamp"),high)-low)/1000,1),
+                          "category":category or event.get("type"),"cell64":position_cell(event),
+                          "actor_id":int(event.get("participantId") or event.get("killerId") or event.get("creatorId") or 0),
+                          "item_id":int(event.get("itemId") or 0),"skill_slot":int(event.get("skillSlot") or 0)})
+        return shown
+    shown=display_events(raw_events)
+    initial=display_events([e for e in timed_events if number(e.get("timestamp"),0)<=low]) if index==0 else []
     own_events=[e for e in raw_events if int(e.get("participantId") or 0)==pid]
     purchases=[int(e["itemId"]) for e in own_events if e.get("type")=="ITEM_PURCHASED" and e.get("itemId")]
     skills=[int(e["skillSlot"]) for e in own_events if e.get("type")=="SKILL_LEVEL_UP" and e.get("skillSlot")]
     return {"actors_t":now_actors,"actors_next":next_actors,"events_next":shown,
+            "events_initial":initial,
             "frame_seconds":round(low/1000,3),"next_frame_seconds":round(high/1000,3),
             "first_item_next":purchases[0] if purchases else None,
             "first_skill_next":skills[0] if skills else None,"metric_t":metric,
@@ -96,10 +123,17 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
         raise ValueError("Trace match must belong to the eligible split")
     checkpoint = models / "best.pt"
     checkpoint_hash = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+    raw = processed.parent / "raw"
+    source_paths = (processed / "matches" / f"{mid}.npz",
+                    raw / "matches" / f"{mid}.json", raw / "timelines" / f"{mid}.json",
+                    raw / "manifest.json", processed / "meta.json")
+    source_hash = _source_fingerprint(*source_paths)
     output = artifacts / "replays" / mid / "trace.json" if allow_any else artifacts / "replay_trace.json"
     existing = read_json(output)
-    if (existing and existing.get("schema_version") == 6 and existing.get("split") and existing.get("match_id") == mid and existing.get("checkpoint_sha256") == checkpoint_hash
-            and existing.get("max_frames") == max_frames
+    if (existing and existing.get("schema_version") == TRACE_SCHEMA_VERSION and existing.get("split")
+            and existing.get("match_id") == mid and existing.get("checkpoint_sha256") == checkpoint_hash
+            and existing.get("source_sha256") == source_hash and existing.get("max_frames") == max_frames
+            and existing.get("rows")
             and all((artifacts / "replay_frames" / row["image"]).is_file() for row in existing["rows"])):
         return output
     model = load_model(meta, checkpoint)
@@ -109,10 +143,11 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
         actual = arrays["region"].copy()
         minute = arrays["minute"].copy()
     count = min(max_frames, len(actual))
-    raw = processed.parent / "raw"
     match = json.loads((raw / "matches" / f"{mid}.json").read_text())
     timeline = json.loads((raw / "timelines" / f"{mid}.json").read_text())
     inventories = inventory_snapshots(timeline)[0]
+    timed_events = [event for frame in (timeline.get("info") or {}).get("frames") or []
+                    for event in frame.get("events") or []]
     puuid = read_json(raw / "manifest.json")["account"]["puuid"]
     with torch.no_grad():
         outputs = [model(x[i:i + 128], champion[i:i + 128]) for i in range(0, count, 128)]
@@ -156,7 +191,7 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
         filename = f"{mid}/{i:02d}.png" if allow_any else f"{i:02d}.png"
         image.save(folder / f"{i:02d}.png")
         entropy = -float(np.sum(p * np.log(np.maximum(p, 1e-12))) / np.log(256))
-        rows.append({"minute": float(minute[i]), **_observed_context(match,timeline,puuid,float(minute[i]),inventories),
+        rows.append({"minute": float(minute[i]), **_observed_context(match,timeline,puuid,float(minute[i]),inventories,timed_events),
                      "actual_region": actual_region,
                      "predicted_region": guess_region, "actual_probability": float(p[actual_region]),
                      "predicted_probability": float(p[guess_region]), "forecast_entropy_0_1": entropy,
@@ -164,8 +199,9 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
                      "level": round(float(current[2] * 18)), "cs": round(float(current[4] * 400)),
                      "estimated_final_win_probability": float(values[i]), "image": filename})
     artifacts.mkdir(parents=True, exist_ok=True)
-    atomic_json(output, {"schema_version": 6, "match_id": mid, "max_frames": max_frames,
-                         "checkpoint_sha256": checkpoint_hash, "source_step_seconds": 60,
+    atomic_json(output, {"schema_version": TRACE_SCHEMA_VERSION, "match_id": mid, "max_frames": max_frames,
+                         "checkpoint_sha256": checkpoint_hash, "source_sha256": source_hash,
+                         "source_step_seconds": 60,
                          "view": model.view,
                          "split": next(k for k,v in meta["splits"].items() if mid in v),
                          "rows": rows})

@@ -9,12 +9,13 @@ flowchart LR
     A[Match ID indexé] --> B[JSON match + timeline locaux]
     B --> C[Frames de positions ~60 s]
     B --> D[Événements horodatés]
-    C --> E[Carte à la dernière observation]
-    D --> F[Flux et marqueurs de lieux]
+    C --> E[Carte à la dernière observation + âge des points]
+    D --> F[Tri par timestamp propre, dès t=0]
     E --> G[Horloge et curseur en secondes]
     F --> G
-    G --> H[Analyse rétrospective séparée]
-    H --> I[Shadow 16×16 vs arrivée réelle t+1]
+    G --> H[Filtres acteurs et événements]
+    H --> I[Analyse rétrospective séparée]
+    I --> J[Shadow 16×16 vs arrivée réelle t+1]
 ```
 
 ## Utilisation
@@ -23,9 +24,11 @@ flowchart LR
 PYTHONPATH=src .venv/bin/python scripts/serve_dashboard.py --host 127.0.0.1 --port 8008
 ```
 
-Ouvrir [le lecteur local](http://127.0.0.1:8008/#replay), choisir un ID dans les 465 parties du catalogue, puis **Ouvrir la partie**. Le bouton lecture, le curseur et les vitesses 1×, 5×, 20× et 60× contrôlent l'horloge. Les raccourcis des moments marquants sautent à leur timestamp. La fiche contenant résultat et objets finaux est pliée pour éviter un spoiler involontaire. L'analyse du modèle historique est aussi pliée : elle affiche **l'arrivée réelle à la frame suivante**, donc du futur par rapport à l'horloge du lecteur.
+Ouvrir [le lecteur local](http://127.0.0.1:8008/#replay), choisir un ID dans les 465 parties du catalogue, puis **Ouvrir la partie**. Chaque nouvelle partie repart à `t=0`. Le bouton lecture, le curseur et les vitesses 1×, 5×, 20× et 60× contrôlent l'horloge. Celle-ci affiche les millisecondes du timestamp Riot ; les boutons **Événement précédent/suivant** et les moments marquants sautent à ce timestamp exact. Un filtre isole Faker, combats, objectifs, vision ou économie ; des cases masquent alliés, adversaires ou lieux d'événement sur la carte. La liste des dix joueurs indique le **dernier** niveau, pourcentage de vie et distance géométrique à Faker, avec l'âge de la frame. La frise commune suit la minute entière atteinte dans le rejeu ; déplacer la frise repositionne aussi le rejeu sur une frame observée.
 
-Les parties sont servies depuis les fichiers privés du Mac. L'endpoint `/api/replay?match=KR_…` n'accepte qu'un match ID présent dans le dataset traité. Les traces JSON version 6 et images générées sont cachées sous `artifacts/replays/` et `artifacts/replay_frames/`; un redémarrage ou un nouveau choix de partie reprend ces fichiers lorsque le checkpoint et le nombre de frames coïncident. Rien de tout cela n'est publié dans Git.
+La fiche contenant résultat et objets finaux est pliée pour éviter un spoiler involontaire. L'analyse du modèle historique est aussi pliée : elle affiche **l'arrivée réelle à la frame suivante**, donc du futur par rapport à l'horloge du lecteur. Les filtres ne changent ni les fichiers d'entraînement ni les prévisions historiques.
+
+Les parties sont servies depuis les fichiers privés du Mac. L'endpoint `/api/replay?match=KR_…` n'accepte qu'un match ID présent dans le dataset traité. Les traces JSON **version 7** et images générées sont cachées sous `artifacts/replays/` et `artifacts/replay_frames/`. Le cache est repris uniquement si le checkpoint, la limite de frames, le NPZ traité, le match et la timeline bruts, le manifeste d'identité et la méta du split ont la même empreinte SHA-256 et si chaque image existe. Un changement de source reconstruit la trace sans refetch Riot. Rien de cela n'est publié dans Git.
 
 ## Ce que montre chaque couche
 
@@ -33,7 +36,8 @@ Les parties sont servies depuis les fichiers privés du Mac. L'endpoint `/api/re
 | --- | --- | --- | --- |
 | Points des dix joueurs | `participantFrames.position` | Frames ~60 s | Dernière position **observée** ; âge affiché, absence tolérée. Vue de données omnisciente, pas minimap de Faker. |
 | Anneau sur la carte | `events[].position` | Timestamp de l'événement | Lieu du kill ou autre événement s'il existe ; jamais la position de Faker déduite de ce lieu. |
-| Flux d'événements | `events[].timestamp` | Millisecondes Riot, affichées en secondes | Achats, compétences, wards, kills, monstres, bâtiments. Les champs acteur manquants restent inconnus. |
+| Flux d'événements | `events[].timestamp` | Millisecondes Riot, affichées en `mm:ss.mmm` | Achats, compétences, wards, kills, monstres, bâtiments. Les événements de `t=0` apparaissent d'emblée ; ceux rangés dans la frame suivante gardent leur propre timestamp. Les champs acteur manquants restent inconnus. |
+| Carte des dix joueurs | `participantFrames` | Dernière frame `<= t` | Niveau, santé et distance avec Faker à la frame observée ; vue omnisciente, même si un adversaire est caché en jeu. |
 | Case Shadow | Modèle spatial historique | Prochaine frame ~60 s | Prévision 16×16 à partir de l'état passé, distincte des coordonnées observées. |
 | Analyse rétrospective | Frame suivante | t+1 | Vérification après coup ; ne doit pas être lue comme une information disponible à t. |
 
@@ -41,4 +45,6 @@ Les parties sont servies depuis les fichiers privés du Mac. L'endpoint `/api/re
 
 ## Vérification
 
-Un pilote sur trois matches d'entraînement et deux de validation contrôle l'ordre des frames, l'appartenance des événements à `(t,t+1]` et la présence de dix acteurs même lorsque des coordonnées manquent. Le test synthétique `tests/test_replay_clock.py` vérifie les timestamps exacts, l'exclusion des événements futurs et les positions manquantes. L'interface a été vérifiée avec une transition de frame autour de 05:00, la lecture, les moments marquants, le changement de partie et le mode mobile. Le lecteur est descriptif : il ne modifie ni l'entraînement ni les scores de Shadow.
+Le [rapport agrégé](docs/data/public_replay_audit.json) est régénéré par `PYTHONPATH=src .venv/bin/python scripts/audit_replay.py --limit 5 --output /tmp/replay-pilot.json`, puis sans `--limit` pour tout le corpus. Le pilote de trois matches train et deux validation compte **130 frames**, **6 106 événements bruts**, **20 événements présents à la première frame** et **3 rangés au-delà de leur intervalle de conteneur**. Sur les **465 parties**, il y a **12 975 frames**, **129 750 positions de joueurs présentes**, **563 198 événements**, **1 794 à la première frame** et **30 sur une frontière du conteneur suivant**. Aucune frame n'a un horodatage non croissant. Ces chiffres portent sur les événements bruts, y compris ceux que le flux du lecteur ne montre pas, par exemple certains événements système ; le lecteur ne promet pas 563 198 marqueurs visibles.
+
+Les tests synthétiques vérifient frontière exacte, absence de futur, cache de source et réponse du simulateur. Dans le navigateur, l'événement **02:21.024** est absent à **02:21.023**, présent à **02:21.024** ; l'horloge de la frise passe à **2 MIN**, la position date de **02:00.043**. Filtres, masquage des adversaires, navigation et largeur mobile 390 px ont été vérifiés. Le lecteur est descriptif : il ne modifie ni l'entraînement ni les scores de Shadow.

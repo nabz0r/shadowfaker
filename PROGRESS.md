@@ -1,5 +1,17 @@
 # Shadow Faker — journal d'avancement
 
+## M21 — rejeu analytique et scénarios (2026-10-11)
+
+- [x] Audit initial de cinq ranked (3 train, 2 validation) : 130 frames, 6 106 événements bruts dont 20 à la première frame ; trois événements se trouvent exactement sur une frontière de frame dans le conteneur suivant. Aucun acteur sans coordonnées dans ce pilote. Le lecteur est corrigé pour attribuer les événements par leur propre timestamp et préserver les événements présents dès `t=0`.
+- [x] Contrôles du rejeu renforcés : horloge à la milliseconde, synchronisation avec la minute commune, navigation précédent/suivant événement, filtres et visibilité des couches, état observé des dix joueurs. Le résultat final reste dans une fiche pliée ; les positions ne sont jamais interpolées.
+- [x] Challenge synthétique : réponse adverse retardée également pour « cinq Faker », basée sur l'allocation passée ; schéma du fichier public porté à v2. Les sorties ne sont pas des probabilités de victoire.
+- [x] Audit complet des 465 parties : 12 975 frames, 129 750 emplacements de joueurs avec coordonnées présentes, 563 198 événements bruts, 1 794 à la première frame, 30 frontières dans le conteneur suivant. Zéro frame à horodatage non croissant. Agrégat seul publié dans `docs/data/public_replay_audit.json` ; script relançable avec pilote `--limit 5`.
+- [x] Cinq traces pilotes (3 train, 2 validation) générées en version 7 puis rappelées sans réécriture ; l'empreinte couvre checkpoint, NPZ, match et timeline, manifeste et méta du split. Tests Python complets : 64 réussites ; syntaxe JS/Python et `git diff --check` réussis.
+- [x] Vérification dans le navigateur : à 02:21.023 la mort de Faker n'est pas visible, à 02:21.024 elle l'est ; raccourci d'événement, filtres, couches, roster, frise commune à 10 MIN, disposition mobile 390 px sans débordement. Routes privées inconnues retournent HTTP 404. README FR/EN, REPLAY et laboratoire des scénarios actualisés.
+- [x] Le panneau d'audit apparaît en FR/EN avec les quatre volumes et leurs limites. Dans le Challenge v2, à 10 min « cinq Faker » affiche `TOP 1:0, MID 1:1, JUNGLE 2:1, BOT 1:3` quand l'adversaire réagit après 10 min à la formation bot précédente ; à 20 min la réaction suit la formation jungle de 10 min. La composition libre conserve cinq joueurs par camp. Changer de partie repart désormais à `t=0`, même si la frise était à 12 min ; vérifié dans le navigateur.
+- [x] Validation finale locale : 64 tests Python, syntaxe JS/Python, `git diff --check`, liens locaux dans six documents, routes publiques/privées et sélecteur de partie vérifiés. Le navigateur affiche le rejeu en français sur une partie de démonstration ; le serveur reste sur `127.0.0.1:8008`.
+- [ ] Publication sur `main` et comparaison du commit distant avec l'arbre local testé.
+
 ## M20 — atlas de preuves et feuille de route 90 % (2026-10-11)
 
 - [x] `PLAN.md` fixe le contrat de cette phase : graphiques issus d'agrégats, pilote de cinq parties, aucune ligne de match ou étiquette test publiée, et seuil de 90 % réservé à une cible exacte préspécifiée.

@@ -121,6 +121,8 @@ const copy = {
 };
 
 Object.assign(copy.fr, {
+  live_roster:"Dix joueurs · dernier état observé",live_filter:"Filtrer le flux",live_filter_all:"Tout",live_filter_faker:"Faker",live_filter_combat:"Combats",live_filter_objective:"Objectifs",live_filter_vision:"Vision",live_filter_economy:"Achats & compétences",live_prev:"← Événement",live_next:"Événement →",live_event:"Lieux d'événements",
+  replay_audit_labels:["parties vérifiées","frames de positions","événements datés","frontières corrigées"],replay_audit_note:"Audit des 465 timelines : 1 794 événements existent dès la première frame ; 30 sont rangés dans le conteneur suivant. Le lecteur les place à leur timestamp propre. Aucune trajectoire entre frames n'est déduite.",
   nav_corpus:"Corpus", guide_choose:"Choisir une seule couche", guide_choose_copy:"La carte affiche le type sélectionné, pas dix joueurs superposés.", guide_point:"Un carré = une case", guide_point_copy:"Plus il est lumineux, plus cette case contient d'observations. Le halo aide seulement à voir une case isolée.", guide_hover:"Survoler pour compter", guide_hover_copy:"Le panneau donne le type, la phase, la coordonnée et le nombre exact.",
   map_key_real:"Gauche : arrivées observées", map_key_shadow:"Droite : choix du modèle", map_key_cell:"Une tuile = une région 16×16 ; même coordonnée sur les deux cartes.", surface_key_xy:"Plan X/Y : position sur la minimap", surface_key_z:"Hauteur Z : nombre de destinations dans la case", surface_key_one:"La vue montre une distribution agrégée, jamais dix joueurs à cet instant.",
   replay_key_now:"Point plein : position à t", replay_key_next:"Anneau : arrivée à t+1", replay_key_model:"Losange : case prédite", replay_key_limit:"Le fond est une probabilité du modèle 16×16 ; les autres joueurs sont des observations Riot à t.",
@@ -132,6 +134,8 @@ Object.assign(copy.fr, {
   map_cell:(col,row,actual,shadow)=>`Case ${col},${row} sur 16×16 · Faker observé : ${actual} % des 1 197 arrivées · Shadow : ${shadow} % des 1 197 choix.`
 });
 Object.assign(copy.en, {
+  live_roster:"Ten players · latest observed state",live_filter:"Filter feed",live_filter_all:"All",live_filter_faker:"Faker",live_filter_combat:"Fights",live_filter_objective:"Objectives",live_filter_vision:"Vision",live_filter_economy:"Purchases & skills",live_prev:"← Event",live_next:"Event →",live_event:"Event locations",
+  replay_audit_labels:["audited games","position frames","timed events","fixed boundaries"],replay_audit_note:"Audit of 465 timelines: 1,794 events exist at the first frame; 30 are stored in the next container. The reader places them at their own timestamp. No path between frames is inferred.",
   nav_corpus:"Corpus", guide_choose:"Select one layer", guide_choose_copy:"The map shows the selected type, not ten players overlaid.", guide_point:"One square = one cell", guide_point_copy:"Brighter cells contain more observations. The halo only makes isolated cells visible.", guide_hover:"Hover to count", guide_hover_copy:"The panel identifies type, phase, coordinates and exact count.",
   map_key_real:"Left: observed arrivals", map_key_shadow:"Right: model choices", map_key_cell:"One tile = one 16×16 region; matching coordinates across the two maps.", surface_key_xy:"X/Y plane: minimap position", surface_key_z:"Z height: number of destinations in the cell", surface_key_one:"An aggregate distribution, never ten players in one instant.",
   replay_key_now:"Solid dot: position at t", replay_key_next:"Ring: observed arrival at t+1", replay_key_model:"Diamond: predicted cell", replay_key_limit:"The background is a 16×16 model probability; other players are Riot observations at t.",
@@ -237,6 +241,7 @@ let replayTimer = null;
 let liveTimer = null;
 let liveSeconds = 0;
 let liveEvents = [];
+let replayAudit = null;
 let sharedMinute = 0;
 let worldFinals = null;
 let corpusData = null;
@@ -540,7 +545,7 @@ function showSharedMinute() {
     `Maps: ${phaseLabel(phase)} min phase (${cohort}, 465 ranked games for players/events) · replay: one game, minute ${trace?.rows?.[Number($("#replay-slider").value)]?.minute.toFixed(0) ?? "—"} · simulation: hypothetical.`;
 }
 
-function setSharedMinute(minute) {
+function setSharedMinute(minute, {preserveLive=false}={}) {
   sharedMinute = Math.max(0, Math.min(39, Math.round(Number(minute) || 0)));
   $("#faker-actions-phase-select").value = phaseAt(sharedMinute);
   $("#atlas-phase").value = phaseAt(sharedMinute);
@@ -550,6 +555,11 @@ function setSharedMinute(minute) {
       Math.abs(row.minute - sharedMinute) < Math.abs(trace.rows[best].minute - sharedMinute) ? index : best, 0);
     $("#replay-slider").value = closest;
     updateReplay();
+    if (!preserveLive && trace.schema_version >= 6) {
+      stopLive();
+      liveSeconds = trace.rows[closest].frame_seconds;
+      renderLive();
+    }
   }
   showSharedMinute();
   if (summary) updateTempo();
@@ -608,7 +618,22 @@ function translate() {
   if (memorySummary) renderMemory();
   if (gameFacts.length) { renderGameCards(); renderGamePreview(); }
   if (trace) { updateReplay(); renderLive(); renderMoments(); }
+  renderReplayAudit();
   showSharedMinute();
+}
+
+function renderReplayAudit() {
+  const root=$("#replay-audit");root.replaceChildren();
+  if(!replayAudit?.counts)return;
+  const counts=replayAudit.counts;
+  const metrics=[counts.games,counts.frames,counts.events,counts.events_exactly_on_previous_boundary];
+  metrics.forEach((value,index)=>{
+    const card=document.createElement("div");card.className="replay-audit-stat";
+    const strong=document.createElement("strong");strong.textContent=value.toLocaleString(language);
+    const label=document.createElement("span");label.textContent=copy[language].replay_audit_labels[index];
+    card.append(strong,label);root.append(card);
+  });
+  const note=document.createElement("p");note.textContent=copy[language].replay_audit_note;root.append(note);
 }
 
 function renderIocLedger() {
@@ -1564,11 +1589,12 @@ function renderMoments() {
   });
   for(const moment of moments.slice(0,32)) {
     const button=document.createElement("button");button.type="button";
-    button.textContent=`${formatGameTime(moment.event.time_seconds ?? moment.minute*60)} · ${liveEventLabel(moment.event,null).replace(" · ⊙","")}`;
+    button.textContent=`${formatPreciseTime(moment.event.time_seconds ?? moment.minute*60)} · ${liveEventLabel(moment.event,null).replace(" · ⊙","")}`;
     button.addEventListener("click",()=>{
       stopLive();stopReplay();
-      if (trace.schema_version >= 6) { liveSeconds=moment.event.time_seconds;renderLive(); }
-      setSharedMinute(moment.minute);
+      if (trace.schema_version >= 6) liveSeconds=moment.event.time_seconds;
+      setSharedMinute(Math.floor(moment.minute),{preserveLive:true});
+      renderLive();
     });
     container.append(button);
   }
@@ -1577,6 +1603,16 @@ function renderMoments() {
 function formatGameTime(seconds) {
   const whole=Math.max(0,Math.floor(Number(seconds)||0));
   return `${String(Math.floor(whole/60)).padStart(2,"0")}:${String(whole%60).padStart(2,"0")}`;
+}
+
+function formatPreciseTime(seconds) {
+  const millis=Math.max(0,Math.round((Number(seconds)||0)*1000));
+  return `${String(Math.floor(millis/60000)).padStart(2,"0")}:${String(Math.floor(millis/1000)%60).padStart(2,"0")}.${String(millis%1000).padStart(3,"0")}`;
+}
+
+function syncSharedFromLive() {
+  const minute=Math.max(0,Math.min(39,Math.floor(liveSeconds/60)));
+  if (minute!==sharedMinute) setSharedMinute(minute,{preserveLive:true});
 }
 
 function stopLive() {
@@ -1608,14 +1644,34 @@ function liveEventLabel(event, actor) {
   return `${category}${owner}${item}${skill}${event.cell64==null?"":" · ⊙"}`;
 }
 
+function filteredLiveEvents() {
+  const filter=$("#live-event-filter").value;
+  if(filter==="all")return liveEvents;
+  const own=trace?.rows?.[0]?.actors_t?.find(actor=>actor.side==="faker")?.participant;
+  return liveEvents.filter(event=>{
+    if(filter==="faker")return event.category.startsWith("faker_") || event.actor_id===own;
+    if(filter==="combat")return event.category.endsWith("_kill") || event.category==="faker_death";
+    if(filter==="objective")return ["dragon","baron","herald","grubs","building"].includes(event.category);
+    if(filter==="vision")return ["ward_placed","ward_cleared"].includes(event.category);
+    return ["ITEM_PURCHASED","SKILL_LEVEL_UP"].includes(event.category);
+  });
+}
+
+function jumpLiveEvent(direction) {
+  const candidates=filteredLiveEvents();
+  const event=direction<0?[...candidates].reverse().find(e=>e.time_seconds<liveSeconds-.0005):
+    candidates.find(e=>e.time_seconds>liveSeconds+.0005);
+  if(!event)return;
+  stopLive();liveSeconds=event.time_seconds;syncSharedFromLive();renderLive();
+}
+
 function renderLive() {
   if (!trace || trace.schema_version < 6) return;
   const rows=trace.rows;
   const end=rows.at(-1).next_frame_seconds;
   liveSeconds=Math.max(0,Math.min(end,liveSeconds));
-  const now=Math.floor(liveSeconds);
-  $("#live-slider").value=now;
-  $("#live-clock").textContent=`${formatGameTime(now)} / ${formatGameTime(end)}`;
+  $("#live-slider").value=liveSeconds.toFixed(3);
+  $("#live-clock").textContent=`${formatPreciseTime(liveSeconds)} / ${formatPreciseTime(end)}`;
   let index=0;
   while(index+1<rows.length && rows[index+1].frame_seconds<=liveSeconds) index++;
   const row=rows[index];
@@ -1623,10 +1679,10 @@ function renderLive() {
   const sampleTime=finalSample?row.next_frame_seconds:row.frame_seconds;
   const actors=finalSample?row.actors_next:row.actors_t;
   const missing=actors.filter(actor=>!actor.xy).length;
-  const age=Math.max(0,Math.floor(liveSeconds-sampleTime));
+  const age=Math.max(0,liveSeconds-sampleTime).toFixed(1);
   $("#live-sample").textContent=language==="fr"?
-    `Positions Riot à ${formatGameTime(sampleTime)} · âge ${age} s · ${10-missing}/10 disponibles (vue omnisciente)`:
-    `Riot positions at ${formatGameTime(sampleTime)} · ${age} s old · ${10-missing}/10 available (omniscient view)`;
+    `Positions Riot à ${formatPreciseTime(sampleTime)} · âge ${age} s · ${10-missing}/10 disponibles (vue omnisciente)`:
+    `Riot positions at ${formatPreciseTime(sampleTime)} · ${age} s old · ${10-missing}/10 available (omniscient view)`;
   const target=formatGameTime(row.next_frame_seconds);
   $("#live-forecast").textContent=finalSample?(language==="fr"?"Fin des positions observées ; aucune prévision suivante disponible.":"End of sampled positions; no next forecast available."):(language==="fr"?
     `Shadow historique : case 16×16 ${row.predicted_region%16},${Math.floor(row.predicted_region/16)} pour la prochaine frame vers ${target}. Prévision, pas position réelle.`:
@@ -1637,14 +1693,16 @@ function renderLive() {
   for(const points of ["60,540 60,60 540,60","60,540 540,60","60,540 540,540 540,60"])
     svg.append(svgNode("polyline",{points,fill:"none",stroke:"#684251","stroke-width":14,"stroke-linejoin":"round"}));
   svg.append(svgNode("line",{x1:75,y1:300,x2:525,y2:300,stroke:"#497789","stroke-width":20,opacity:.28}));
-  for(const e of liveEvents) {
-    if(e.time_seconds>liveSeconds || e.time_seconds<liveSeconds-8 || e.cell64==null) continue;
+  const visibleEvents=filteredLiveEvents();
+  for(const e of visibleEvents) {
+    if(!$("#live-show-places").checked || e.time_seconds>liveSeconds || e.time_seconds<liveSeconds-8 || e.cell64==null) continue;
     const x=60+((e.cell64%64+.5)/64)*480,y=540-((Math.floor(e.cell64/64)+.5)/64)*480;
     const marker=svgNode("circle",{cx:x,cy:y,r:11,fill:"none",stroke:"#ffe09c","stroke-width":3,opacity:.9});
-    const title=svgNode("title");title.textContent=`${formatGameTime(e.time_seconds)} · ${e.category}`;marker.append(title);svg.append(marker);
+    const title=svgNode("title");title.textContent=`${formatPreciseTime(e.time_seconds)} · ${e.category}`;marker.append(title);svg.append(marker);
   }
   const labels=[];
   for(const actor of actors) {
+    if(actor.side==="ally"&&!$("#live-show-allies").checked || actor.side==="enemy"&&!$("#live-show-enemies").checked)continue;
     if(!actor.xy)continue;
     const x=60+actor.xy[0]*480,y=540-actor.xy[1]*480;
     const colour=actor.side==="faker"?"#ffdf9c":actor.side==="ally"?"#67b8f3":"#ff667e";
@@ -1671,15 +1729,28 @@ function renderLive() {
     const label=svgNode("text",{x:labelX,y:labelY,fill:colour,"font-size":actor.side==="faker"?13:10,"font-weight":700,stroke:"#100d18","stroke-width":3,"paint-order":"stroke"});
     label.textContent=name;svg.append(label);
   }
+  const own=actors.find(actor=>actor.side==="faker");
+  const roster=$("#live-roster");roster.replaceChildren();
+  for(const actor of actors){
+    if(actor.side==="ally"&&!$("#live-show-allies").checked || actor.side==="enemy"&&!$("#live-show-enemies").checked)continue;
+    const card=document.createElement("div");card.className=`live-player ${actor.side}`;
+    const who=document.createElement("strong");who.textContent=`${actor.side==="faker"?"FAKER · ":""}${actor.champion} · ${actor.role}`;
+    const detail=document.createElement("span");
+    const distance=own?.xy&&actor.xy?Math.round(Math.hypot(actor.xy[0]-own.xy[0],actor.xy[1]-own.xy[1])*15000):null;
+    detail.textContent=`Lv ${actor.level} · ${actor.health_fraction==null?"HP ?":`HP ${Math.round(actor.health_fraction*100)}%`} · ${actor.side==="faker"?"—":distance==null?"?":`${distance.toLocaleString(language)} u`}`;
+    card.append(who,detail);roster.append(card);
+  }
   const feed=$("#live-events");feed.replaceChildren();
-  const past=liveEvents.filter(e=>e.time_seconds<=liveSeconds).slice(-8).reverse();
+  const past=visibleEvents.filter(e=>e.time_seconds<=liveSeconds).slice(-8).reverse();
   if(!past.length)feed.textContent=language==="fr"?"Aucun événement encore.":"No events yet.";
   for(const event of past) {
     const item=document.createElement("div");item.className="live-event";
     const actor=actors.find(a=>a.participant===event.actor_id);
-    item.textContent=`${formatGameTime(event.time_seconds)}  ${liveEventLabel(event,actor)}`;
+    item.textContent=`${formatPreciseTime(event.time_seconds)}  ${liveEventLabel(event,actor)}`;
     feed.append(item);
   }
+  $("#live-prev-event").disabled=!visibleEvents.some(e=>e.time_seconds<liveSeconds-.0005);
+  $("#live-next-event").disabled=!visibleEvents.some(e=>e.time_seconds>liveSeconds+.0005);
 }
 
 function updateReplay() {
@@ -1721,11 +1792,11 @@ function setTrace(data) {
     for(const row of trace.rows){
       if(seen.has(row.source_frame_index))continue;
       seen.add(row.source_frame_index);
-      liveEvents.push(...(row.events_next||[]));
+      liveEvents.push(...(row.events_initial||[]),...(row.events_next||[]));
     }
     liveEvents.sort((a,b)=>a.time_seconds-b.time_seconds);
     liveSeconds=trace.rows[0].frame_seconds;
-    $("#live-slider").max=Math.ceil(trace.rows.at(-1).next_frame_seconds);
+    $("#live-slider").max=trace.rows.at(-1).next_frame_seconds;
     $("#live-replay").hidden=false;
     renderLive();
   }else $("#live-replay").hidden=true;
@@ -1735,7 +1806,7 @@ function setTrace(data) {
   $("#pressure-game-picker").value=trace.match_id;
   $("#game-status").textContent=`${trace.match_id} · ${trace.split} · ${trace.rows.length} frames · ${liveEvents.length} events`;
   renderGamePreview(trace.match_id);
-  renderMoments();setSharedMinute(sharedMinute);
+  renderMoments();setSharedMinute(0);
 }
 
 async function loadGameList() {
@@ -1832,11 +1903,12 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json"), fetch("/team-probe.json"), fetch("/ninety-gate.json"), fetch("/second-scale.json"), fetch("/faker-actions.json"), fetch("/faker-actions-sanitized.json")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json"), fetch("/team-probe.json"), fetch("/ninety-gate.json"), fetch("/second-scale.json"), fetch("/faker-actions.json"), fetch("/faker-actions-sanitized.json"), fetch("/replay-audit.json")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
   let memoryPayload;
-  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData, teamProbe, ninetyData, secondScaleData, fakerActionsData, sanitationData] = payloads;
+  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData, teamProbe, ninetyData, secondScaleData, fakerActionsData, sanitationData, replayAudit] = payloads;
+  renderReplayAudit();
   try { const response = await fetch("/ioc-ledger.json"); if (response.ok) iocLedger = await response.json(); }
   catch (error) { console.warn("IoC ledger aggregate unavailable", error); }
   memoryCases = memoryPayload?.examples || [];
@@ -1947,14 +2019,20 @@ $("#surface-actual").addEventListener("click", () => { surfaceMode = "actual"; i
 $("#surface-shadow").addEventListener("click", () => { surfaceMode = "predicted"; if (summary) renderSurface(); });
 $("#angle-slider").addEventListener("input", () => { if (summary) renderSurface(); });
 $("#replay-slider").addEventListener("input", () => { stopReplay(); if (trace) setSharedMinute(trace.rows[Number($("#replay-slider").value)].minute); });
-$("#live-slider").addEventListener("input",()=>{stopLive();liveSeconds=Number($("#live-slider").value);renderLive();});
+$("#live-slider").addEventListener("input",()=>{stopLive();liveSeconds=Number($("#live-slider").value);syncSharedFromLive();renderLive();});
+for(const id of ["live-show-allies","live-show-enemies","live-show-places","live-event-filter"])
+  $("#"+id).addEventListener("change",()=>{if(trace)renderLive();});
+$("#live-prev-event").addEventListener("click",()=>jumpLiveEvent(-1));
+$("#live-next-event").addEventListener("click",()=>jumpLiveEvent(1));
 $("#live-play").addEventListener("click",()=>{
   if(!trace || trace.schema_version<6)return;
   if(liveTimer){stopLive();return;}
   if(liveSeconds>=trace.rows.at(-1).next_frame_seconds)liveSeconds=0;
+  syncSharedFromLive();
   $("#live-play").textContent=copy[language].replay_pause;
   liveTimer=setInterval(()=>{
     liveSeconds+=Number($("#live-speed").value)*.2;
+    syncSharedFromLive();
     renderLive();
     if(liveSeconds>=trace.rows.at(-1).next_frame_seconds)stopLive();
   },200);

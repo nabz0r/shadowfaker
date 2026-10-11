@@ -69,6 +69,10 @@ def test_all_queue_pagination_deduplicates_and_challenges_are_synthetic():
         assert all(0 <= row["map_coverage"] <= 1 for row in rows)
     assert simulate("five_bot")[0]["map_coverage"] == .25
     assert simulate("five_faker")[0]["map_coverage"] == 1
+    rotating=simulate("five_faker",response_delay=1)
+    assert rotating[0]["opponent_allocation"]==dict(top=1,mid=1,jungle=1,bot=2)
+    assert rotating[1]["opponent_allocation"]==dict(top=0,mid=1,jungle=1,bot=3)
+    assert rotating[3]["opponent_allocation"]==dict(top=1,mid=1,jungle=2,bot=1)
 
 
 def test_interaction_channels_cannot_read_the_next_frame():

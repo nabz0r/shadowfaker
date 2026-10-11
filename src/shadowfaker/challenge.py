@@ -26,10 +26,15 @@ def simulate(scenario: str, response_delay: int = 2, sharing: float = .7) -> lis
         ours = allocation(scenario, minute)
         focus = max(range(4), key=lambda i: ours[i])
         enemy = [1, 1, 1, 2]
-        if scenario != "five_faker" and tick >= response_delay:
-            donor = 3 if focus != 3 else 0
+        if tick >= response_delay:
+            # React to the formation seen response_delay ticks earlier. This
+            # matters for the rotating five_faker hypothesis as well as the
+            # static five-lane stress tests.
+            observed = allocation(scenario, (tick - response_delay) * 5)
+            target = max(range(4), key=lambda i: observed[i])
+            donor = 3 if target != 3 else 0
             enemy[donor] -= 1
-            enemy[focus] += 1
+            enemy[target] += 1
         # Lane/jungle supplies are deliberately abstract, fixed units.
         resources = sum(min(1.0, n) + sharing * max(0, min(n - 1, 1)) for n in ours if n) / 5
         coverage = sum(n > 0 for n in ours) / 4
@@ -46,9 +51,10 @@ def generate(output: Path = CONFIG.root / "docs" / "data" / "challenge_scenarios
     grid = {scenario: {str(delay): {str(sharing): simulate(scenario, delay, sharing)
                                      for sharing in (.4, .7, 1.0)} for delay in (1, 2, 4)}
             for scenario in SCENARIOS}
-    report = {"schema_version": 1, "type": "synthetic_stress_test", "calibrated_to_matches": False,
+    report = {"schema_version": 2, "type": "synthetic_stress_test", "calibrated_to_matches": False,
               "not_a_win_probability": True, "time_step_minutes": 5,
               "assumptions": {"zones": ZONES, "baseline_opponent": [1, 1, 1, 2],
+                              "opponent_response": "After response_delay five-minute ticks, one opponent moves toward the strongest zone of the earlier allocation",
                               "five_faker": "Hypothetical rotating allocation, not five trained Faker agents",
                               "resource_access": "One supply unit per occupied zone plus sharing fraction for at most one extra player, divided by five",
                               "map_coverage": "Occupied zones divided by four",

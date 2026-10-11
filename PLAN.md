@@ -1,5 +1,14 @@
 # Shadow Faker — plan d'exécution
 
+## M21 — rejeu analytique et simulateur de scénarios renforcés (2026-10-11)
+
+1. Auditer l'horloge, les événements, les positions manquantes et la reprise des traces sur cinq parties, puis vérifier les invariants d'horodatage des 465 timelines sans entraînement ni appel Riot. Garder les résultats par partie privés et publier seulement des compteurs agrégés.
+2. Corriger la synchronisation du curseur à la seconde, de la minute commune et de l'analyse rétrospective ; afficher le temps précis des événements et l'âge des positions. Ajouter des contrôles clairs pour suivre les dix joueurs et les événements sans inventer de trajet entre frames ni révéler le futur dans l'entrée du modèle.
+3. Corriger le scénario synthétique « cinq Faker » afin que la réponse adverse sélectionnée s'applique comme dans les autres scénarios. Vérifier la conservation des cinq présences, la réaction au délai et la cohérence des formules Python/JavaScript. Aucune courbe synthétique ne sera présentée comme chance de victoire.
+4. Tester le parcours réel dans le navigateur sur ordinateur et mobile, la reprise des caches après changement de sources, les routes privées et les contrôles FR/EN ; actualiser REPLAY, GAME_THEORY_LAB, README FR/EN et PROGRESS. Publier sur `main` et vérifier l'arbre distant.
+
+Risques : l'événement Riot est horodaté plus finement que la position d'un joueur, un résumé de fin de partie est rétrospectif et la simulation de cinq rôles n'est pas calibrée sur des matchs joués. Les couches doivent conserver leurs sources et horloges séparées.
+
 ## M20 — atlas de preuves visuelles et trajectoire vérifiable vers 90 % (2026-10-11)
 
 1. Recalculer sur le registre IoC privé un **pilote de cinq parties** (trois train, deux validation), puis des agrégats train/validation sans exposer de match, de ligne Riot ou de label test : fréquence des sept cibles et âge réel des snapshots dans les fenêtres de dix secondes.
