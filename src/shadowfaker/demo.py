@@ -64,14 +64,16 @@ def _observed_context(match: dict, timeline: dict, puuid: str, minute: float,
     for event in raw_events:
         category=event_category(event,pid,team_id,teams)
         if category is None and event.get("type") not in ("ITEM_PURCHASED","SKILL_LEVEL_UP"): continue
-        shown.append({"seconds_after_t":round((number(event.get("timestamp"),high)-low)/1000,1),
+        shown.append({"time_seconds":round(number(event.get("timestamp"),high)/1000,3),
+                      "seconds_after_t":round((number(event.get("timestamp"),high)-low)/1000,1),
                       "category":category or event.get("type"),"cell64":position_cell(event),
-                      "actor_id":int(event.get("participantId") or event.get("killerId") or 0),
+                      "actor_id":int(event.get("participantId") or event.get("killerId") or event.get("creatorId") or 0),
                       "item_id":int(event.get("itemId") or 0),"skill_slot":int(event.get("skillSlot") or 0)})
     own_events=[e for e in raw_events if int(e.get("participantId") or 0)==pid]
     purchases=[int(e["itemId"]) for e in own_events if e.get("type")=="ITEM_PURCHASED" and e.get("itemId")]
     skills=[int(e["skillSlot"]) for e in own_events if e.get("type")=="SKILL_LEVEL_UP" and e.get("skillSlot")]
     return {"actors_t":now_actors,"actors_next":next_actors,"events_next":shown,
+            "frame_seconds":round(low/1000,3),"next_frame_seconds":round(high/1000,3),
             "first_item_next":purchases[0] if purchases else None,
             "first_skill_next":skills[0] if skills else None,"metric_t":metric,
             "source_frame_index":index}
@@ -83,7 +85,8 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
     """Export one local test game's observed minute states and model forecasts.
 
     The output is ignored by Git and served only on localhost. It is a replay
-    of one-minute timeline frames, never a claim of second-level data or POV.
+    of sampled positions and precisely timed events, never a claim of
+    second-level positions or player POV.
     """
     meta = read_json(processed / "meta.json")
     if not meta:
@@ -95,7 +98,7 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
     checkpoint_hash = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
     output = artifacts / "replays" / mid / "trace.json" if allow_any else artifacts / "replay_trace.json"
     existing = read_json(output)
-    if (existing and existing.get("schema_version") == 4 and existing.get("split") and existing.get("match_id") == mid and existing.get("checkpoint_sha256") == checkpoint_hash
+    if (existing and existing.get("schema_version") == 6 and existing.get("split") and existing.get("match_id") == mid and existing.get("checkpoint_sha256") == checkpoint_hash
             and existing.get("max_frames") == max_frames
             and all((artifacts / "replay_frames" / row["image"]).is_file() for row in existing["rows"])):
         return output
@@ -161,7 +164,7 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
                      "level": round(float(current[2] * 18)), "cs": round(float(current[4] * 400)),
                      "estimated_final_win_probability": float(values[i]), "image": filename})
     artifacts.mkdir(parents=True, exist_ok=True)
-    atomic_json(output, {"schema_version": 4, "match_id": mid, "max_frames": max_frames,
+    atomic_json(output, {"schema_version": 6, "match_id": mid, "max_frames": max_frames,
                          "checkpoint_sha256": checkpoint_hash, "source_step_seconds": 60,
                          "view": model.view,
                          "split": next(k for k,v in meta["splits"].items() if mid in v),

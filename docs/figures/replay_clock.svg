@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 430" role="img" aria-labelledby="title desc">
+  <title id="title">Shadow Faker analytical replay clock</title>
+  <desc id="desc">Player positions are observed at approximately sixty-second anchors, while events retain their individual timestamps. No movement is inferred between anchors.</desc>
+  <defs>
+    <linearGradient id="back" x2="1" y2="1"><stop stop-color="#321826"/><stop offset="1" stop-color="#120e18"/></linearGradient>
+    <linearGradient id="red" x2="1"><stop stop-color="#ff5575"/><stop offset="1" stop-color="#ffb0b7"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="9"/></filter>
+  </defs>
+  <rect width="1200" height="430" rx="18" fill="url(#back)"/>
+  <rect x="1" y="1" width="1198" height="428" rx="17" fill="none" stroke="#96506b"/>
+  <circle cx="1050" cy="-12" r="180" fill="#ff5776" opacity=".06" filter="url(#glow)"/>
+  <text x="56" y="58" fill="#ff8ca2" font-size="16" font-weight="800" letter-spacing="4" font-family="Arial,sans-serif">SHADOW FAKER / REPLAY</text>
+  <text x="56" y="108" fill="#fff7f3" font-size="37" font-weight="800" font-family="Arial,sans-serif">One game. Two clocks.</text>
+  <text x="56" y="140" fill="#cdb9c2" font-size="17" font-family="Arial,sans-serif">Events arrive in seconds. Player positions update only when Riot samples a frame.</text>
+  <line x1="172" y1="225" x2="1090" y2="225" stroke="#795063" stroke-width="3"/>
+  <line x1="172" y1="321" x2="1090" y2="321" stroke="#795063" stroke-width="3"/>
+  <text x="56" y="229" fill="#8bd4f4" font-size="15" font-weight="700" font-family="Arial,sans-serif">PLAYERS</text>
+  <text x="56" y="325" fill="#ffc289" font-size="15" font-weight="700" font-family="Arial,sans-serif">EVENTS</text>
+  <g font-family="Arial,sans-serif" text-anchor="middle">
+    <circle cx="235" cy="225" r="12" fill="#76bdf3" stroke="#fff" stroke-width="2"/><text x="235" y="195" fill="#d6ecf7" font-size="15">00:00</text>
+    <circle cx="630" cy="225" r="12" fill="#76bdf3" stroke="#fff" stroke-width="2"/><text x="630" y="195" fill="#d6ecf7" font-size="15">01:00</text>
+    <circle cx="1025" cy="225" r="12" fill="#76bdf3" stroke="#fff" stroke-width="2"/><text x="1025" y="195" fill="#d6ecf7" font-size="15">02:00</text>
+    <circle cx="314" cy="321" r="8" fill="#ffd895"/><text x="314" y="353" fill="#ffdec0" font-size="14">00:12</text>
+    <circle cx="531" cy="321" r="8" fill="#ffd895"/><text x="531" y="353" fill="#ffdec0" font-size="14">00:45</text>
+    <circle cx="788" cy="321" r="8" fill="#ffd895"/><text x="788" y="353" fill="#ffdec0" font-size="14">01:24</text>
+    <circle cx="972" cy="321" r="8" fill="#ffd895"/><text x="972" y="353" fill="#ffdec0" font-size="14">01:52</text>
+  </g>
+  <rect x="236" y="246" width="393" height="25" rx="6" fill="#27445c" opacity=".58"/>
+  <rect x="631" y="246" width="393" height="25" rx="6" fill="#27445c" opacity=".58"/>
+  <text x="432" y="263" text-anchor="middle" fill="#b6d9ec" font-size="13" font-family="Arial,sans-serif">last observed positions · age increases</text>
+  <text x="826" y="263" text-anchor="middle" fill="#b6d9ec" font-size="13" font-family="Arial,sans-serif">new sample · positions update</text>
+  <path d="M235 381H1025" stroke="url(#red)" stroke-width="4"/>
+  <text x="235" y="408" fill="#ffc4ce" font-size="14" font-family="Arial,sans-serif">FORECAST at t</text>
+  <text x="901" y="408" fill="#ffc4ce" font-size="14" font-family="Arial,sans-serif">REVEAL only after t+1</text>
+</svg>

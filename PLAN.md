@@ -1,5 +1,13 @@
 # Shadow Faker — plan d'exécution
 
+## M17 — rejeu analytique des parties indexées (2026-10-11)
+
+1. Vérifier sur cinq parties que les horodatages des frames et des événements Riot sont ordonnés et que les dix positions peuvent manquer sans casser l'affichage. Exporter ces temps dans la trace locale versionnée, avec cache et reprise.
+2. Permettre de chercher une des parties indexées, jouer/mettre en pause et parcourir la partie à la seconde, à plusieurs vitesses. Montrer les dix joueurs à leur **dernière position observée**, l'âge de cette observation et les événements à leur horodatage réel. Un événement sur la carte représente son lieu, pas un déplacement continu d'un joueur.
+3. Garder la prédiction spatiale historique et la destination réelle dans une analyse rétrospective séparée, car cette dernière révèle le futur. Expliquer que ce lecteur n'est ni la vidéo/POV du client LoL, ni une mesure de position à chaque seconde.
+4. Tester cinq traces puis des parties de durées et de schémas différents, l'interface FR/EN et mobile, les routes locales, les tests et la publication sur `main`. Mettre README et PROGRESS à jour.
+
+
 ## M16 — prochaines actions de Faker à 10 secondes (2026-10-11)
 
 **Contrat figé avant entraînement.** Depuis les mêmes états causaux du modèle d'événements, prédire pour chaque fenêtre `(t,t+10 s]` plusieurs événements explicitement attribués à Faker : achat, point de compétence, ward posée/détruite, kill, mort et assistance. Achat/skill/ward sont des actes observables ; kill/mort/assistance sont des issues, sans prétention sur l'intention. Ne pas utiliser `LEVEL_UP`, `ITEM_DESTROYED` ou un événement de toute l'équipe comme une action de Faker. Un lieu d'événement n'est jamais sa position.

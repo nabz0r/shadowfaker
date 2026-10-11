@@ -2,7 +2,7 @@
 
 # Shadow Faker
 
-[**Open the visual dashboard locally**](#visual-dashboard) · [**The second-scale target**](SECOND_SCALE.md) · [**Explore the 512×512 atlas**](#a-512512-atlas-and-its-accuracy-limit) · [**Six Worlds finals**](WORLD_FINALS.md) · [**Français**](README.fr.md)
+[**Open the visual dashboard locally**](#visual-dashboard) · [**Replay a game**](REPLAY.md) · [**The second-scale target**](SECOND_SCALE.md) · [**Explore the 512×512 atlas**](#a-512512-atlas-and-its-accuracy-limit) · [**Français**](README.fr.md)
 
 **A reproducible, local research pipeline aimed at Faker's decisions on a seconds-scale clock.** The research target is the next **action, its timing and any continuous location**; 16×16, 64×64 and 512×512 grids are adjustable renderings. The current ranked spatial model still predicts from positions sampled roughly **once per minute**. Two ten-second heads predict event types: one covers marked game events, and the newer one targets seven explicitly Faker-attributed families. **No second-scale Faker movement score exists yet**. That requires aligned, authorized replay or player-view evidence and a new benchmark. Only actions of the account resolved as `Hide on bush#KR1` are targets in the original spatial model; the other nine players provide context. Riot account-v1 confirms the Riot ID and PUUID, but cannot establish a person's identity by itself. [Measured second-scale evidence and protocol](SECOND_SCALE.md).
 
@@ -20,13 +20,15 @@ The dashboard now opens **one dynamic tab at a time**. Its six gold stars refer 
 |---|---|
 | **Atlas 512×512** | Observed cells, event layers and the exact-cell failure in [the atlas result](#a-512512-atlas-and-its-accuracy-limit) |
 | **Legacy 16×16 / 3D** | [Observed versus predicted maps](#faker-on-the-map-shadow-on-the-map) and [the frequency surface](#the-landscape-of-next-moves) |
-| **Evolution / Tempo / Pressure** | A local game clock, [team movement](#the-project-at-a-glance), a [selectable opponent zone](PRESSURE.md) and ten observed positions |
+| **Replay / Tempo / Pressure** | [One-game second clock](REPLAY.md), [team movement](#the-project-at-a-glance), a [selectable opponent zone](PRESSURE.md) and ten sampled positions |
 | **Scores / Research / Evidence** | [Second-scale observability](SECOND_SCALE.md), [measured baselines](#what-we-score), failed rare-event classes and [research gates](NEXT_RESEARCH.md) |
 | **Strategies / Challenge** | [Hypotheses and the standard for stronger play](SHADOW_PLUS.md); compose five lanes or challenge the [Faker episode memory](FAKER_MEMORY.md) |
 | **Faker × team** | [Shared-game history and 10→15-minute resource matrices](TEAM_MATRIX.md) |
 | **Finals BO5 / Corpus / Archives** | [Six sourced Worlds finals and 25 games](WORLD_FINALS.md), [the IoC matrix](IOC_VISION.md), plus private ranked match cards |
 
 The horizontal tab strip stays available on mobile; [see the 390-pixel capture](DESIGN.md#dynamic-chapter-tabs). The shared clock changes the linked views according to their own cohorts; it does not add observations between one-minute Riot frames.
+
+![Analytical replay: precise event timestamps and sampled player positions](docs/figures/replay_clock.svg)
 
 ![Six-star Shadow Faker home screen, with the shared game clock](docs/figures/dashboard_hero.png)
 
@@ -177,7 +179,7 @@ The account's **519 all-queue IDs** include the same 470 ranked-solo IDs plus **
 
 ![Three-dimensional comparison of observed and predicted map-cell frequencies](docs/figures/probability_surface_3d.png)
 
-The horizontal plane is the **16×16 legacy map grid**; bar height is the **share of next-minute locations** in a cell, aggregated over 46 historical test matches. It is not game terrain, an individual replay, or a set of counterfactual futures. The model's dominant central spike is a measurable failure mode, not a discovered strategy. The [interactive local dashboard](#visual-dashboard) lets you rotate an isometric version, inspect cells, scrub team tempo, and replay one held-out match minute by minute.
+The horizontal plane is the **16×16 legacy map grid**; bar height is the **share of next-minute locations** in a cell, aggregated over 46 historical test matches. It is not game terrain, an individual replay, or a set of counterfactual futures. The model's dominant central spike is a measurable failure mode, not a discovered strategy. The [interactive local dashboard](#visual-dashboard) lets you rotate an isometric version, inspect cells, scrub team tempo, and [replay any indexed local ranked game](REPLAY.md) with timestamped events.
 
 ### Faker on the map, Shadow on the map
 
@@ -223,17 +225,17 @@ The public figures and README banners use [published aggregate counts and metric
 
 ## Visual dashboard
 
-Run the local dashboard after setup, then open [http://127.0.0.1:8008/](http://127.0.0.1:8008/). It shows the **observed account, Shadow and evidence side by side** in French or English. It uses the published aggregates for its public views. If the full pipeline has run, a held-out match replay and GIF are served locally from ignored files.
+Run the local dashboard after setup, then open [http://127.0.0.1:8008/#replay](http://127.0.0.1:8008/#replay). The **Replay** tab can open any locally indexed ranked game and play its timestamped events on a second-scale clock at 1×–60×. All ten player markers update only at their sampled Riot frames (~60 s); the clock explicitly shows how old those positions are. Shadow's historical 16×16 forecast and the actual next-frame destination live in a folded retrospective analysis. This is a timeline viewer, not a video, Faker POV, or second-by-second player trajectory. [Reader contract and controls](REPLAY.md).
 
 Opening [dashboard/index.html](dashboard/index.html) as a `file://` page now acts as a **launcher**: it redirects to the running local server or displays the start command. The interactive dashboard needs that server for its allowlisted aggregate JSON and optional private replay. The research panel explains the current rare-event failure and links the next evidence protocol.
 
 ```bash
 .venv/bin/python scripts/serve_dashboard.py
-# Optional: generate the local minute-by-minute replay before opening the page.
+# Optional: pre-generate the legacy retrospective analysis before opening the page.
 .venv/bin/python -m shadowfaker.demo --max-frames 30
 ```
 
-The dashboard server binds to `127.0.0.1` and serves an allowlist of public visuals plus optional local replay files. A sticky **shared timeline** lets you scrub minute 0–39 with a slider, keyboard or mouse wheel over the slider. It synchronizes the local **512×512 atlas**, sparse 3D frequency surface, five-minute team tempo, opponent pressure, one-game replay and synthetic scenario cursor. The colour key travels with the timeline. Atlas and surface show **phase aggregates** (0–10, 10–20, 20+ minutes): the 512 observed/modelled destinations use 46 **validation** games (460, 443 and 372 transitions by phase), while player/event layers use 465 ranked games. If the local 512 atlas is absent, the page labels its 64×64 historical fallback. The replay shows **one selected game with the legacy 16×16 model**, sampled about every minute; it stops at that game's final frame. The local metric field remains an explicitly labelled 64×64 historical view. Fixed historical score figures remain labelled as such rather than pretending to change with the slider.
+The dashboard server binds to `127.0.0.1` and serves an allowlist of public visuals plus optional private local replay files. A sticky **shared timeline** lets you scrub minute 0–39 across the aggregate views. The separate **Replay clock** scrubs a selected game in seconds. Atlas and surface show **phase aggregates** (0–10, 10–20, 20+ minutes): the 512 observed/modelled destinations use 46 **validation** games (460, 443 and 372 transitions by phase), while player/event layers use 465 ranked games. If the local 512 atlas is absent, the page labels its 64×64 historical fallback. The local metric field remains an explicitly labelled 64×64 historical view. Fixed historical score figures remain labelled as such rather than pretending to change with the slider.
 
 The score section now includes an **8×8 development validation** panel: exact-cell accuracy, the map area needed for 90% candidate-set coverage, and three candidate models by game phase. Its bars respond to the shared timeline. Its **46 validation matches are separate from the 46 historical test matches** shown in the atlas.
 
@@ -317,6 +319,7 @@ Region metrics include top-1/top-5 accuracy and mean distance in grid cells agai
 - [OTHER_GAMES_RESEARCH.md](OTHER_GAMES_RESEARCH.md): methods from StarCraft, Dota, Minecraft, Atari, and other MOBA studies, with applicability boundaries.
 - [PUBLIC_GAME_ANALYSIS.md](PUBLIC_GAME_ANALYSIS.md): Korean/English official VODs, T1 communications, interviews, and fan discussions, with provenance and an annotation contract.
 - [REPLAY_FEASIBILITY.md](REPLAY_FEASIBILITY.md): replay/video path when matching local material exists.
+- [REPLAY.md](REPLAY.md): the local analytical replay, its controls, timestamp contract and limits.
 - [PLAN.md](PLAN.md) and [PROGRESS.md](PROGRESS.md): architecture, risks, actual tests, counts, and results.
 - [RESULTS.md](RESULTS.md): exact held-out scores, baselines, and the remaining region-prediction gap.
 - [ROADMAP.md](ROADMAP.md) and [BENCHMARK_PROTOCOL.md](BENCHMARK_PROTOCOL.md): next-level milestones and the frozen prospective test.

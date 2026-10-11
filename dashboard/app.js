@@ -1,6 +1,6 @@
 const copy = {
   fr: {
-    nav_atlas: "Atlas 512×512", nav_map: "16×16 historique", nav_replay: "Évolution", nav_accuracy: "Scores", nav_research: "Recherche", nav_tempo: "Tempo", nav_pressure: "Pression", nav_strategy: "Stratégies", nav_challenge: "Challenge", nav_finals: "Finales BO5", nav_library: "Archives", nav_evidence: "Preuves",
+    nav_atlas: "Atlas 512×512", nav_map: "16×16 historique", nav_replay: "Rejouer", nav_accuracy: "Scores", nav_research: "Recherche", nav_tempo: "Tempo", nav_pressure: "Pression", nav_strategy: "Stratégies", nav_challenge: "Challenge", nav_finals: "Finales BO5", nav_library: "Archives", nav_evidence: "Preuves",
     finals_title: "Six étoiles. Vingt-cinq manches de finale.", finals_intro: "Explore les six finales mondiales gagnées par Faker et T1/SKT. Chaque manche a son résultat, sa durée et une source vérifiable. Les parties professionnelles restent un corpus distinct : ici, pas de replay Riot, de clics ni de trajectoire inventée.", finals_epic: "Autres parties marquantes à étudier", finals_limit: "Fiches factuelles publiques indexées séparément des 465 timelines ranked KR. Les liens pointent vers les statistiques de Games of Legends ; le titre 2025 est confirmé par le copropriétaire de T1. Ce catalogue guide une future annotation de VOD, il n'entraîne pas Shadow.",
     time_title: "CHRONOLOGIE · FAIRE DÉFILER", key_faker: "Faker à t", key_real: "arrivée réelle", key_shadow: "choix Shadow", key_ally: "alliés", key_enemy: "adversaires", key_objective: "objectifs",
     fixed_16: "Archive fixe : ancien modèle 16×16, toutes phases réunies. Sa prédiction par phase n'a pas été conservée ; la frise anime les vues 512×512 de validation ci-dessus.",
@@ -17,8 +17,9 @@ const copy = {
     atlas_layer: "Couche", atlas_phase: "Phase", atlas_positions_real: "Destinations observées", atlas_positions_model: "Destinations prédites", atlas_positions_enemy: "Positions adverses", atlas_positions_allies: "Positions alliées", atlas_faker_kill: "Kills du compte", atlas_faker_death: "Morts du compte", atlas_ally_kill: "Kills alliés", atlas_enemy_kill: "Kills adverses", atlas_building: "Bâtiments", atlas_ward: "Wards posées", atlas_early: "0–10 min", atlas_middle: "10–20 min", atlas_late: "20+ min", atlas_total: "Événements dans la phase", atlas_unplaced: "Sans position connue", atlas_note: "Positions échantillonnées ~60 s ; événements horodatés plus finement. Les destinations 512×512 viennent de 46 parties de validation ; joueurs et événements de 465 ranked. Le halo rend les points visibles à l'écran, sans créer de mesures : le survol lit la case exacte. Cette carte agrège des parties, sans reconstituer la vision du joueur.", atlas_hover: "Survole une case", atlas_cell: (x,y,n) => `Case ${x},${y} : ${n.toLocaleString("fr")} ${n === 1 ? "événement ou position" : "événements ou positions"}`,
     surface_title: "La minimap devient une surface de choix", surface_intro: "Les axes au sol sont les coordonnées de la carte ; la hauteur est la fréquence d'une prochaine position. Tourne la surface et compare la distribution réelle à Shadow. La troisième dimension est une fréquence agrégée, pas le relief réel de LoL ni une preuve de stratégie gagnante.",
     surface_actual: "Observé", surface_shadow: "Shadow", surface_rotate: "Angle de vue",
-    replay_title: "Une décision change le prochain état", replay_step: "Rejeu historique 16×16 · ~60 s",
-    replay_intro: "Cette vue par partie utilise encore le modèle historique 16×16. À chaque frame : depuis la position actuelle, où sera le compte environ une minute plus tard ? Le fond coloré est sa probabilité prédite ; les anneaux montrent la réponse et son choix le plus probable. L'atlas 512×512 ci-dessus est un agrégat distinct de validation.",
+    replay_title: "Rejouer une partie, suivre chaque événement", replay_step: "Horloge en secondes · positions ~60 s",
+    replay_intro: "Choisis une partie classée indexée. L'horloge suit les événements horodatés ; les dix points restent à leur dernière position réellement observée jusqu'à la frame suivante. C'est un rejeu analytique de la timeline Riot, pas une vidéo ni le point de vue de Faker.",
+    live_kicker: "PARTIE LOCALE · CHRONOLOGIE OBSERVÉE", live_title: "Dix joueurs, une horloge", live_allies: "Alliés", live_enemies: "Adversaires", live_event: "Lieu d'événement", live_feed: "Événements déjà observés", live_speed: "Vitesse", live_limit: "Les événements ont leur temps propre. Les joueurs n'ont une nouvelle position qu'aux frames Riot (~60 s) ; aucun trajet ou clic entre frames n'est inventé. Les lieux des événements ne sont pas la position de Faker. Vision et communications inconnues.", replay_analysis: "Ouvrir l'analyse rétrospective : prévision Shadow et arrivée réelle à la minute suivante", game_spoiler: "Voir la fiche de fin de partie · résultat et objets finaux",
     replay_now: "Départ : compte à la minute affichée", replay_team: "Contexte : autres alliés au départ", replay_real: "Arrivée réelle une minute après", replay_guess: "Case prévue par Shadow", replay_minute: "Minute de départ",
     replay_gold: "Écart d'or équipe", replay_xp: "Écart d'XP", replay_level: "Niveau", replay_uncertainty: "Dispersion de prédiction",
     replay_play: "▶ Rejouer", replay_pause: "Ⅱ Pause", replay_trend_note: "Courbe rétrospective de l'écart d'or ; elle n'entre jamais dans l'état passé du modèle.",
@@ -59,7 +60,7 @@ const copy = {
     load_error: "Les chiffres agrégés sont indisponibles. Lance le serveur du dashboard depuis le dépôt."
   },
   en: {
-    nav_atlas: "512×512 atlas", nav_map: "Legacy 16×16", nav_replay: "Evolution", nav_accuracy: "Scores", nav_research: "Research", nav_tempo: "Tempo", nav_pressure: "Pressure", nav_strategy: "Strategies", nav_challenge: "Challenge", nav_finals: "BO5 finals", nav_library: "Archive", nav_evidence: "Evidence",
+    nav_atlas: "512×512 atlas", nav_map: "Legacy 16×16", nav_replay: "Replay", nav_accuracy: "Scores", nav_research: "Research", nav_tempo: "Tempo", nav_pressure: "Pressure", nav_strategy: "Strategies", nav_challenge: "Challenge", nav_finals: "BO5 finals", nav_library: "Archive", nav_evidence: "Evidence",
     finals_title: "Six stars. Twenty-five final games.", finals_intro: "Explore Faker and T1/SKT's six winning Worlds finals. Every game has a result, duration and verifiable source. Professional games are a separate corpus: no Riot replay, clicks or invented trajectory appears here.", finals_epic: "Other landmark games to investigate", finals_limit: "Public match facts are indexed separately from the 465 KR ranked timelines. Links lead to Games of Legends statistics; T1's co-owner confirms the 2025 title. This catalogue guides future VOD annotation and does not train Shadow.",
     time_title: "TIMELINE · SCRUB TO EXPLORE", key_faker: "Faker at t", key_real: "observed arrival", key_shadow: "Shadow choice", key_ally: "allies", key_enemy: "opponents", key_objective: "objectives",
     fixed_16: "Fixed archive: the earlier 16×16 model across all phases. Its per-phase predictions were not retained; the timeline animates the 512×512 validation views above.",
@@ -75,8 +76,9 @@ const copy = {
     atlas_layer: "Layer", atlas_phase: "Phase", atlas_positions_real: "Observed destinations", atlas_positions_model: "Predicted destinations", atlas_positions_enemy: "Enemy positions", atlas_positions_allies: "Ally positions", atlas_faker_kill: "Account kills", atlas_faker_death: "Account deaths", atlas_ally_kill: "Ally kills", atlas_enemy_kill: "Enemy kills", atlas_building: "Buildings", atlas_ward: "Wards placed", atlas_early: "0–10 min", atlas_middle: "10–20 min", atlas_late: "20+ min", atlas_total: "Events in this phase", atlas_unplaced: "Without known position", atlas_note: "Positions are sampled about every 60 s; event timestamps are finer. The 512×512 destinations use 46 validation games; players/events use 465 ranked. A display halo makes points visible without inventing measurements: hover reads the exact cell. This aggregate map is not player vision.", atlas_hover: "Hover over a cell", atlas_cell: (x,y,n) => `Cell ${x},${y}: ${n.toLocaleString("en")} ${n === 1 ? "event or position" : "events or positions"}`,
     surface_title: "The minimap becomes a surface of choices", surface_intro: "The ground axes are map coordinates; height is how often a next position occurs. Rotate the surface and compare reality with Shadow. The third dimension is aggregate frequency, not LoL terrain or proof of a winning strategy.",
     surface_actual: "Observed", surface_shadow: "Shadow", surface_rotate: "View angle",
-    replay_title: "A decision changes the next state", replay_step: "Legacy 16×16 replay · ~60 s",
-    replay_intro: "This individual-game replay still uses the historical 16×16 model. At each frame, it asks where the account will be about one minute later. The background is its predicted probability; rings mark the observed arrival and model choice. The 512×512 atlas above is a separate validation aggregate.",
+    replay_title: "Replay a game, follow every event", replay_step: "Second clock · positions ~60 s",
+    replay_intro: "Choose an indexed ranked game. The clock follows timestamped events; all ten player markers stay at their last observed positions until the next frame. This is an analytical Riot timeline replay, not a video or Faker's player view.",
+    live_kicker: "LOCAL GAME · OBSERVED CHRONOLOGY", live_title: "Ten players, one clock", live_allies: "Allies", live_enemies: "Opponents", live_event: "Event location", live_feed: "Events observed so far", live_speed: "Speed", live_limit: "Events have their own timestamps. Player positions update only at Riot frames (~60 s); no path or clicks between frames are invented. Event locations are not Faker's position. Vision and communication are unknown.", replay_analysis: "Open retrospective analysis: Shadow forecast and actual arrival one minute later", game_spoiler: "Show end-of-game card · result and final items",
     replay_now: "Start: account at displayed minute", replay_team: "Context: other allies at the start", replay_real: "Observed arrival one minute later", replay_guess: "Cell predicted by Shadow", replay_minute: "Starting minute",
     replay_gold: "Team gold difference", replay_xp: "XP difference", replay_level: "Level", replay_uncertainty: "Forecast spread",
     replay_play: "▶ Play", replay_pause: "Ⅱ Pause", replay_trend_note: "Retrospective gold difference; future values never enter the model's past state.",
@@ -229,6 +231,9 @@ let atlasValues = null;
 let trace = null;
 let surfaceMode = "actual";
 let replayTimer = null;
+let liveTimer = null;
+let liveSeconds = 0;
+let liveEvents = [];
 let sharedMinute = 0;
 let worldFinals = null;
 let corpusData = null;
@@ -595,7 +600,7 @@ function translate() {
   if (teamProbe) renderTeamProbe();
   if (memorySummary) renderMemory();
   if (gameFacts.length) { renderGameCards(); renderGamePreview(); }
-  if (trace) updateReplay();
+  if (trace) { updateReplay(); renderLive(); renderMoments(); }
   showSharedMinute();
 }
 
@@ -1503,14 +1508,126 @@ function renderMoments() {
   const important=new Set(["faker_kill","faker_death","dragon","baron","herald","grubs","building"]);
   const moments=[];
   trace.rows.forEach((row,index)=>{
-    const event=row.events_next?.find(e=>important.has(e.category));
-    if(event)moments.push({index,event,minute:row.minute});
+    for(const event of row.events_next||[])if(important.has(event.category))
+      moments.push({index,event,minute:(event.time_seconds??row.minute*60)/60});
   });
-  for(const moment of moments.slice(0,20)) {
+  for(const moment of moments.slice(0,32)) {
     const button=document.createElement("button");button.type="button";
-    button.textContent=`${moment.minute.toFixed(0)}m · ${moment.event.category.replaceAll("_"," ")}`;
-    button.addEventListener("click",()=>{stopReplay();setSharedMinute(moment.minute);});
+    button.textContent=`${formatGameTime(moment.event.time_seconds ?? moment.minute*60)} · ${liveEventLabel(moment.event,null).replace(" · ⊙","")}`;
+    button.addEventListener("click",()=>{
+      stopLive();stopReplay();
+      if (trace.schema_version >= 6) { liveSeconds=moment.event.time_seconds;renderLive(); }
+      setSharedMinute(moment.minute);
+    });
     container.append(button);
+  }
+}
+
+function formatGameTime(seconds) {
+  const whole=Math.max(0,Math.floor(Number(seconds)||0));
+  return `${String(Math.floor(whole/60)).padStart(2,"0")}:${String(whole%60).padStart(2,"0")}`;
+}
+
+function stopLive() {
+  if (liveTimer) clearInterval(liveTimer);
+  liveTimer=null;
+  $("#live-play").textContent=copy[language].replay_play;
+}
+
+function liveEventLabel(event, actor) {
+  const fr=language==="fr";
+  const name=actor?.side==="faker"?"Faker":actor?.champion;
+  const category={
+    faker_kill:fr?"Faker élimine un adversaire":"Faker kills an opponent",
+    faker_death:fr?"Faker meurt":"Faker dies",
+    ally_kill:fr?"Élimination alliée":"Ally kill",
+    enemy_kill:fr?"Élimination adverse":"Opponent kill",
+    dragon:fr?"Dragon":"Dragon",baron:fr?"Baron Nashor":"Baron Nashor",
+    herald:fr?"Héraut":"Herald",grubs:fr?"Larves du Néant":"Void grubs",
+    building:fr?"Bâtiment détruit":"Structure destroyed",
+    ward_placed:fr?"Balise posée":"Ward placed",
+    ward_cleared:fr?"Balise détruite":"Ward cleared",
+    ITEM_PURCHASED:fr?"Achat":"Purchase",
+    SKILL_LEVEL_UP:fr?"Point de compétence":"Skill point",
+  }[event.category]||event.category.replaceAll("_"," ");
+  const item=event.item_id?` · ${spriteManifest?.items?.[String(event.item_id)]?.[language]||`#${event.item_id}`}`:"";
+  const skill=event.skill_slot?` · ${["","Q","W","E","R"][event.skill_slot]||event.skill_slot}`:"";
+  const owner=event.category==="faker_kill"?"":event.category==="faker_death"&&name?
+    ` · ${fr?"par":"by"} ${name}`:name?` · ${name}`:"";
+  return `${category}${owner}${item}${skill}${event.cell64==null?"":" · ⊙"}`;
+}
+
+function renderLive() {
+  if (!trace || trace.schema_version < 6) return;
+  const rows=trace.rows;
+  const end=rows.at(-1).next_frame_seconds;
+  liveSeconds=Math.max(0,Math.min(end,liveSeconds));
+  const now=Math.floor(liveSeconds);
+  $("#live-slider").value=now;
+  $("#live-clock").textContent=`${formatGameTime(now)} / ${formatGameTime(end)}`;
+  let index=0;
+  while(index+1<rows.length && rows[index+1].frame_seconds<=liveSeconds) index++;
+  const row=rows[index];
+  const finalSample=index===rows.length-1 && liveSeconds>=row.next_frame_seconds;
+  const sampleTime=finalSample?row.next_frame_seconds:row.frame_seconds;
+  const actors=finalSample?row.actors_next:row.actors_t;
+  const missing=actors.filter(actor=>!actor.xy).length;
+  const age=Math.max(0,Math.floor(liveSeconds-sampleTime));
+  $("#live-sample").textContent=language==="fr"?
+    `Positions Riot à ${formatGameTime(sampleTime)} · âge ${age} s · ${10-missing}/10 disponibles (vue omnisciente)`:
+    `Riot positions at ${formatGameTime(sampleTime)} · ${age} s old · ${10-missing}/10 available (omniscient view)`;
+  const target=formatGameTime(row.next_frame_seconds);
+  $("#live-forecast").textContent=finalSample?(language==="fr"?"Fin des positions observées ; aucune prévision suivante disponible.":"End of sampled positions; no next forecast available."):(language==="fr"?
+    `Shadow historique : case 16×16 ${row.predicted_region%16},${Math.floor(row.predicted_region/16)} pour la prochaine frame vers ${target}. Prévision, pas position réelle.`:
+    `Historical Shadow: 16×16 cell ${row.predicted_region%16},${Math.floor(row.predicted_region/16)} for the next frame around ${target}. Forecast, not an observed position.`);
+  const svg=$("#live-map");svg.replaceChildren();
+  svg.append(svgNode("rect",{x:0,y:0,width:600,height:600,fill:"#100d18"}));
+  svg.append(svgNode("rect",{x:60,y:60,width:480,height:480,fill:"#221923",stroke:"#a85d73","stroke-width":2}));
+  for(const points of ["60,540 60,60 540,60","60,540 540,60","60,540 540,540 540,60"])
+    svg.append(svgNode("polyline",{points,fill:"none",stroke:"#684251","stroke-width":14,"stroke-linejoin":"round"}));
+  svg.append(svgNode("line",{x1:75,y1:300,x2:525,y2:300,stroke:"#497789","stroke-width":20,opacity:.28}));
+  for(const e of liveEvents) {
+    if(e.time_seconds>liveSeconds || e.time_seconds<liveSeconds-8 || e.cell64==null) continue;
+    const x=60+((e.cell64%64+.5)/64)*480,y=540-((Math.floor(e.cell64/64)+.5)/64)*480;
+    const marker=svgNode("circle",{cx:x,cy:y,r:11,fill:"none",stroke:"#ffe09c","stroke-width":3,opacity:.9});
+    const title=svgNode("title");title.textContent=`${formatGameTime(e.time_seconds)} · ${e.category}`;marker.append(title);svg.append(marker);
+  }
+  const labels=[];
+  for(const actor of actors) {
+    if(!actor.xy)continue;
+    const x=60+actor.xy[0]*480,y=540-actor.xy[1]*480;
+    const colour=actor.side==="faker"?"#ffdf9c":actor.side==="ally"?"#67b8f3":"#ff667e";
+    const dot=svgNode("circle",{cx:x,cy:y,r:actor.side==="faker"?10:7,fill:colour,stroke:"#100d18","stroke-width":2});
+    const title=svgNode("title");title.textContent=`${actor.side==="faker"?"Faker":actor.role} · ${actor.champion} · niveau ${actor.level}`;dot.append(title);svg.append(dot);
+    const name=actor.side==="faker"?"FAKER":actor.champion;
+    const width=name.length*(actor.side==="faker"?8:6.5)+4;
+    let labelX=x+13,labelY=y-10,placed=false;
+    for(let step=0;step<40;step++) {
+      const side=step%2===0?1:-1;
+      const level=Math.floor(step/2);
+      const tier=Math.ceil(level/2);
+      const direction=level%2===0?1:-1;
+      const candidateX=side>0?x+13:x-13-width;
+      const candidateY=y-10+direction*tier*15;
+      const box={x:candidateX,y:candidateY-12,w:width,h:15};
+      if(box.x<62||box.x+box.w>538||box.y<62||box.y+box.h>538)continue;
+      if(labels.some(other=>box.x<other.x+other.w+4&&box.x+box.w+4>other.x&&box.y<other.y+other.h+3&&box.y+box.h+3>other.y))continue;
+      labelX=candidateX;labelY=candidateY;labels.push(box);placed=true;break;
+    }
+    if(!placed)continue;
+    if(Math.hypot(labelX-x,labelY-y)>26)
+      svg.append(svgNode("line",{x1:x,y1:y,x2:labelX,y2:labelY-4,stroke:colour,"stroke-width":.8,opacity:.55}));
+    const label=svgNode("text",{x:labelX,y:labelY,fill:colour,"font-size":actor.side==="faker"?13:10,"font-weight":700,stroke:"#100d18","stroke-width":3,"paint-order":"stroke"});
+    label.textContent=name;svg.append(label);
+  }
+  const feed=$("#live-events");feed.replaceChildren();
+  const past=liveEvents.filter(e=>e.time_seconds<=liveSeconds).slice(-8).reverse();
+  if(!past.length)feed.textContent=language==="fr"?"Aucun événement encore.":"No events yet.";
+  for(const event of past) {
+    const item=document.createElement("div");item.className="live-event";
+    const actor=actors.find(a=>a.participant===event.actor_id);
+    item.textContent=`${formatGameTime(event.time_seconds)}  ${liveEventLabel(event,actor)}`;
+    feed.append(item);
   }
 }
 
@@ -1540,17 +1657,32 @@ async function loadReplay() {
     if (!response.ok) return;
     const data = await response.json();
     setTrace(data);
+    if (data.schema_version < 6) await openGame(data.match_id);
   } catch (_) { /* Per-match trace is local and optional. */ }
 }
 
 function setTrace(data) {
   if (!data.rows?.length || data.source_step_seconds !== 60 || data.schema_version < 3) return;
-  stopReplay();trace=data;
+  stopLive();stopReplay();trace=data;
+  liveEvents=[];
+  if(data.schema_version>=6){
+    const seen=new Set();
+    for(const row of trace.rows){
+      if(seen.has(row.source_frame_index))continue;
+      seen.add(row.source_frame_index);
+      liveEvents.push(...(row.events_next||[]));
+    }
+    liveEvents.sort((a,b)=>a.time_seconds-b.time_seconds);
+    liveSeconds=trace.rows[0].frame_seconds;
+    $("#live-slider").max=Math.ceil(trace.rows.at(-1).next_frame_seconds);
+    $("#live-replay").hidden=false;
+    renderLive();
+  }else $("#live-replay").hidden=true;
   $("#replay-slider").max=trace.rows.length-1;$("#replay-slider").value=0;
   $("#replay-nav").hidden=false;
   $("#game-picker").value=trace.match_id;
   $("#pressure-game-picker").value=trace.match_id;
-  $("#game-status").textContent=`${trace.match_id} · ${trace.split} · ${trace.rows.length} frames`;
+  $("#game-status").textContent=`${trace.match_id} · ${trace.split} · ${trace.rows.length} frames · ${liveEvents.length} events`;
   renderGamePreview(trace.match_id);
   renderMoments();setSharedMinute(sharedMinute);
 }
@@ -1760,6 +1892,18 @@ $("#surface-actual").addEventListener("click", () => { surfaceMode = "actual"; i
 $("#surface-shadow").addEventListener("click", () => { surfaceMode = "predicted"; if (summary) renderSurface(); });
 $("#angle-slider").addEventListener("input", () => { if (summary) renderSurface(); });
 $("#replay-slider").addEventListener("input", () => { stopReplay(); if (trace) setSharedMinute(trace.rows[Number($("#replay-slider").value)].minute); });
+$("#live-slider").addEventListener("input",()=>{stopLive();liveSeconds=Number($("#live-slider").value);renderLive();});
+$("#live-play").addEventListener("click",()=>{
+  if(!trace || trace.schema_version<6)return;
+  if(liveTimer){stopLive();return;}
+  if(liveSeconds>=trace.rows.at(-1).next_frame_seconds)liveSeconds=0;
+  $("#live-play").textContent=copy[language].replay_pause;
+  liveTimer=setInterval(()=>{
+    liveSeconds+=Number($("#live-speed").value)*.2;
+    renderLive();
+    if(liveSeconds>=trace.rows.at(-1).next_frame_seconds)stopLive();
+  },200);
+});
 $("#replay-play").addEventListener("click", () => {
   if (!trace) return;
   if (replayTimer) { stopReplay(); return; }

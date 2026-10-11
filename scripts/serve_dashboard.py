@@ -29,7 +29,7 @@ FIGURES = FIGURES | frozenset({"grid64_observed_vs_predicted.png", "event_atlas6
                                "ioc_challenge.png", "event_validation.png",
                                "faker_memory_challenge.png", "team_matrix.png", "team_history_probe.png",
                                "ninety_exact_gate.png", "second_scale_observability.png",
-                               "faker_actions_10s.png"})
+                               "faker_actions_10s.png", "replay_clock.svg"})
 ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/app.js": ROOT / "dashboard" / "app.js",
           "/style.css": ROOT / "dashboard" / "style.css",

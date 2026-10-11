@@ -2,7 +2,7 @@
 
 # Shadow Faker
 
-[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Cible à la seconde**](SECOND_SCALE.md) · [**Explorer l'atlas 512×512**](#atlas-512512--résultat-mesuré) · [**Six finales mondiales**](WORLD_FINALS.md) · [**English**](README.md)
+[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Rejouer une partie**](REPLAY.md) · [**Cible à la seconde**](SECOND_SCALE.md) · [**Explorer l'atlas 512×512**](#atlas-512512--résultat-mesuré) · [**English**](README.md)
 
 La [documentation anglaise](README.md) est la version internationale de référence pour les résultats et la calibration les plus récents.
 
@@ -20,7 +20,7 @@ La page fonctionne désormais par **onglets dynamiques** : une vue à la fois, a
 |---|---|
 | **Atlas 512×512** | Cases et événements observés, puis [échec de la case exacte](#atlas-512512--résultat-mesuré) |
 | **16×16 historique / 3D** | [Carte observée contre prédite et surface](#le-paysage-des-prochains-mouvements) |
-| **Évolution / Tempo / Pression** | Chronologie d'une partie, [fonctionnement](#fonctionnement), [zone adverse réglable](PRESSURE.md) et positions des dix joueurs |
+| **Rejouer / Tempo / Pression** | [Horloge d'une partie](REPLAY.md), [fonctionnement](#fonctionnement), [zone adverse réglable](PRESSURE.md) et dix positions échantillonnées |
 | **Scores / Recherche / Preuves** | [Horloge à la seconde et trous d'observation](SECOND_SCALE.md), baselines et [prochains tests](NEXT_RESEARCH.md) |
 | **Stratégies / Challenge** | Hypothèses de composition et [quiz de la mémoire Faker](FAKER_MEMORY.md) |
 | **Stratégies / Challenge** | [Hypothèses et critères d'un jeu meilleur](SHADOW_PLUS.md) ; composition libre de cinq postes dans la simulation illustrative |
@@ -28,6 +28,8 @@ La page fonctionne désormais par **onglets dynamiques** : une vue à la fois, a
 | **Finales BO5 / Corpus / Archives** | [Six finales sourcées, 25 manches](WORLD_FINALS.md), [matrice IoC](IOC_VISION.md) et fiches ranked privées |
 
 La barre d'onglets reste accessible sur mobile : [capture à 390 pixels](DESIGN.md#dynamic-chapter-tabs). La chronologie commune synchronise des vues de cohortes différentes ; elle n'invente pas de positions entre les frames Riot espacées d'environ une minute.
+
+![Rejeu analytique : temps précis des événements et positions échantillonnées](docs/figures/replay_clock.svg)
 
 ![Accueil Shadow Faker à six étoiles et chronologie partagée](docs/figures/dashboard_hero.png)
 
@@ -182,7 +184,7 @@ L'exploration du même PUUID a trouvé **519 IDs toutes queues**, dont les **470
 
 ![Surface 3D des fréquences de positions réelles et de celles prédites par Shadow](docs/figures/probability_surface_3d.png)
 
-Le plan horizontal représente les **256 cases de la carte** ; la hauteur indique la **part des positions à la minute suivante** dans chaque case, agrégée sur 46 parties du test historique. Ce n'est ni le relief de la carte, ni le replay d'une partie, ni l'ensemble des futurs possibles. Le pic central de Shadow révèle surtout un biais à corriger. Le [tableau de bord local](#tableau-de-bord-visuel) permet d'orienter une vue isométrique, de lire les cases, de suivre le tempo et de rejouer une partie test minute par minute.
+Le plan horizontal représente les **256 cases de la carte** ; la hauteur indique la **part des positions à la minute suivante** dans chaque case, agrégée sur 46 parties du test historique. Ce n'est ni le relief de la carte, ni le replay d'une partie, ni l'ensemble des futurs possibles. Le pic central de Shadow révèle surtout un biais à corriger. Le [tableau de bord local](#tableau-de-bord-visuel) permet d'orienter une vue isométrique, de lire les cases, de suivre le tempo et de [rejouer chaque partie classée locale indexée](REPLAY.md) avec les événements horodatés.
 
 ![Lieux réels du compte comparés aux prédictions de Shadow Faker sur une grille de minimap](docs/figures/faker_vs_shadow_minimap.png)
 
@@ -218,17 +220,17 @@ Les graphiques et bannières proviennent de [résultats agrégés publics](docs/
 
 ## Tableau de bord visuel
 
-Après installation, lancer le serveur local et ouvrir [http://127.0.0.1:8008/](http://127.0.0.1:8008/). L'interface FR/EN compare **Faker observé, Shadow et niveau de preuve**, avec carte interactive, surface 3D, tempo et hypothèses de stratégie. Le rejeu d'une partie du test et le GIF apparaissent si le pipeline a déjà produit ses fichiers locaux.
+Après installation, lancer le serveur local et ouvrir [le lecteur Rejouer](http://127.0.0.1:8008/#replay). On peut choisir toute partie classée indexée, suivre ses événements horodatés avec une horloge en secondes et lire la carte à 1×–60×. Les dix joueurs ne changent de position qu'aux frames Riot (~60 s) ; l'âge de la dernière observation est indiqué. La prévision historique de Shadow et l'arrivée réelle à la minute suivante sont dans une analyse rétrospective pliée. Ce lecteur de timeline n'est ni une vidéo, ni la vision de Faker, ni une trajectoire par seconde. [Contrat et commandes du rejeu](REPLAY.md).
 
 L'ouverture directe de [dashboard/index.html](dashboard/index.html) en `file://` sert désormais de **lanceur** : redirection vers le serveur local s'il tourne, sinon commande de démarrage visible. Les graphiques interactifs ont besoin de ce serveur pour les JSON agrégés autorisés et le rejeu privé facultatif. Le nouveau panneau de recherche rend visibles les échecs par classe et les prochaines preuves à obtenir.
 
 ```bash
 .venv/bin/python scripts/serve_dashboard.py
-# Facultatif : exporter le rejeu local avant d'ouvrir la page.
+# Facultatif : pré-générer l'analyse rétrospective historique.
 .venv/bin/python -m shadowfaker.demo --max-frames 30
 ```
 
-Une **frise commune** reste visible pendant le défilement de la page. Son curseur (ou les flèches du clavier et la molette sur ce curseur) synchronise l'atlas **512×512 local**, la surface 3D, le tempo, la pression adverse, la minute du rejeu et le repère du scénario synthétique. Le code couleur reste affiché. Les destinations Faker/Shadow de cette nouvelle carte agrègent **46 parties de validation** par phase : **460 destinations entre 0 et 10 min, 443 entre 10 et 20 min, 372 après 20 min**. Les couches de joueurs et événements agrègent **465 ranked** ; le rejeu correspond à **une partie avec l'ancien modèle 16×16** et s'arrête à sa dernière frame. Le champ géométrique local garde sa grille historique 64×64, explicitement nommée. Sans l'atlas local, l'interface indique son repli 64×64 historique. Les anciens scores restent fixes. Le curseur ne crée pas de positions intermédiaires à la seconde.
+Une **frise commune** reste visible pendant le défilement de la page et synchronise les vues agrégées. L'horloge de **Rejouer** parcourt séparément la partie choisie à la seconde. Les destinations Faker/Shadow de l'atlas agrègent **46 parties de validation** par phase : **460 destinations entre 0 et 10 min, 443 entre 10 et 20 min, 372 après 20 min**. Les couches de joueurs et événements agrègent **465 ranked** ; le rejeu ouvre une seule partie locale à la fois. Le champ géométrique local garde sa grille historique 64×64. Sans l'atlas local, l'interface indique son repli 64×64 historique. Les anciens scores restent fixes. Aucun curseur ne crée de positions intermédiaires à la seconde.
 
 Dans « Ce qu'on sait vraiment prédire », le panneau 512 donne le résultat exact et ses baselines. Le panneau **8×8 de validation** montre la précision exacte, le coût spatial de 90 % de couverture et trois candidats par phase. Les barres suivent la frise commune. Ces métriques de développement ne doivent pas être mélangées aux **46 parties du test historique** affichées dans les archives 16/64.
 
