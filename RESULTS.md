@@ -1,5 +1,11 @@
 # Measured results (updated 2026-10-11)
 
+## M18: audited Faker actions, same historical validation games
+
+![Frozen M16 model versus the audited challenger](docs/figures/faker_actions_sanitized.png)
+
+All **465** cached KR ranked games pass the new source and attribution contract; **73,482** windows retain the same labels and match split. The audit counts **7,578** system-actor events and **11,196** textually repeated targetable event records without blindly removing possible legitimate multiplicity. The **48-signal** challenger adds Faker's available gold, CS, health and previous-frame changes to the frozen 37-signal state. Across the exact same **46 validation games / 7,480 windows**, the four observable acts improve from **0.22992 to 0.22309** action log loss and from **0.14929 to 0.17404** macro AP. Paired match-bootstrap gain in action log loss: **0.00683 [0.00566, 0.00796]**. Purchase AP improves **0.2409 → 0.3121**; kill outcome AP only **0.0767 → 0.0789**. This reused validation is exploratory; no old test was used to select the candidate and no 90% claim follows. [Audit and protocol](DATA_SANITATION.md).
+
 ## M16: Faker-attributed events in the next ten seconds
 
 ![Average precision by Faker action or outcome against a train-only phase rule](docs/figures/faker_actions_10s.png)

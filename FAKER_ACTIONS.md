@@ -1,5 +1,7 @@
 # Shadow Faker — événements attribués à Faker dans les 10 secondes
 
+**Mise à jour M18 :** le [challenger assaini](DATA_SANITATION.md) contrôle les sources et ajoute onze variables causales ; sur les mêmes 46 matchs de validation, l'AP moyenne des quatre actes observables passe de 14,93 % à 17,40 %. Le modèle M16 décrit ci-dessous reste gelé comme référence. Aucune nouvelle cohorte indépendante n'a encore confirmé le gain.
+
 ![Précision moyenne par famille sur 46 parties de validation](docs/figures/faker_actions_10s.png)
 
 ## Ce que le modèle prédit

@@ -163,6 +163,10 @@ def main() -> None:
     command(sys.executable, CONFIG.root / "scripts" / "train_faker_actions.py")
     command(sys.executable, CONFIG.root / "scripts" / "render_faker_actions.py")
     stage("Faker-attributed 10-second action probabilities and validation baselines refreshed.")
+    command(sys.executable, CONFIG.root / "scripts" / "run_action_sanitation.py")
+    command(sys.executable, CONFIG.root / "scripts" / "challenge_faker_actions.py")
+    command(sys.executable, CONFIG.root / "scripts" / "render_action_sanitation.py")
+    stage("Audited causal Faker-action windows and paired validation challenger refreshed; old test untouched.")
 
     export_trace(max_frames=30)
     command(sys.executable, CONFIG.root / "scripts" / "render_atlas64.py")

@@ -12,6 +12,10 @@ Pipeline de recherche local visant à modéliser **les décisions macro de Faker
 
 ![Précision moyenne de sept familles d'événements attribués à Faker](docs/figures/faker_actions_10s.png)
 
+**Étape suivante : décisions de Faker sur données assainies.** Un audit avec empreinte des sources a contrôlé les **465 parties ranked / 73 482 fenêtres de dix secondes**, sans quarantaine. Les acteurs système et les événements Riot répétés sont signalés plutôt que convertis en faux labels « rien ». Un **challenger à 48 signaux** ajoute l'or disponible de Faker, ses CS, sa santé et les variations depuis la frame précédente. Sur les **mêmes 46 parties de validation historique**, l'AP moyenne des quatre actes observables monte de **14,93 % à 17,40 %**, et leur perte log baisse de **0,22992 à 0,22309**. L'AP achat monte de **24,09 % à 31,21 %** ; les issues kill restent faibles. C'est une amélioration exploratoire, ni 90 % de prédiction ni une mesure de sa vision réelle. [Audit, comparaison et reproduction](DATA_SANITATION.md).
+
+![Challenger assaini et modèle gelé sur les mêmes fenêtres de validation](docs/figures/faker_actions_sanitized.png)
+
 ## Le site, en images
 
 La page fonctionne désormais par **onglets dynamiques** : une vue à la fois, avec une chronologie commune. Les six étoiles évoquent le sixième titre mondial de T1 en 2025, [confirmé par son copropriétaire Comcast Spectacor](https://comcastspectacor.com/news/2025/12/t1-entertainment-sports-wins-2025-league-of-legends-world-championship/). Shadow Faker est un laboratoire de fans indépendant ; ces étoiles ne représentent ni la précision du modèle ni une affiliation à T1.

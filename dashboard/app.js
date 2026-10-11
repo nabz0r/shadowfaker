@@ -202,6 +202,8 @@ Object.assign(copy.en,{ninety_kicker:"ARCHIVE · NEXT-MINUTE 8×8 CELL",ninety_t
 
 Object.assign(copy.fr,{faker_actions_kicker:"NOUVEAU MODÈLE · FAKER · 10 SECONDES",faker_actions_title:"Que fait Faker ensuite ?",faker_actions_intro:"Sept familles attribuées à Faker sur 46 parties de validation. Achats, compétences et wards sont des actes observables ; kill, mort et assistance sont des issues. La phase suit aussi le curseur de partie.",faker_actions_phase:"Phase évaluée",faker_actions_all:"Toutes",faker_actions_early:"Début <10 min",faker_actions_middle:"Milieu 10–20 min",faker_actions_late:"Fin ≥20 min",faker_actions_nll:"Perte log du modèle ↓",faker_actions_baseline:"Règle par phase ↓",faker_actions_ap:"AP moyenne · 7 familles ↑",faker_actions_empty:"Toujours « rien » · accuracy trompeuse",faker_actions_model:"Shadow",faker_actions_rule:"Règle par phase",faker_actions_unit:"Précision moyenne par famille · % ; plus haut = mieux",faker_actions_limit:"La règle « toujours rien » paraît forte car les événements sont rares, mais rate tous les cas positifs. Validation historique réutilisée ; ni lieu de Faker à la seconde ni action gagnante mesurée.",faker_actions_doc:"Protocole et résultats complets ↗",faker_actions_positive:"cas positifs",faker_actions_labels:{purchase:"Achat",skill_point:"Compétence",ward_placed:"Ward posée",ward_cleared:"Ward détruite",kill:"Kill · issue",death:"Mort · issue",assist:"Assistance · issue"}});
 Object.assign(copy.en,{faker_actions_kicker:"NEW MODEL · FAKER · NEXT 10 SECONDS",faker_actions_title:"What does Faker do next?",faker_actions_intro:"Seven Faker-attributed families across 46 validation games. Purchases, skill points and wards are observable acts; kills, deaths and assists are outcomes. The shared game clock also selects the phase.",faker_actions_phase:"Evaluated phase",faker_actions_all:"All phases",faker_actions_early:"Early <10 min",faker_actions_middle:"Middle 10–20 min",faker_actions_late:"Late ≥20 min",faker_actions_nll:"Model log loss ↓",faker_actions_baseline:"Phase rule ↓",faker_actions_ap:"Mean AP · 7 families ↑",faker_actions_empty:"Always none · misleading accuracy",faker_actions_model:"Shadow",faker_actions_rule:"Phase rule",faker_actions_unit:"Average precision per family · %; higher is better",faker_actions_limit:"The always-none rule looks strong because events are rare, yet misses every positive case. Reused historical validation; neither Faker's second-scale position nor action value is measured.",faker_actions_doc:"Full protocol and scores ↗",faker_actions_positive:"positive cases",faker_actions_labels:{purchase:"Purchase",skill_point:"Skill point",ward_placed:"Ward placed",ward_cleared:"Ward cleared",kill:"Kill · outcome",death:"Death · outcome",assist:"Assist · outcome"}});
+Object.assign(copy.fr,{sanitation_kicker:"CORPUS ASSAINI · MÊMES 46 PARTIES · 10 SECONDES",sanitation_title:"Plus de contexte, meilleure prédiction de Faker",sanitation_intro:"Un nouvel état causal ajoute l'or disponible, les CS, la santé et les changements depuis la frame précédente. Les 465 parties passent l'audit ; le graphique compare le modèle gelé et le challenger sur exactement les mêmes fenêtres de validation.",sanitation_new_ap:"Challenger · AP moyenne des quatre actes ↑",sanitation_old_ap:"Ancien modèle · mêmes actes ↑",sanitation_new_nll:"Challenger · perte log des actes ↓",sanitation_limit:"Validation historique déjà réutilisée : amélioration exploratoire, pas score prospectif ni preuve de vision réelle de la minimap. Les kills, morts et assists sont des issues séparées.",sanitation_doc:"Audit et protocole détaillés ↗"});
+Object.assign(copy.en,{sanitation_kicker:"AUDITED CORPUS · SAME 46 GAMES · NEXT 10 SECONDS",sanitation_title:"More context, better Faker prediction",sanitation_intro:"A new causal state adds unspent gold, CS, health and changes since the previous frame. All 465 games pass the audit; this chart compares the frozen model and challenger on exactly the same validation windows.",sanitation_new_ap:"Challenger · mean AP for four acts ↑",sanitation_old_ap:"Previous model · same acts ↑",sanitation_new_nll:"Challenger · action log loss ↓",sanitation_limit:"Reused historical validation: exploratory improvement, not a prospective score or proof of Faker's actual minimap view. Kills, deaths and assists are separate outcomes.",sanitation_doc:"Audit and full protocol ↗"});
 
 let language = "fr";
 let summary = null;
@@ -224,6 +226,7 @@ let predictabilityData = null;
 let ninetyData = null;
 let secondScaleData = null;
 let fakerActionsData = null;
+let sanitationData = null;
 let eventAblation = null;
 let challengeScenario = "five_faker";
 let customAllocation = ["top","mid","jungle","bot","bot"];
@@ -557,6 +560,7 @@ function setSharedMinute(minute) {
   if (ninetyData) renderNinety();
   if (secondScaleData) renderSecondScale();
   if (fakerActionsData) renderFakerActions();
+  if (sanitationData) renderSanitation();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
 }
@@ -591,6 +595,7 @@ function translate() {
   if (ninetyData) renderNinety();
   if (secondScaleData) renderSecondScale();
   if (fakerActionsData) renderFakerActions();
+  if (sanitationData) renderSanitation();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
   if (worldFinals) renderFinals();
@@ -672,6 +677,15 @@ function renderFakerActions() {
     return `<div class="faker-actions-row"><span class="label">${copy[language].faker_actions_labels[key]}<small>${row.positives.toLocaleString(locale)} ${copy[language].faker_actions_positive}</small></span><span class="tracks"><span class="track"><i style="width:${Math.min(100,modelAP*250)}%"></i></span><span class="track"><i style="width:${Math.min(100,baseAP*250)}%"></i></span></span><strong>${percent(modelAP)}<small>${percent(baseAP)}</small></strong></div>`;
   });
   $("#faker-actions-rows").innerHTML = rows.join("");
+}
+
+function renderSanitation() {
+  if (!sanitationData) return;
+  const locale = language === "fr" ? "fr-FR" : "en-US";
+  const percent = value => (100 * value).toLocaleString(locale,{minimumFractionDigits:1,maximumFractionDigits:1}) + " %";
+  $("#sanitation-new-ap").textContent = percent(sanitationData.action_summary.candidate.macro_ap);
+  $("#sanitation-old-ap").textContent = percent(sanitationData.action_summary.incumbent.macro_ap);
+  $("#sanitation-new-nll").textContent = sanitationData.action_summary.candidate.nll.toLocaleString(locale,{minimumFractionDigits:3,maximumFractionDigits:3});
 }
 
 function renderPredictability() {
@@ -1781,11 +1795,11 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json"), fetch("/team-probe.json"), fetch("/ninety-gate.json"), fetch("/second-scale.json"), fetch("/faker-actions.json")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json"), fetch("/team-probe.json"), fetch("/ninety-gate.json"), fetch("/second-scale.json"), fetch("/faker-actions.json"), fetch("/faker-actions-sanitized.json")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
   let memoryPayload;
-  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData, teamProbe, ninetyData, secondScaleData, fakerActionsData] = payloads;
+  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData, teamProbe, ninetyData, secondScaleData, fakerActionsData, sanitationData] = payloads;
   memoryCases = memoryPayload?.examples || [];
   renderIocResult();
   if (summary && (atlas512 || grid64)) renderSurface();
@@ -1796,6 +1810,7 @@ async function start() {
   if (ninetyData) renderNinety();
   if (secondScaleData) renderSecondScale();
   if (fakerActionsData) renderFakerActions();
+  if (sanitationData) renderSanitation();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
   if (worldFinals) renderFinals();

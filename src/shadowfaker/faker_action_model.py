@@ -20,9 +20,9 @@ PUBLIC = CONFIG.root / "docs" / "data" / "public_faker_actions_10s.json"
 
 
 class ActionMLP(nn.Module):
-    def __init__(self):
+    def __init__(self, input_dim: int = len(FEATURES)):
         super().__init__()
-        self.net = nn.Sequential(nn.Linear(len(FEATURES), 128), nn.GELU(),
+        self.net = nn.Sequential(nn.Linear(input_dim, 128), nn.GELU(),
                                  nn.Linear(128, 64), nn.GELU(),
                                  nn.Linear(64, len(CLASSES)))
 
@@ -35,12 +35,13 @@ def _phase(x: np.ndarray) -> np.ndarray:
     return np.where(minute < 10, 0, np.where(minute < 20, 1, 2))
 
 
-def _iter_batches(ids: list[str], batch: int, shuffle: bool, rng: random.Random):
+def _iter_batches(ids: list[str], batch: int, shuffle: bool, rng: random.Random,
+                  data=DATA):
     order_ids = list(ids)
     if shuffle:
         rng.shuffle(order_ids)
     for mid in order_ids:
-        with np.load(DATA / f"{mid}.npz") as z:
+        with np.load(data / f"{mid}.npz") as z:
             x, y = z["x"].astype(np.float32), z["y"].astype(np.float32)
         rows = list(range(len(y)))
         if shuffle:
@@ -50,14 +51,14 @@ def _iter_batches(ids: list[str], batch: int, shuffle: bool, rng: random.Random)
             yield mid, x[selection], y[selection]
 
 
-def train_priors(ids: list[str]) -> tuple[np.ndarray, np.ndarray]:
+def train_priors(ids: list[str], data=DATA) -> tuple[np.ndarray, np.ndarray]:
     """Jeffreys-smoothed Bernoulli rates, estimated from train matches only."""
     total = np.full(len(CLASSES), .5, dtype=np.float64)
     count = 1
     phases = np.full((3, len(CLASSES)), .5, dtype=np.float64)
     phase_count = np.ones(3, dtype=np.float64)
     for mid in ids:
-        with np.load(DATA / f"{mid}.npz") as z:
+        with np.load(data / f"{mid}.npz") as z:
             x, y = z["x"], z["y"]
         total += y.sum(axis=0)
         count += len(y)
@@ -100,34 +101,46 @@ def metrics(label: np.ndarray, probability: np.ndarray) -> dict:
             "per_class": classes}
 
 
-def run(*, pilot: bool = False, epochs: int = 50, batch: int = 512) -> dict:
+def run(*, pilot: bool = False, epochs: int = 50, batch: int = 512,
+        data=DATA, model_path=MODEL, private_path=PRIVATE, public_path=PUBLIC,
+        schema_version: int = SCHEMA_VERSION) -> dict:
     if not 1 <= epochs <= 100 or batch < 16:
         raise ValueError("Invalid training parameters")
-    generated = read_json(DATA / "meta.json")
-    if generated.get("schema_version") != SCHEMA_VERSION or generated.get("pilot"):
+    generated = read_json(data / "meta.json")
+    if not generated or generated.get("schema_version") != schema_version or generated.get("pilot"):
         raise ValueError("Build the complete Faker action dataset first")
     split = read_json(CONFIG.processed / "meta.json")["splits"]
     train_ids, val_ids = list(split["train"]), list(split["val"])
     if pilot:
         train_ids, val_ids = train_ids[:3], val_ids[:2]
+    audit = read_json(data / "private_manifest.json")
+    excluded_train = excluded_val = 0
+    if audit is not None:
+        eligible = {mid for mid, row in audit.items() if row.get("status") == "eligible"}
+        excluded_train, excluded_val = (sum(mid not in eligible for mid in train_ids),
+                                        sum(mid not in eligible for mid in val_ids))
+        train_ids = [mid for mid in train_ids if mid in eligible]
+        val_ids = [mid for mid in val_ids if mid in eligible]
+    if not train_ids or not val_ids:
+        raise ValueError("No eligible train or validation matches after audit")
     if set(train_ids) & set(val_ids):
         raise AssertionError("Match leakage")
-    if not all((DATA / f"{mid}.npz").exists() for mid in train_ids + val_ids):
+    if not all((data / f"{mid}.npz").exists() for mid in train_ids + val_ids):
         raise FileNotFoundError("Missing per-match action labels")
     torch.manual_seed(CONFIG.seed)
     np.random.seed(CONFIG.seed)
     torch.set_num_threads(min(4, torch.get_num_threads()))
     rng = random.Random(CONFIG.seed)
-    global_prior, phase_prior = train_priors(train_ids)
-    model = ActionMLP()
+    global_prior, phase_prior = train_priors(train_ids, data)
+    model = ActionMLP(len(generated.get("features", FEATURES)))
     optimizer = torch.optim.AdamW(model.parameters(), lr=8e-4, weight_decay=1e-3)
-    path = MODEL.with_name("faker_actions_10s_pilot.pt") if pilot else MODEL
+    path = model_path.with_name(model_path.stem + "_pilot.pt") if pilot else model_path
     path.parent.mkdir(parents=True, exist_ok=True)
     best, best_epoch, stale, history = float("inf"), 0, 0, []
     for epoch in range(1, epochs + 1):
         model.train()
         train_sum = train_n = 0
-        for _, x, y in _iter_batches(train_ids, batch, True, rng):
+        for _, x, y in _iter_batches(train_ids, batch, True, rng, data):
             optimizer.zero_grad(set_to_none=True)
             loss = nn.functional.binary_cross_entropy_with_logits(
                 model(torch.from_numpy(x)), torch.from_numpy(y))
@@ -138,7 +151,7 @@ def run(*, pilot: bool = False, epochs: int = 50, batch: int = 512) -> dict:
         model.eval()
         val_sum = val_n = 0
         with torch.no_grad():
-            for _, x, y in _iter_batches(val_ids, batch, False, rng):
+            for _, x, y in _iter_batches(val_ids, batch, False, rng, data):
                 loss = nn.functional.binary_cross_entropy_with_logits(
                     model(torch.from_numpy(x)), torch.from_numpy(y))
                 val_sum += float(loss) * len(y)
@@ -157,7 +170,7 @@ def run(*, pilot: bool = False, epochs: int = 50, batch: int = 512) -> dict:
     model.eval()
     ys, ps, global_ps, phase_ps, phase_bins, match_names = [], [], [], [], [], []
     with torch.no_grad():
-        for mid, x, y in _iter_batches(val_ids, batch, False, rng):
+        for mid, x, y in _iter_batches(val_ids, batch, False, rng, data):
             ys.append(y)
             ps.append(torch.sigmoid(model(torch.from_numpy(x))).numpy())
             global_ps.append(np.broadcast_to(global_prior, y.shape))
@@ -197,6 +210,8 @@ def run(*, pilot: bool = False, epochs: int = 50, batch: int = 512) -> dict:
     report = {"schema_version": 1, "pilot": pilot,
               "target": "seven Faker-attributed outcomes in next ten seconds",
               "train_matches": len(train_ids), "validation_matches": len(val_ids),
+              "quarantined_train_matches": excluded_train,
+              "quarantined_validation_matches": excluded_val,
               "train_windows": train_n, "validation_windows": len(label),
               "parameters": sum(p.numel() for p in model.parameters()),
               "best_epoch": best_epoch, "history": history, "scores": scores,
@@ -206,11 +221,11 @@ def run(*, pilot: bool = False, epochs: int = 50, batch: int = 512) -> dict:
               "selection": "historical validation; old test and future lockbox untouched",
               "limits": "event occurrence, not player position, click, vision, intention or action value",
               "per_match": per_match}
-    private = PRIVATE.with_name("faker_actions_10s_pilot.json") if pilot else PRIVATE
+    private = private_path.with_name(private_path.stem + "_pilot.json") if pilot else private_path
     atomic_json(private, report)
     if not pilot:
         aggregate = {k: v for k, v in report.items() if k not in ("history", "per_match")}
-        atomic_json(PUBLIC, aggregate)
+        atomic_json(public_path, aggregate)
     return report
 
 

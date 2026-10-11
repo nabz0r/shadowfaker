@@ -10,6 +10,10 @@
 
 ![Faker-attributed next-ten-second average precision by event family](docs/figures/faker_actions_10s.png)
 
+**Next step: audited Faker decisions.** A source-fingerprinted, per-game audit checked all **465 ranked games / 73,482 ten-second windows** without quarantining a game. It recorded system actors and repeated Riot event records instead of turning ambiguous data into false negative labels. A **48-signal challenger** adds Faker's unspent gold, CS, health and changes since the previous observed frame. On the **same 46 reused validation games**, average precision for four observable acts rises from **14.93% to 17.40%**, while their log loss falls from **0.22992 to 0.22309**. Purchase AP rises from **24.09% to 31.21%**; kill outcomes remain weak. This is exploratory historical validation, not a 90% prediction result or a measure of player vision. [Audit, paired comparison and reproduction](DATA_SANITATION.md).
+
+![Audited candidate versus frozen incumbent on identical validation windows](docs/figures/faker_actions_sanitized.png)
+
 The longer-term goal is a **Shadow Plus** policy that could improve on this behavioral prior. Prediction accuracy on old matches does not establish stronger play. [SHADOW_PLUS.md](SHADOW_PLUS.md) defines the evidence needed for that claim. [Version française](README.fr.md).
 
 ## A visual tour of the site

@@ -1,5 +1,14 @@
 # Shadow Faker — plan d'exécution
 
+## M18 — assainir le corpus causal et rechallenger la prédiction Faker (2026-10-11)
+
+1. Geler les scores du modèle à 10 s et les splits par match. Auditer d'abord cinq parties puis les 465 JSON cachés : identité de Faker, queue ranked solo, durée, correspondance match/timeline, cadence des frames et intégrité des événements attribués. Chaque exclusion est expliquée et comptée ; les détails par match restent locaux.
+2. Versionner un jeu assaini. Une partie dont l'identité, la timeline ou l'horizon est incohérent est mise en quarantaine. Les événements malformés ne deviennent pas silencieusement des négatifs. Recréer les échantillons avec empreinte des sources et cache reprenable, sans charger tout le corpus en RAM.
+3. Tester sur les mêmes matchs train/validation un challenger qui ajoute des variables connues à `t` utiles à l'action de Faker, notamment l'or disponible et les changements d'état depuis la frame précédente. Comparer aux fréquences train et au modèle M16 sur les mêmes fenêtres ; séparer actes observables et issues de combat. Le vieux test consulté et le futur lockbox ne servent pas à choisir.
+4. Mettre à jour la documentation et les figures publiques avec couverture, exclusions, résultats et limites. Publier code, tests et documentation sur `main`, sans JSON Riot, NPZ, poids ou secrets.
+
+Risque central : une timeline omnisciente et des frames espacées d'environ une minute ne révèlent ni la minimap réellement vue, ni les clics, ni le sang-froid. L'assainissement et les nouvelles variables ne rendent pas l'objectif de 90 % acquis ; tout gain doit être mesuré à cible et population constantes.
+
 ## M17 — rejeu analytique des parties indexées (2026-10-11)
 
 1. Vérifier sur cinq parties que les horodatages des frames et des événements Riot sont ordonnés et que les dix positions peuvent manquer sans casser l'affichage. Exporter ces temps dans la trace locale versionnée, avec cache et reprise.
