@@ -18,8 +18,8 @@ const copy = {
     surface_title: "La minimap devient une surface de choix", surface_intro: "Les axes au sol sont les coordonnées de la carte ; la hauteur est la fréquence d'une prochaine position. Tourne la surface et compare la distribution réelle à Shadow. La troisième dimension est une fréquence agrégée, pas le relief réel de LoL ni une preuve de stratégie gagnante.",
     surface_actual: "Observé", surface_shadow: "Shadow", surface_rotate: "Angle de vue",
     replay_title: "Rejouer une partie, suivre chaque événement", replay_step: "Horloge en secondes · positions ~60 s",
-    replay_intro: "Choisis une partie classée indexée. L'horloge suit les événements horodatés ; les dix points restent à leur dernière position réellement observée jusqu'à la frame suivante. C'est un rejeu analytique de la timeline Riot, pas une vidéo ni le point de vue de Faker.",
-    live_kicker: "PARTIE LOCALE · CHRONOLOGIE OBSERVÉE", live_title: "Dix joueurs, une horloge", live_allies: "Alliés", live_enemies: "Adversaires", live_event: "Lieu d'événement", live_feed: "Événements déjà observés", live_speed: "Vitesse", live_limit: "Les événements ont leur temps propre. Les joueurs n'ont une nouvelle position qu'aux frames Riot (~60 s) ; aucun trajet ou clic entre frames n'est inventé. Les lieux des événements ne sont pas la position de Faker. Vision et communications inconnues.", replay_analysis: "Ouvrir l'analyse rétrospective : prévision Shadow et arrivée réelle à la minute suivante", game_spoiler: "Voir la fiche de fin de partie · résultat et objets finaux",
+    replay_intro: "Choisis une partie classée indexée. La carte de la Faille situe les dernières positions observées, les événements horodatés et les liens entre frames passées. Le fond est un dessin actuel de Riot ; ce n'est ni une vidéo ni la vision de Faker.",
+    live_kicker: "PARTIE LOCALE · CHRONOLOGIE OBSERVÉE", live_title: "La Faille, autour de Faker", live_allies: "Alliés", live_enemies: "Adversaires", live_event: "Événements", live_paths: "Traces observées", live_path_scope: "Suivre", live_path_faker: "Faker", live_path_all: "10 joueurs", live_path_depth: "Frames", live_event_window: "Sur la carte", live_event_15: "15 s", live_event_60: "60 s", live_event_180: "3 min", live_feed: "Événements déjà observés", live_speed: "Vitesse", live_limit: "Fond Riot Data Dragon 16.20.1, pas une carte du patch historique. Portraits et vie : dernière frame Riot (~60 s). Les traits relient seulement des relevés passés ; le trajet réel entre eux est inconnu. Événements à leur temps et lieu propre si fourni ; vision et communications de Faker inconnues.", replay_analysis: "Ouvrir l'analyse rétrospective : prévision Shadow et arrivée réelle à la minute suivante", game_spoiler: "Voir la fiche de fin de partie · résultat et objets finaux",
     replay_now: "Départ : compte à la minute affichée", replay_team: "Contexte : autres alliés au départ", replay_real: "Arrivée réelle une minute après", replay_guess: "Case prévue par Shadow", replay_minute: "Minute de départ",
     replay_gold: "Écart d'or équipe", replay_xp: "Écart d'XP", replay_level: "Niveau", replay_uncertainty: "Dispersion de prédiction",
     replay_play: "▶ Rejouer", replay_pause: "Ⅱ Pause", replay_trend_note: "Courbe rétrospective de l'écart d'or ; elle n'entre jamais dans l'état passé du modèle.",
@@ -77,8 +77,8 @@ const copy = {
     surface_title: "The minimap becomes a surface of choices", surface_intro: "The ground axes are map coordinates; height is how often a next position occurs. Rotate the surface and compare reality with Shadow. The third dimension is aggregate frequency, not LoL terrain or proof of a winning strategy.",
     surface_actual: "Observed", surface_shadow: "Shadow", surface_rotate: "View angle",
     replay_title: "Replay a game, follow every event", replay_step: "Second clock · positions ~60 s",
-    replay_intro: "Choose an indexed ranked game. The clock follows timestamped events; all ten player markers stay at their last observed positions until the next frame. This is an analytical Riot timeline replay, not a video or Faker's player view.",
-    live_kicker: "LOCAL GAME · OBSERVED CHRONOLOGY", live_title: "Ten players, one clock", live_allies: "Allies", live_enemies: "Opponents", live_event: "Event location", live_feed: "Events observed so far", live_speed: "Speed", live_limit: "Events have their own timestamps. Player positions update only at Riot frames (~60 s); no path or clicks between frames are invented. Event locations are not Faker's position. Vision and communication are unknown.", replay_analysis: "Open retrospective analysis: Shadow forecast and actual arrival one minute later", game_spoiler: "Show end-of-game card · result and final items",
+    replay_intro: "Choose an indexed ranked game. The Rift map shows latest sampled positions, timed events and links between past frames. The backdrop is current Riot artwork; this is neither a video nor Faker's point of view.",
+    live_kicker: "LOCAL GAME · OBSERVED CHRONOLOGY", live_title: "The Rift, around Faker", live_allies: "Allies", live_enemies: "Opponents", live_event: "Events", live_paths: "Observed links", live_path_scope: "Follow", live_path_faker: "Faker", live_path_all: "10 players", live_path_depth: "Frames", live_event_window: "On map", live_event_15: "15 s", live_event_60: "60 s", live_event_180: "3 min", live_feed: "Events observed so far", live_speed: "Speed", live_limit: "Riot Data Dragon 16.20.1 artwork, not each game's historical patch. Portraits and health: latest Riot frame (~60 s). Lines link past samples only; the real route between them is unknown. Events use their own time and place where supplied. Faker's vision and communication remain unknown.", replay_analysis: "Open retrospective analysis: Shadow forecast and actual arrival one minute later", game_spoiler: "Show end-of-game card · result and final items",
     replay_now: "Start: account at displayed minute", replay_team: "Context: other allies at the start", replay_real: "Observed arrival one minute later", replay_guess: "Cell predicted by Shadow", replay_minute: "Starting minute",
     replay_gold: "Team gold difference", replay_xp: "XP difference", replay_level: "Level", replay_uncertainty: "Forecast spread",
     replay_play: "▶ Play", replay_pause: "Ⅱ Pause", replay_trend_note: "Retrospective gold difference; future values never enter the model's past state.",
@@ -219,6 +219,9 @@ let events64 = null;
 let challengeData = null;
 let pressureData = null;
 let spriteManifest = null;
+const riftArtwork = new Image();
+riftArtwork.src = "/assets/map11.png";
+riftArtwork.addEventListener("load", () => { if (summary) renderAtlas(); });
 let pressureRadius = 2500;
 const iocFilters = {faker:true, allies:true, enemies:true, lanes:true, items:true, radius:true, role:"ALL"};
 const lanePaths = {
@@ -700,6 +703,25 @@ function renderNinety() {
   $("#ninety-all").textContent = percentage(ninetyData.all_transitions_accuracy);
   $("#ninety-top").textContent = percentage(ninetyData.accuracy_at_fixed_served_coverage[0].exact_accuracy);
   $("#ninety-lockbox").textContent = `${ninetyData.prospective.new_games_scored} / ${ninetyData.prospective.required_new_games}`;
+  let rail=$("#score-rail");
+  if(!rail){
+    rail=document.createElement("div");rail.id="score-rail";rail.className="score-rail";
+    const labels=document.createElement("div");labels.className="score-rail-labels";
+    const actual=document.createElement("strong");actual.className="score-rail-actual";
+    const target=document.createElement("span");target.className="score-rail-target";
+    labels.append(actual,target);
+    const track=document.createElement("div");track.className="score-rail-track";track.setAttribute("role","meter");track.setAttribute("aria-valuemin","0");track.setAttribute("aria-valuemax","100");
+    const fill=document.createElement("i");fill.className="score-rail-fill";track.append(fill);
+    track.append(document.createElement("b"));
+    rail.append(labels,track);
+    document.querySelector(".ninety-metrics").before(rail);
+  }
+  const exact=100*ninetyData.all_transitions_accuracy;
+  rail.querySelector(".score-rail-actual").textContent=language==="fr"?`Archive 8×8/min · ${percentage(ninetyData.all_transitions_accuracy)}`:`8×8/min archive · ${percentage(ninetyData.all_transitions_accuracy)}`;
+  rail.querySelector(".score-rail-target").textContent=language==="fr"?"Repère 90 %":"90% marker";
+  rail.querySelector(".score-rail-fill").style.width=`${Math.max(0,Math.min(100,exact))}%`;
+  rail.querySelector(".score-rail-track").setAttribute("aria-valuenow",exact.toFixed(2));
+  rail.querySelector(".score-rail-track").setAttribute("aria-label",language==="fr"?"Précision d'une case 8×8 exacte en validation":"Exact 8×8 cell accuracy on validation");
 }
 
 function renderSecondScale() {
@@ -826,7 +848,13 @@ function renderAtlas() {
   const teamPositions = layer === "positions_enemy" || layer === "positions_allies";
   const positions = modelPositions || teamPositions;
   const canvas = $("#atlas-canvas"), ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#091526"; ctx.fillRect(0, 0, 512, 512);
+  ctx.fillStyle = "#130f19"; ctx.fillRect(0, 0, 512, 512);
+  if (riftArtwork.complete && riftArtwork.naturalWidth) {
+    ctx.globalAlpha = .66;
+    ctx.drawImage(riftArtwork,0,0,512,512);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#170e20";ctx.globalAlpha=.22;ctx.fillRect(0,0,512,512);ctx.globalAlpha=1;
+  }
   const modelPhase = grid64?.phases?.[phase] || grid64;
   const fallback = modelPositions ? modelPhase?.[layer === "positions_real" ? "observed_density" : "predicted_density"] :
     teamPositions ? pressureData?.phases[phase][layer === "positions_enemy" ? "enemy_density" : "ally_density"] : events64?.phases?.[phase]?.[layer]?.cells;
@@ -864,8 +892,10 @@ function renderAtlas() {
     const strength = Math.pow(count / max, .42);
     const channel = (n) => Math.round(8 + (n - 8) * (.18 + .82 * strength));
     ctx.fillStyle = `rgb(${channel(rgb[0])},${channel(rgb[1])},${channel(rgb[2])})`;
+    ctx.globalAlpha = .35 + .58 * strength;
     ctx.fillRect(x * scale, (atlasGrid - 1 - y) * scale, scale, scale);
   }
+  ctx.globalAlpha=1;
   ctx.strokeStyle = "rgba(190,218,240,.13)"; ctx.lineWidth = 1;
   for (let i = 0; i <= 8; i++) {
     const pixel = i * 64 + .5;
@@ -1218,7 +1248,8 @@ function renderPressureLive() {
     return;
   }
   const project = xy => [30 + xy[0] * 500, 530 - xy[1] * 500];
-  svg.append(svgNode("rect", {x:30,y:30,width:500,height:500,fill:"#190f1a",stroke:"#94556b","stroke-width":2}));
+  svg.append(svgNode("image", {href:"/assets/map11.png",x:30,y:30,width:500,height:500,preserveAspectRatio:"none",class:"pressure-rift-art"}));
+  svg.append(svgNode("rect", {x:30,y:30,width:500,height:500,fill:"#190f1a",opacity:.17,stroke:"#94556b","stroke-width":2}));
   if(iocFilters.lanes)for(const [lane,path] of Object.entries(lanePaths)){
     svg.append(svgNode("polyline",{points:path.map(xy=>project(xy).join(",")).join(" "),
       fill:"none",stroke:"#ffcf98",opacity:.55,"stroke-width":4,"stroke-dasharray":"8 8"}));
@@ -1243,9 +1274,8 @@ function renderPressureLive() {
     const color = actor.side === "faker" ? "#ffd895" : actor.side === "ally" ? "#70a8ff" : "#ff637d";
     if (inside) svg.append(svgNode("line",{x1:fx,y1:fy,x2:px,y2:py,stroke:color,opacity:.7,
       "stroke-width":2,"stroke-dasharray":"5 5"}));
-    svg.append(svgNode("circle",{cx:px,cy:py,r:actor.side==="faker"?10:inside?8:6,
-      fill:color,stroke:"#fff7ee","stroke-width":inside?2.5:1.5}));
-    const label=svgNode("text",{x:Math.min(490,px+10),y:Math.max(25,py-7),fill:color,
+    appendLiveActor(svg,actor,px,py,"pressure");
+    const label=svgNode("text",{x:Math.min(490,px+23),y:Math.max(25,py-7),fill:color,
       "font-size":11,"font-weight":800});
     label.textContent=actor.side==="faker"?"FAKER":actor.role.slice(0,3);svg.append(label);
   }
@@ -1342,6 +1372,17 @@ function svgNode(name, attributes = {}) {
   return node;
 }
 
+function appendRiftPlane(svg, p00, p10, p01, boundary, id, opacity=.45) {
+  const points=boundary.map(point=>point.map(v=>v.toFixed(1)).join(",")).join(" ");
+  const defs=svgNode("defs");
+  const clip=svgNode("clipPath",{id});clip.append(svgNode("polygon",{points}));defs.append(clip);svg.append(defs);
+  const matrix=[(p10[0]-p00[0])/512,(p10[1]-p00[1])/512,
+                (p01[0]-p00[0])/512,(p01[1]-p00[1])/512,p00[0],p00[1]];
+  svg.append(svgNode("image",{href:"/assets/map11.png",x:0,y:0,width:512,height:512,
+    transform:`matrix(${matrix.map(v=>v.toFixed(5)).join(" ")})`,"clip-path":`url(#${id})`,opacity,
+    "pointer-events":"none",class:"projected-rift-art"}));
+}
+
 function renderSurface() {
   const svg = $("#surface-svg");
   svg.replaceChildren();
@@ -1369,6 +1410,8 @@ function renderSurface() {
   const points = (...vertices) => vertices.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
   const base = [project(0, 0, 0), project(grid, 0, 0), project(grid, grid, 0), project(0, grid, 0)];
   svg.append(svgNode("polygon", {points: points(...base), fill: "#132c42", stroke: "#3a667b", "stroke-width": 1.5}));
+  appendRiftPlane(svg,project(0,grid,0),project(grid,grid,0),project(0,0,0),base,"surface-rift-clip",.48);
+  svg.append(svgNode("polygon",{points:points(...base),fill:"none",stroke:"#b77f91","stroke-width":1.4}));
   const cells = [];
   if (local) {
     for (const [index, count] of values) {
@@ -1534,6 +1577,7 @@ function renderEcosystem(row) {
   const project=(xy,level=0)=>[410+(xy[0]-xy[1])*310,135+(xy[0]+xy[1])*155-level*8];
   const ground=[[0,0],[1,0],[1,1],[0,1]].map(x=>project(x));
   svg.append(svgNode("polygon",{points:ground.map(p=>p.join(",")).join(" "),fill:"#291621",stroke:"#a05368","stroke-width":2}));
+  appendRiftPlane(svg,project([0,1]),project([1,1]),project([0,0]),ground,"ecosystem-rift-clip",.38);
   for(let value=0;value<=1.001;value+=.125) {
     for(const pair of [[[value,0],[value,1]],[[0,value],[1,value]]]) {
       const a=project(pair[0]),b=project(pair[1]);
@@ -1665,6 +1709,67 @@ function jumpLiveEvent(direction) {
   stopLive();liveSeconds=event.time_seconds;syncSharedFromLive();renderLive();
 }
 
+function liveMapPoint(xy) {
+  return {x:60+xy[0]*480,y:540-xy[1]*480};
+}
+
+function liveEventKind(category) {
+  if(["dragon","baron","herald","grubs","building"].includes(category))return "objective";
+  if(category.startsWith("ward_"))return "vision";
+  if(["ITEM_PURCHASED","SKILL_LEVEL_UP"].includes(category))return "economy";
+  return "combat";
+}
+
+function liveEventSymbol(kind) {
+  return {combat:"✕",objective:"◆",vision:"◉",economy:"+"}[kind];
+}
+
+function appendLiveEvent(svg,event,actor,age,windowSeconds) {
+  const xy=event.xy|| (event.cell64==null?null:[(event.cell64%64+.5)/64,(Math.floor(event.cell64/64)+.5)/64]);
+  if(!xy)return false;
+  const {x,y}=liveMapPoint(xy),kind=liveEventKind(event.category);
+  const colour={combat:"#ff8ba0",objective:"#ffd08a",vision:"#70d5df",economy:"#d7aaff"}[kind];
+  const opacity=Math.max(.4,1-age/windowSeconds*.55);
+  const group=svgNode("g",{class:`live-map-event ${kind}`,opacity,"data-event-time":event.time_seconds});
+  group.append(svgNode("circle",{cx:x,cy:y,r:kind==="objective"?15:12,fill:"#100e19",stroke:colour,"stroke-width":2.2}));
+  if(kind==="combat"){
+    group.append(svgNode("path",{d:`M${x-5} ${y-5}l10 10m0-10l-10 10`,stroke:colour,"stroke-width":2.6,"stroke-linecap":"round"}));
+  }else if(kind==="objective"){
+    group.append(svgNode("path",{d:`M${x} ${y-8}l7 8-7 8-7-8z`,fill:colour}));
+  }else if(kind==="vision"){
+    group.append(svgNode("path",{d:`M${x-7} ${y}q7-9 14 0-7 9-14 0z`,fill:"none",stroke:colour,"stroke-width":1.8}));
+    group.append(svgNode("circle",{cx:x,cy:y,r:2.5,fill:colour}));
+  }else{
+    group.append(svgNode("path",{d:`M${x-5} ${y}h10m-5-5v10`,stroke:colour,"stroke-width":2.4,"stroke-linecap":"round"}));
+  }
+  const title=svgNode("title");title.textContent=`${formatPreciseTime(event.time_seconds)} · ${liveEventLabel(event,actor)}`;group.append(title);svg.append(group);
+  return true;
+}
+
+function appendLiveActor(svg,actor,x,y,prefix="live") {
+  const colour=actor.side==="faker"?"#ffe0a1":actor.side==="ally"?"#77caff":"#ff8397";
+  const radius=actor.side==="faker"?17:13;
+  const id=`${prefix}-portrait-${actor.participant}`;
+  const description=`${actor.side==="faker"?"Faker · ":""}${actor.champion} · ${actor.role} · Lv ${actor.level} · ${actor.health_fraction==null?"HP ?":`HP ${Math.round(actor.health_fraction*100)}%`}`;
+  svg.append(svgNode("circle",{cx:x,cy:y,r:radius+5,fill:"#120c19dd",stroke:colour,"stroke-width":actor.side==="faker"?2:1,opacity:.8}));
+  const spec=spriteManifest?.champions?.[actor.champion];
+  if(spec){
+    const clip=svgNode("clipPath",{id});clip.append(svgNode("circle",{cx:x,cy:y,r:radius}));svg.append(clip);
+    const tile=radius*2;
+    const photo=svgNode("image",{href:"/assets/champions.png",x:x-radius-spec.x*tile,y:y-radius-spec.y*tile,width:tile*16,height:tile*11,"clip-path":`url(#${id})`,"data-participant":actor.participant});
+    const title=svgNode("title");title.textContent=description;photo.append(title);svg.append(photo);
+  }else{
+    const fallback=svgNode("circle",{cx:x,cy:y,r:radius,fill:colour});
+    const title=svgNode("title");title.textContent=description;fallback.append(title);svg.append(fallback);
+    const initial=svgNode("text",{x,y:y+4,"text-anchor":"middle",fill:"#190f1d","font-size":12,"font-weight":900});initial.textContent=actor.champion?.[0]||"?";svg.append(initial);
+  }
+  svg.append(svgNode("circle",{cx:x,cy:y,r:radius,fill:"none",stroke:colour,"stroke-width":actor.side==="faker"?3:2}));
+  if(actor.health_fraction!=null){
+    svg.append(svgNode("rect",{x:x-radius,y:y+radius+4,width:radius*2,height:3,rx:1.5,fill:"#0d0b12"}));
+    svg.append(svgNode("rect",{x:x-radius,y:y+radius+4,width:radius*2*actor.health_fraction,height:3,rx:1.5,fill:actor.health_fraction<.3?"#ff687c":"#8ce0b0"}));
+  }
+}
+
 function renderLive() {
   if (!trace || trace.schema_version < 6) return;
   const rows=trace.rows;
@@ -1688,26 +1793,61 @@ function renderLive() {
     `Shadow historique : case 16×16 ${row.predicted_region%16},${Math.floor(row.predicted_region/16)} pour la prochaine frame vers ${target}. Prévision, pas position réelle.`:
     `Historical Shadow: 16×16 cell ${row.predicted_region%16},${Math.floor(row.predicted_region/16)} for the next frame around ${target}. Forecast, not an observed position.`);
   const svg=$("#live-map");svg.replaceChildren();
-  svg.append(svgNode("rect",{x:0,y:0,width:600,height:600,fill:"#100d18"}));
-  svg.append(svgNode("rect",{x:60,y:60,width:480,height:480,fill:"#221923",stroke:"#a85d73","stroke-width":2}));
-  for(const points of ["60,540 60,60 540,60","60,540 540,60","60,540 540,540 540,60"])
-    svg.append(svgNode("polyline",{points,fill:"none",stroke:"#684251","stroke-width":14,"stroke-linejoin":"round"}));
-  svg.append(svgNode("line",{x1:75,y1:300,x2:525,y2:300,stroke:"#497789","stroke-width":20,opacity:.28}));
+  svg.append(svgNode("rect",{x:0,y:0,width:600,height:600,fill:"#130d1a"}));
+  svg.append(svgNode("image",{href:"/assets/map11.png",x:60,y:60,width:480,height:480,preserveAspectRatio:"none",class:"live-rift-art"}));
+  svg.append(svgNode("rect",{x:60,y:60,width:480,height:480,fill:"#110d1b",opacity:.14,"pointer-events":"none"}));
+  for(const offset of [180,300,420]){
+    svg.append(svgNode("line",{x1:offset,y1:60,x2:offset,y2:540,stroke:"#ffe5e8","stroke-width":.6,opacity:.11,"pointer-events":"none"}));
+    svg.append(svgNode("line",{x1:60,y1:offset,x2:540,y2:offset,stroke:"#ffe5e8","stroke-width":.6,opacity:.11,"pointer-events":"none"}));
+  }
+  svg.append(svgNode("rect",{x:60,y:60,width:480,height:480,fill:"none",stroke:"#e4a5a6","stroke-width":2}));
+  for(const site of [{name:"BARON",xy:[.34,.66],colour:"#c9afff"},{name:"DRAGON",xy:[.66,.34],colour:"#ffca87"}]){
+    const {x,y}=liveMapPoint(site.xy);
+    const landmark=svgNode("g",{class:"live-landmark"});
+    landmark.append(svgNode("circle",{cx:x,cy:y,r:10,fill:"#160f20b8",stroke:site.colour,"stroke-width":1.2,"stroke-dasharray":"2 3"}));
+    landmark.append(svgNode("circle",{cx:x,cy:y,r:2.5,fill:site.colour}));
+    const title=svgNode("title");title.textContent=language==="fr"?`${site.name} · repère du terrain, statut inconnu`:`${site.name} · terrain landmark, status unknown`;landmark.append(title);svg.append(landmark);
+  }
+  const faker=actors.find(a=>a.side==="faker"&&a.xy);
+  if(faker){
+    const {x,y}=liveMapPoint(faker.xy);
+    svg.append(svgNode("circle",{cx:x,cy:y,r:80,fill:"#ffb872",opacity:.045,"pointer-events":"none"}));
+    svg.append(svgNode("circle",{cx:x,cy:y,r:80,fill:"none",stroke:"#ffdb9d","stroke-width":1.2,"stroke-dasharray":"2 8",opacity:.65,"pointer-events":"none"}));
+  }
+  const depth=Number($("#live-path-depth").value);
+  if($("#live-show-paths").checked){
+    const start=Math.max(0,index-depth+1+(finalSample?1:0));
+    const samples=rows.slice(start,index+1).map(r=>r.actors_t);
+    if(finalSample)samples.push(row.actors_next);
+    for(const actor of actors){
+      if(actor.side==="ally"&&!$("#live-show-allies").checked || actor.side==="enemy"&&!$("#live-show-enemies").checked)continue;
+      if($("#live-path-scope").value==="faker" && actor.side!=="faker")continue;
+      const points=samples.map(group=>group.find(a=>a.participant===actor.participant)?.xy||null);
+      const colour=actor.side==="faker"?"#ffe0a1":actor.side==="ally"?"#72bcf3":"#ff788f";
+      for(let p=1;p<points.length;p++){
+        if(!points[p-1]||!points[p])continue;
+        const a=liveMapPoint(points[p-1]),b=liveMapPoint(points[p]);
+        svg.append(svgNode("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:"#110d19","stroke-width":actor.side==="faker"?7:4,opacity:.72}));
+        svg.append(svgNode("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:colour,"stroke-width":actor.side==="faker"?3:1.7,"stroke-dasharray":actor.side==="faker"?"7 5":"4 6",opacity:actor.side==="faker"?.96:.63,class:"live-sample-link","data-participant":actor.participant}));
+      }
+      for(let p=0;p<points.length-1;p++)if(points[p]){
+        const {x,y}=liveMapPoint(points[p]);svg.append(svgNode("circle",{cx:x,cy:y,r:actor.side==="faker"?3:2,fill:colour,opacity:.8}));
+      }
+    }
+  }
   const visibleEvents=filteredLiveEvents();
-  for(const e of visibleEvents) {
-    if(!$("#live-show-places").checked || e.time_seconds>liveSeconds || e.time_seconds<liveSeconds-8 || e.cell64==null) continue;
-    const x=60+((e.cell64%64+.5)/64)*480,y=540-((Math.floor(e.cell64/64)+.5)/64)*480;
-    const marker=svgNode("circle",{cx:x,cy:y,r:11,fill:"none",stroke:"#ffe09c","stroke-width":3,opacity:.9});
-    const title=svgNode("title");title.textContent=`${formatPreciseTime(e.time_seconds)} · ${e.category}`;marker.append(title);svg.append(marker);
+  let mappedEvents=0;
+  const windowSeconds=Number($("#live-event-window").value);
+  if($("#live-show-places").checked)for(const e of visibleEvents.filter(e=>e.time_seconds<=liveSeconds && e.time_seconds>=liveSeconds-windowSeconds).slice(-30)){
+    if(appendLiveEvent(svg,e,actors.find(a=>a.participant===e.actor_id),liveSeconds-e.time_seconds,windowSeconds))mappedEvents++;
   }
   const labels=[];
   for(const actor of actors) {
     if(actor.side==="ally"&&!$("#live-show-allies").checked || actor.side==="enemy"&&!$("#live-show-enemies").checked)continue;
     if(!actor.xy)continue;
-    const x=60+actor.xy[0]*480,y=540-actor.xy[1]*480;
+    const {x,y}=liveMapPoint(actor.xy);
     const colour=actor.side==="faker"?"#ffdf9c":actor.side==="ally"?"#67b8f3":"#ff667e";
-    const dot=svgNode("circle",{cx:x,cy:y,r:actor.side==="faker"?10:7,fill:colour,stroke:"#100d18","stroke-width":2});
-    const title=svgNode("title");title.textContent=`${actor.side==="faker"?"Faker":actor.role} · ${actor.champion} · niveau ${actor.level}`;dot.append(title);svg.append(dot);
+    appendLiveActor(svg,actor,x,y);
     const name=actor.side==="faker"?"FAKER":actor.champion;
     const width=name.length*(actor.side==="faker"?8:6.5)+4;
     let labelX=x+13,labelY=y-10,placed=false;
@@ -1716,7 +1856,7 @@ function renderLive() {
       const level=Math.floor(step/2);
       const tier=Math.ceil(level/2);
       const direction=level%2===0?1:-1;
-      const candidateX=side>0?x+13:x-13-width;
+      const candidateX=side>0?x+22:x-22-width;
       const candidateY=y-10+direction*tier*15;
       const box={x:candidateX,y:candidateY-12,w:width,h:15};
       if(box.x<62||box.x+box.w>538||box.y<62||box.y+box.h>538)continue;
@@ -1729,6 +1869,10 @@ function renderLive() {
     const label=svgNode("text",{x:labelX,y:labelY,fill:colour,"font-size":actor.side==="faker"?13:10,"font-weight":700,stroke:"#100d18","stroke-width":3,"paint-order":"stroke"});
     label.textContent=name;svg.append(label);
   }
+  $("#live-map-count").textContent=language==="fr"?`${10-missing} JOUEURS · ${mappedEvents} LIEUX`:`${10-missing} PLAYERS · ${mappedEvents} PLACES`;
+  $("#live-map-readout").textContent=language==="fr"?
+    `${formatPreciseTime(liveSeconds)} · ${10-missing}/10 positions au dernier relevé (${formatPreciseTime(sampleTime)}, âge ${age} s). ${mappedEvents} lieu${mappedEvents>1?"x":""} d'événement affiché${mappedEvents>1?"s":""} sur ${windowSeconds} s. Traits pointillés = liens entre frames connues, chemin exact inconnu.`:
+    `${formatPreciseTime(liveSeconds)} · ${10-missing}/10 positions at latest sample (${formatPreciseTime(sampleTime)}, ${age} s old). ${mappedEvents} event location${mappedEvents===1?"":"s"} shown over ${windowSeconds} s. Dashed lines link known frames; exact route unknown.`;
   const own=actors.find(actor=>actor.side==="faker");
   const roster=$("#live-roster");roster.replaceChildren();
   for(const actor of actors){
@@ -1744,9 +1888,13 @@ function renderLive() {
   const past=visibleEvents.filter(e=>e.time_seconds<=liveSeconds).slice(-8).reverse();
   if(!past.length)feed.textContent=language==="fr"?"Aucun événement encore.":"No events yet.";
   for(const event of past) {
-    const item=document.createElement("div");item.className="live-event";
+    const item=document.createElement("div");item.className=`live-event ${liveEventKind(event.category)}`;
     const actor=actors.find(a=>a.participant===event.actor_id);
-    item.textContent=`${formatPreciseTime(event.time_seconds)}  ${liveEventLabel(event,actor)}`;
+    const symbol=document.createElement("span");symbol.className="live-event-symbol";symbol.textContent=liveEventSymbol(liveEventKind(event.category));symbol.setAttribute("aria-hidden","true");
+    const jump=document.createElement("button");jump.type="button";jump.className="live-event-jump live-event-body";
+    jump.textContent=`${formatPreciseTime(event.time_seconds)}  ${liveEventLabel(event,actor)}`;
+    jump.addEventListener("click",()=>{stopLive();liveSeconds=event.time_seconds;syncSharedFromLive();renderLive();});
+    item.append(symbol,jump);
     feed.append(item);
   }
   $("#live-prev-event").disabled=!visibleEvents.some(e=>e.time_seconds<liveSeconds-.0005);
@@ -2020,7 +2168,7 @@ $("#surface-shadow").addEventListener("click", () => { surfaceMode = "predicted"
 $("#angle-slider").addEventListener("input", () => { if (summary) renderSurface(); });
 $("#replay-slider").addEventListener("input", () => { stopReplay(); if (trace) setSharedMinute(trace.rows[Number($("#replay-slider").value)].minute); });
 $("#live-slider").addEventListener("input",()=>{stopLive();liveSeconds=Number($("#live-slider").value);syncSharedFromLive();renderLive();});
-for(const id of ["live-show-allies","live-show-enemies","live-show-places","live-event-filter"])
+for(const id of ["live-show-allies","live-show-enemies","live-show-places","live-show-paths","live-path-scope","live-path-depth","live-event-window","live-event-filter"])
   $("#"+id).addEventListener("change",()=>{if(trace)renderLive();});
 $("#live-prev-event").addEventListener("click",()=>jumpLiveEvent(-1));
 $("#live-next-event").addEventListener("click",()=>jumpLiveEvent(1));

@@ -27,7 +27,9 @@ def test_replay_keeps_event_time_separate_from_sampled_positions():
     assert result["next_frame_seconds"] == 60
     assert [event["time_seconds"] for event in result["events_next"]] == [12.345, 45.678]
     assert result["events_next"][0]["cell64"] is not None
+    assert result["events_next"][0]["xy"] == [0.6, round(7000/15000,5)]
     assert result["events_next"][1]["cell64"] is None
+    assert result["events_next"][1]["xy"] is None
     assert result["actors_t"][0]["xy"] != result["actors_next"][0]["xy"]
     assert sum(actor["xy"] is None for actor in result["actors_t"]) == 9
 
@@ -39,7 +41,8 @@ def test_boundary_events_use_own_clock_and_initial_events_are_visible():
     frames=[{"timestamp":stamp,"participantFrames":{
         "1":{"position":{"x":1000+index*100,"y":1000},"championStats":{"health":80,"healthMax":100}}},
         "events":events} for index,(stamp,events) in enumerate([
-            (0,[{"type":"ITEM_PURCHASED","timestamp":0,"participantId":1,"itemId":1056}]),
+            (0,[{"type":"ITEM_PURCHASED","timestamp":0,"participantId":1,"itemId":1056},
+                {"type":"SKILL_LEVEL_UP","timestamp":0,"participantId":0,"skillSlot":4}]),
             (60000,[]),
             (120000,[{"type":"CHAMPION_KILL","timestamp":60000,"killerId":1,"victimId":6},
                      {"type":"WARD_PLACED","timestamp":60234,"creatorId":7}])])]

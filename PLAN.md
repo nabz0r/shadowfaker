@@ -1,5 +1,15 @@
 # Shadow Faker — plan d'exécution
 
+## M22 — carte du rejeu et lecture des traces (2026-10-11)
+
+1. Remplacer le fond schématique par la minimap officielle de Data Dragon épinglée au même patch que l'atlas des champions. Conserver les coordonnées Riot normalisées, distinguer l'art statique des observations historiques et vérifier son orientation dans le navigateur.
+2. Exporter les coordonnées réelles des lieux d'événement quand Riot les fournit, puis dessiner des marqueurs distincts pour combat, objectif et vision. Garder l'horodatage exact et laisser les événements sans position dans le flux seulement.
+3. Ajouter les portraits des dix champions, des traits entre frames déjà observées et des contrôles de profondeur/visibilité. Aucun trait ne doit interpoler un déplacement ni lire une frame future. Vérifier sur cinq parties avant de généraliser.
+4. Étendre la direction visuelle au reste des visualisations : même fond de Faille sous les densités de l'atlas, plan de la surface 3D et carte de pression ; portraits cohérents, cadres et couleurs des panneaux, règle du score exact vers 90 %. Conserver la distinction entre fond de terrain, agrégat, partie individuelle et métrique.
+5. Tester les contrôles, la causalité, l'alignement, la lisibilité sur ordinateur et mobile, et les langues FR/EN. Mettre README et REPLAY à jour, publier sur `main` et vérifier le contenu distant.
+
+Risque : la minimap de Data Dragon est un visuel du patch épinglé, pas une capture du terrain au patch exact de chaque partie. Les événements ont un lieu et une horloge plus précis que les positions des joueurs ; relier deux relevés ne révèle pas les clics intermédiaires.
+
 ## M21 — rejeu analytique et simulateur de scénarios renforcés (2026-10-11)
 
 1. Auditer l'horloge, les événements, les positions manquantes et la reprise des traces sur cinq parties, puis vérifier les invariants d'horodatage des 465 timelines sans entraînement ni appel Riot. Garder les résultats par partie privés et publier seulement des compteurs agrégés.

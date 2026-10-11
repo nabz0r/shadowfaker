@@ -20,7 +20,7 @@ from .events64 import event_category, position_cell
 from .geometry64 import local_metric
 from .ioc import inventory_snapshots
 
-TRACE_SCHEMA_VERSION = 7
+TRACE_SCHEMA_VERSION = 9
 
 
 def _source_fingerprint(*paths: Path) -> str:
@@ -85,11 +85,15 @@ def _observed_context(match: dict, timeline: dict, puuid: str, minute: float,
     def display_events(events):
         shown=[]
         for event in events:
+            if event.get("type") in ("ITEM_PURCHASED","SKILL_LEVEL_UP") and int(event.get("participantId") or 0) not in teams:
+                continue
             category=event_category(event,pid,team_id,teams)
             if category is None and event.get("type") not in ("ITEM_PURCHASED","SKILL_LEVEL_UP"): continue
+            event_xy=position(event)
             shown.append({"time_seconds":round(number(event.get("timestamp"),high)/1000,3),
                           "seconds_after_t":round((number(event.get("timestamp"),high)-low)/1000,1),
                           "category":category or event.get("type"),"cell64":position_cell(event),
+                          "xy":None if event_xy is None else [round(float(v),5) for v in event_xy],
                           "actor_id":int(event.get("participantId") or event.get("killerId") or event.get("creatorId") or 0),
                           "item_id":int(event.get("itemId") or 0),"skill_slot":int(event.get("skillSlot") or 0)})
         return shown
