@@ -69,3 +69,5 @@ PYTHONPATH=src .venv/bin/python scripts/challenge_faker_actions.py
 ```
 
 Le pipeline général `PYTHONPATH=src .venv/bin/python scripts/run_next_level.py --limit 1000 --epochs 25` inclut ces étapes après M16. Le modèle et les métriques par match sont locaux ; [l'agrégat public](docs/data/public_faker_actions_sanitation.json) suffit à reproduire le graphique. La prochaine étude doit obtenir de nouvelles parties et, pour la prédiction de mouvements/clics à la seconde, des observations replay/POV alignées dont la provenance et les droits sont établis.
+
+Le **11 octobre 2026**, une requête live de l'ID ranked KR le plus récent a de nouveau reçu **HTTP 401**. La nouvelle cohorte prospective n'a donc pas été collectée ; le pipeline local reste relançable depuis son cache. Après renouvellement de `RIOT_API_KEY` dans `.env`, la collecte peut reprendre sans republier cette clé.
