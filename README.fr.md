@@ -53,6 +53,12 @@ La barre d'onglets reste accessible sur mobile : [capture à 390 pixels](DESIGN.
 
 **Le passé commun aide-t-il à prédire un score ultérieur ?** Une épreuve chronologique sur 534/39/72 manches train/validation/test prédit l'écart d'or de Faker mid à 15 minutes depuis le contexte à 10 minutes. Sur les 72 manches test, copier le score de 10 minutes donne **412,64 or** d'erreur absolue moyenne, le modèle de contexte **442,17**, et le contexte plus historique **441,88**. La différence liée à l'historique n'est que **−0,29 or**, intervalle 95 % **[−2,89 ; +2,10]**. Le signal n'est pas confirmé et la baseline de copie gagne. Cette épreuve de score pro **n'améliore pas la prédiction de mouvement de Shadow**. [Protocole et limites](TEAM_PROBE.md).
 
+**Le vrai seuil de 90 %.** Sur les 46 parties de validation de développement, le meilleur modèle M3 prédit **la bonne case 8×8 unique à la minute suivante dans 17,49 %** des 1 275 transitions. En ne répondant qu'à ses **5 % de cas les plus confiants**, il trouve **31/64 = 48,44 %**. Aucun seuil de confiance préétabli n'atteint 90 % avec une couverture utile. Ce diagnostic est exploratoire, car le checkpoint a été choisi sur cette même validation ; le nouveau snapshot Riot est bloqué par une clé expirée. [Mesure exacte, courbe de couverture et plan de données](NINETY_GATE.md).
+
+![Précision exacte de la case suivante lorsque Shadow s'abstient sur les transitions incertaines](docs/figures/ninety_exact_gate.png)
+
+![La porte des 90 % dans le tableau de bord Shadow Faker](docs/figures/dashboard_ninety_gate.png)
+
 ![Épreuve chronologique de score pro : historique commun face au contexte et à la copie](docs/figures/team_history_probe.png)
 
 ![Onglet Faker × équipe avec épreuve chronologique et limites visibles](docs/figures/dashboard_team_probe.png)

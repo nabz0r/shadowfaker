@@ -188,6 +188,8 @@ Object.assign(copy.fr,{team_correlation_kicker:"MOUVEMENTS ENTRE RÔLES",team_co
 Object.assign(copy.en,{team_correlation_kicker:"HOW ROLES MOVE TOGETHER",team_correlation_title:"Which gaps move together?",team_correlation_note:"Correlation of the 10→15-minute gold-gap changes across games. +1 = move together; 0 = no linear association; −1 = move in opposite directions. Neither direction of influence nor causality follows.",team_correlation_limit:"Uses the same complete games as the scoreboard above; a favorable global game state may lift several roles together.",team_corr_roles:{top:"TOP",jng:"JNG",mid:"FAKER",bot:"BOT",sup:"SUP"}});
 Object.assign(copy.fr,{probe_kicker:"CHALLENGE CHRONOLOGIQUE · 10 → 15 MIN",probe_title:"Est-ce que l'histoire commune aide vraiment ?",probe_intro:"On prédit l'écart d'or de Faker à 15 minutes à partir du score à 10 minutes. Trois méthodes affrontent les mêmes 72 manches test ; moins d'erreur est mieux.",probe_doc:"Protocole, chiffres et limites ↗",probe_methods:["Copier le score à 10 min","Contexte à 10 min","Contexte + parties communes"],probe_verdict:"Signal non confirmé : l'historique commun ne bat pas la simple copie du score à 10 minutes.",probe_detail:(d,lo,hi,n)=>`Gain de l'historique face au contexte : ${(-d).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})} or d'erreur en moins ; intervalle 95 % de ${lo.toLocaleString("fr-FR",{minimumFractionDigits:2})} à ${hi.toLocaleString("fr-FR",{minimumFractionDigits:2})} pour la différence historique − contexte (n = ${n} manches test). L'intervalle traverse zéro. Score pro omniscient, ni décision de Faker ni précision de Shadow.`});
 Object.assign(copy.en,{probe_kicker:"CHRONOLOGICAL CHALLENGE · 10 → 15 MIN",probe_title:"Does shared history actually help?",probe_intro:"We predict Faker's 15-minute gold gap from the 10-minute scoreboard. Three methods face the same 72 test games; lower error is better.",probe_doc:"Protocol, numbers and limits ↗",probe_methods:["Copy 10-minute score","10-minute context","Context + shared games"],probe_verdict:"Signal not confirmed: shared history does not beat simply copying the 10-minute score.",probe_detail:(d,lo,hi,n)=>`History versus context: ${(-d).toFixed(2)} less gold error; 95% interval ${lo.toFixed(2)} to ${hi.toFixed(2)} for history − context (n = ${n} test games). The interval crosses zero. Omniscient pro scoreboard, neither Faker's decisions nor Shadow accuracy.`});
+Object.assign(copy.fr,{ninety_kicker:"PORTE 90 % · UNE CASE EXACTE",ninety_title:"Et si Shadow ne répondait que lorsqu'il est sûr ?",ninety_intro:"On classe ses prédictions par confiance. L'axe horizontal mesure la part des transitions servies, pas la surface de carte proposée.",ninety_badge:"SEUIL NON ATTEINT",ninety_all_label:"Toutes les transitions · case 8×8 exacte",ninety_best_label:"Les 5 % les plus confiantes · 64 décisions",ninety_lockbox_label:"Nouvelles parties testées",ninety_limit:"Validation déjà utilisée pour choisir le modèle : exploratoire. Aucun seuil n'atteint 90 % avec une couverture utile. La collecte future est suspendue car la clé Riot a expiré ; aucun test prospectif ouvert.",ninety_doc:"Protocole exact et prochaines données ↗"});
+Object.assign(copy.en,{ninety_kicker:"90% GATE · ONE EXACT CELL",ninety_title:"What if Shadow answers only when confident?",ninety_intro:"Predictions are ranked by confidence. The horizontal axis measures the share of transitions answered, not map area proposed.",ninety_badge:"GATE NOT MET",ninety_all_label:"All transitions · exact 8×8 cell",ninety_best_label:"Most confident 5% · 64 decisions",ninety_lockbox_label:"New games tested",ninety_limit:"The model was already selected using this validation cohort: exploratory. No threshold reaches 90% at useful coverage. Fresh collection is paused by an expired Riot key; no prospective test has been opened.",ninety_doc:"Exact protocol and next data ↗"});
 Object.assign(copy.fr,{memory_title:"Un souvenir, une hypothèse, une réponse",memory_intro:"10 038 décisions de train alimentent une base locale de situations. Le challenger retrouve des cas proches, calibre ses choix sur des parties distinctes et prédit la prochaine région. Essayez vous-même sur des exemples de validation.",memory_doc:"Méthode et limites ↗",memory_retrieval:"mémoire · top-1 8×8",memory_baseline:"règle rôle/phase",memory_shadow:"Shadow IoC",memory_scores_limit:"Même validation réutilisée de 46 parties. La mémoire ne bat ni la règle ni Shadow ; aucune promotion du modèle. 512×512 désigne des cases de destination, pas une mesure à 512 Hz.",memory_you:"votre choix",memory_model:"mémoire",memory_actual:"observé",memory_instruction:"Cliquez une case : où Faker sera-t-il à la prochaine minute observée ?",memory_reveal:"Révéler",memory_next:"Cas suivant",memory_quiz_limit:"Ce quiz n'entraîne rien depuis le navigateur. La mémoire est calibrée sur le train ; les réponses de validation servent seulement à mesurer l'erreur.",memory_case:(n,total,row)=>`Cas ${n}/${total} · ${row.champion} · ${row.role} · minute ${row.minute}`,memory_feedback:(choice,pred,actual)=>`Votre case : ${choice ?? "—"} · Mémoire : ${pred} · Observé : ${actual}${choice===actual?" · juste !":""}`});
 Object.assign(copy.en,{memory_title:"A memory, a guess, an answer",memory_intro:"10,038 training decisions form a local case memory. The challenger retrieves similar situations, tunes its choices on separate training matches, then predicts the next region. Try held-out validation cases yourself.",memory_doc:"Method and limits ↗",memory_retrieval:"memory · top-1 8×8",memory_baseline:"role/phase rule",memory_shadow:"Shadow IoC",memory_scores_limit:"Same reused validation set of 46 matches. Retrieval trails both the rule and Shadow; no model promotion. 512×512 means destination cells, not 512 Hz observations.",memory_you:"your choice",memory_model:"memory",memory_actual:"observed",memory_instruction:"Click a cell: where will Faker be at the next observed minute?",memory_reveal:"Reveal",memory_next:"Next case",memory_quiz_limit:"The browser quiz does not train a model. Retrieval is calibrated within training matches; validation answers measure error only.",memory_case:(n,total,row)=>`Case ${n}/${total} · ${row.champion} · ${row.role} · minute ${row.minute}`,memory_feedback:(choice,pred,actual)=>`Your cell: ${choice ?? "—"} · Memory: ${pred} · Observed: ${actual}${choice===actual?" · correct!":""}`});
 
@@ -209,6 +211,7 @@ const lanePaths = {
   BOT:[[.06,.06],[.90,.07],[.94,.10],[.94,.94]]
 };
 let predictabilityData = null;
+let ninetyData = null;
 let eventAblation = null;
 let challengeScenario = "five_faker";
 let customAllocation = ["top","mid","jungle","bot","bot"];
@@ -535,6 +538,7 @@ function setSharedMinute(minute) {
   if (pressureData) renderPressure();
   if (challengeData) renderChallenge();
   if (predictabilityData) renderPredictability();
+  if (ninetyData) renderNinety();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
 }
@@ -564,6 +568,7 @@ function translate() {
   if (challengeData) renderChallenge();
   if (pressureData) renderPressure();
   if (predictabilityData) renderPredictability();
+  if (ninetyData) renderNinety();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
   if (worldFinals) renderFinals();
@@ -598,6 +603,14 @@ function updateReadout(col, row) {
     col, row, percent(density.actual[index], density.samples),
     percent(density.predicted[index], density.samples)
   );
+}
+
+function renderNinety() {
+  if (!ninetyData) return;
+  const percentage = value => `${(100 * value).toLocaleString(language === "fr" ? "fr-FR" : "en-US",{minimumFractionDigits:2,maximumFractionDigits:2})} %`;
+  $("#ninety-all").textContent = percentage(ninetyData.all_transitions_accuracy);
+  $("#ninety-top").textContent = percentage(ninetyData.accuracy_at_fixed_served_coverage[0].exact_accuracy);
+  $("#ninety-lockbox").textContent = `${ninetyData.prospective.new_games_scored} / ${ninetyData.prospective.required_new_games}`;
 }
 
 function renderPredictability() {
@@ -1580,11 +1593,11 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json"), fetch("/team-probe.json")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json"), fetch("/team-probe.json"), fetch("/ninety-gate.json")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
   let memoryPayload;
-  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData, teamProbe] = payloads;
+  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData, teamProbe, ninetyData] = payloads;
   memoryCases = memoryPayload?.examples || [];
   renderIocResult();
   if (summary && (atlas512 || grid64)) renderSurface();
@@ -1592,6 +1605,7 @@ async function start() {
   if (challengeData) renderChallenge();
   if (pressureData) renderPressure();
   if (predictabilityData) renderPredictability();
+  if (ninetyData) renderNinety();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
   if (worldFinals) renderFinals();

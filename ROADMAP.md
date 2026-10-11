@@ -2,6 +2,8 @@
 
 Updated 2026-10-11. This roadmap preserves the original objective: model **Faker's macro decisions** and eventually test whether a policy can improve team outcomes. The 465-match development corpus has already influenced model and metric choices. Its test split must never be presented as a fresh confirmation again.
 
+**M14 evidence gate:** [the exact 90% audit](NINETY_GATE.md) finds **17.49%** correct over all validation transitions and **48.44%** on the 5% most confident. No useful abstention threshold reaches 90%; the same validation has already influenced model selection. The `20261011` Riot refresh received HTTP 401, so no new future-game score exists. The next material gain requires a renewed key for a fresh queue-420 lockbox and authorized match-aligned, player-visible evidence at finer time resolution. The current result is a diagnostic, not a revised model score.
+
 ## Next evidence gate: trainable Faker memory
 
 The [Faker Memory database and challenger](FAKER_MEMORY.md) are operational: a five-game pilot, 10,038 train episodes, 125 causal fields, match-disjoint calibration and an anonymous quiz. Retrieval scores **11.53%** 8×8 on reused validation, below the **15.29%** role/phase baseline and **17.41%** Shadow IoC. Next: annotate a new matched replay/player-view cohort, retain source timestamps and visibility masks, freeze a future-match lockbox, then train an action policy or reranker only on the training partition. A text LLM may retrieve sourced explanations; it has no basis yet for a claim of superior play or 90% exact cells.

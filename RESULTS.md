@@ -1,4 +1,12 @@
-# Measured results (updated 2026-10-10)
+# Measured results (updated 2026-10-11)
+
+## M14: one exact 8×8 cell at 90% — gate not reached
+
+![Exact 8×8 accuracy versus answered-transition coverage](docs/figures/ninety_exact_gate.png)
+
+The selected M3 full-context checkpoint, with its recorded role/phase prior, is correct on **223/1,275 = 17.49%** of next-minute transitions in the 46-game development validation set. Sorting by its maximum cell probability and answering only the **64 most confident transitions (5.02%)** yields **31/64 = 48.44% exact**, Wilson lower 95% bound **36.63%**. At 10% served coverage it is **48/128 = 37.50%**; at 20%, **95/255 = 37.25%**. No match-half calibration threshold met the predeclared 90% lower-bound and minimum-coverage gate. Confidence helps a little but is far from reliable enough for an exact 90% claim.
+
+This is **exploratory**, because checkpoint epoch and prior weight were already selected on this same validation cohort. No old historical test or prospective lockbox match was scored in M14. A fresh `20261011` Riot snapshot failed with **HTTP 401: expired or unauthorized local key**, so the M0 future cohort remains **0/100** and its score unopened. [Protocol and next data gate](NINETY_GATE.md). This 90% target refers to **one exact destination cell**, never a top-k list or a dominant no-action class.
 
 ![Shadow Faker visual research dashboard](docs/figures/readme_hero_en.svg)
 

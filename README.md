@@ -52,6 +52,12 @@ The horizontal tab strip stays available on mobile; [see the 390-pixel capture](
 
 **Does prior co-play help predict a later scoreboard?** A chronological 534/39/72-game train/validation/test experiment predicts Faker's 15-minute mid gold gap from 10-minute context. On the 72 test games, copying the 10-minute gap has **412.64 gold** mean absolute error, a context ridge has **442.17**, and context plus prior shared games has **441.88**. The history difference from context is only **−0.29 gold**, 95% day-bootstrap interval **[−2.89, +2.10]**. The signal is unconfirmed and the persistence baseline wins. This is a separate professional scoreboard task, **not a gain in Shadow's movement accuracy**. [Full protocol and limits](TEAM_PROBE.md).
 
+**The 90% exact-cell gate.** On the existing 46-game development validation cohort, the best M3 policy predicts **one correct next-minute 8×8 cell in 17.49%** of all 1,275 transitions. If it answers only its **5% most confident transitions**, it gets **31/64 = 48.44%** right. No predeclared confidence threshold reaches 90% with meaningful served coverage. This is an exploratory diagnostic because the checkpoint was selected on the same validation games, and the new Riot snapshot is blocked by an expired key; it is **not** a future score. [Exact metric, coverage curve and data plan](NINETY_GATE.md).
+
+![Exact next-cell accuracy as Shadow abstains on less confident transitions](docs/figures/ninety_exact_gate.png)
+
+![The 90% exact-cell gate in the live Shadow Faker dashboard](docs/figures/dashboard_ninety_gate.png)
+
 ![Chronological professional scoreboard backtest: history versus context and persistence](docs/figures/team_history_probe.png)
 
 ![Live Faker × team challenge showing the chronological backtest and its limits](docs/figures/dashboard_team_probe.png)

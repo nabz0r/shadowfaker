@@ -151,6 +151,10 @@ def main() -> None:
     geometry = run_transition_probe()
     stage(f"Transition geometry: {geometry['validation']['top1']:.4f} validation top-1; {geometry['alignment']['val']['current_vs_previous64_mismatches']} alignment mismatches.")
     command(sys.executable, CONFIG.root / "scripts" / "render_predictability.py")
+    command(sys.executable, CONFIG.root / "scripts" / "run_ninety_gate.py", "--pilot-only")
+    command(sys.executable, CONFIG.root / "scripts" / "run_ninety_gate.py")
+    command(sys.executable, CONFIG.root / "scripts" / "render_ninety_gate.py")
+    stage("Exact-cell confidence gate refreshed on development validation; prospective claims remain locked.")
 
     export_trace(max_frames=30)
     command(sys.executable, CONFIG.root / "scripts" / "render_atlas64.py")
