@@ -30,6 +30,14 @@ At time `t`, the input contains the latest sampled frame **at or before `t`**, t
 
 The window split is **58,974 train / 7,480 validation / 7,028 historical test**. The export function refuses to include validation or test and streams from SQLite into private JSONL. A five-game pilot produced 737 windows (three train and two validation games), then the full build covered all 465 matches without errors. Re-running the builder validates file hashes and skips all 465 unchanged matches. The [aggregate JSON](docs/data/public_ioc_ledger.json) contains counts, schema and event-family totals only.
 
+![How often the seven Faker-attributed labels occur on whole-match train and validation splits](docs/figures/ioc_action_density.svg)
+
+The [public roadmap aggregate](docs/data/public_roadmap90.json) now gives separate train and validation counts for every label, plus the five-game pilot. It contains no match IDs or private examples. Outcomes (kill, death, assist) remain distinct from observable acts. The validation windows have **2,498 with at least one Faker label and 4,982 with none**; seven overlapping binary decisions cannot be summarized honestly by an overall "no action" accuracy.
+
+![Age of the last observed ten-player snapshot when each ten-second window begins](docs/figures/ioc_observation_clock.svg)
+
+The position-age chart uses only train and validation windows. It exposes the distinct clocks rather than implying that the 563,198 event timestamps update player positions. Rebuild both SVGs and the [exact-cell roadmap figure](docs/figures/roadmap90_gate.svg) with `PYTHONPATH=src .venv/bin/python scripts/render_roadmap_evidence.py`; that script reads the private database read-only and verifies the original 737-window pilot before writing public aggregates. [Measurement contract and the stages toward 90%](MODEL_90_ROADMAP.md).
+
 Item IDs at `t` are reconstructed from timestamped purchases, sales, destruction and undo events. They are an **incomplete inventory proxy**: the earlier final-inventory audit found only 29.05% of ten-player end sets exactly matching the completed-match item IDs. `items_at_snapshot` and `items_at_t` are therefore evidence from the event ledger, never an exact client inventory. Health and positions also come from the omniscient Riot timeline. This is **not Faker's true minimap**, voice chat, attention, clicks or judgment.
 
 ## Build, inspect and export locally

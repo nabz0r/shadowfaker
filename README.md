@@ -2,7 +2,7 @@
 
 # Shadow Faker
 
-[**Open the visual dashboard locally**](#visual-dashboard) · [**Replay a game**](REPLAY.md) · [**The second-scale target**](SECOND_SCALE.md) · [**Explore the 512×512 atlas**](#a-512512-atlas-and-its-accuracy-limit) · [**Français**](README.fr.md)
+[**Open the visual dashboard locally**](#visual-dashboard) · [**90% research roadmap**](MODEL_90_ROADMAP.md) · [**Replay a game**](REPLAY.md) · [**The second-scale target**](SECOND_SCALE.md) · [**Explore the 512×512 atlas**](#a-512512-atlas-and-its-accuracy-limit) · [**Français**](README.fr.md)
 
 **A reproducible, local research pipeline aimed at Faker's decisions on a seconds-scale clock.** The research target is the next **action, its timing and any continuous location**; 16×16, 64×64 and 512×512 grids are adjustable renderings. The current ranked spatial model still predicts from positions sampled roughly **once per minute**. Two ten-second heads predict event types: one covers marked game events, and the newer one targets seven explicitly Faker-attributed families. **No second-scale Faker movement score exists yet**. That requires aligned, authorized replay or player-view evidence and a new benchmark. Only actions of the account resolved as `Hide on bush#KR1` are targets in the original spatial model; the other nine players provide context. Riot account-v1 confirms the Riot ID and PUUID, but cannot establish a person's identity by itself. [Measured second-scale evidence and protocol](SECOND_SCALE.md).
 
@@ -13,6 +13,31 @@
 **Next step: audited Faker decisions.** A source-fingerprinted, per-game audit checked all **465 ranked games / 73,482 ten-second windows** without quarantining a game. It recorded system actors and repeated Riot event records instead of turning ambiguous data into false negative labels. A **48-signal challenger** adds Faker's unspent gold, CS, health and changes since the previous observed frame. On the **same 46 reused validation games**, average precision for four observable acts rises from **14.93% to 17.40%**, while their log loss falls from **0.22992 to 0.22309**. Purchase AP rises from **24.09% to 31.21%**; kill outcomes remain weak. This is exploratory historical validation, not a 90% prediction result or a measure of player vision. [Audit, paired comparison and reproduction](DATA_SANITATION.md).
 
 ![Audited candidate versus frozen incumbent on identical validation windows](docs/figures/faker_actions_sanitized.png)
+
+## The evidence map → the 90% research gate
+
+![Observed positions, event clock and age of the last known ten-player state](docs/figures/ioc_observation_clock.svg)
+
+**The data have two clocks.** In 465 usable KR ranked matches, the private Faker-centred ledger holds **12,975 sampled frames** (129,750 ten-player states) and **563,198 timestamped events**. It derives **73,482 ten-second windows**, yet no new player position appears between most minute-spaced frames. The left chart shows how old the latest known position is at decision time `t`, separately for train and validation. An event coordinate is never treated as Faker's second-by-second path. The five-game pilot produced **737 windows**; the full training split has **58,974**. [Exact schema and source audit](IOC_LEDGER.md).
+
+![How often each Faker-attributed event occurs in the next ten seconds](docs/figures/ioc_action_density.svg)
+
+**A large dataset does not make a rare action easy.** On the 46 validation matches, purchase appears in **616/7,480 windows (8.24%)**, skill point in **712 (9.52%)**, ward placed in **486 (6.50%)** and ward cleared in **240 (3.21%)**. Kill, death and assist are outcomes reported separately. Labels can overlap. For the audited 48-signal candidate, the four observable acts have **17.40% macro average precision** versus **8.05%** for a train-only phase-frequency rule; the stronger purchase AP is **31.21%**, but ward clearing is **7.50%**. These are historical validation ranking scores, not a percent of Faker decisions correctly reproduced. [Per-class table and leakage notes](MODEL_90_ROADMAP.md#ce-que-le-laboratoire-possède-réellement).
+
+![The historical exact-cell score, the unachieved 90% goal and the next research gates](docs/figures/roadmap90_gate.svg)
+
+**Where 90% stands.** The archived next-minute **one-cell 8×8** score is **17.49% exact** on 1,275 reused validation transitions; even its most confident 5% score **48.44%**. No calibration fold cleared the frozen 90% exact-cell gate. A 90% *map coverage* figure obtained by naming 40–41 cells is a different, much weaker statement. Shadow's real target is a Faker action, its delay and, where observable, a continuous location on a seconds-scale clock. That new target has **no measured spatial score yet**. The [90% roadmap](MODEL_90_ROADMAP.md) defines five-game player-view pilots, strict time-`t` features, matched baselines, calibrated abstention and a prospective **100+ new-match** lockbox. Its 90% bar is a research gate, not a promise. As of the latest key check, a Riot HTTP 401 leaves that future cohort at **0/100**; cached-data work remains reproducible.
+
+```mermaid
+flowchart LR
+  A["465 ranked games<br/>positions ~60 s · events timestamped"] --> B["Faker IoC ledger<br/>38 strict t-only fields"]
+  B --> C["Action / delay / location model<br/>train games only"]
+  C --> D["Calibrate on whole validation games<br/>freeze target and coverage"]
+  D --> E["100+ genuinely new games<br/>match-level uncertainty"]
+  E --> F{"Meets the pre-registered 90% gate?"}
+```
+
+[View the public aggregate behind these charts](docs/data/public_roadmap90.json) · [Rebuild the three SVGs from the private cache](MODEL_90_ROADMAP.md#reproduire-les-figures-sans-publier-le-corpus) · [Follow progress](PROGRESS.md).
 
 The longer-term goal is a **Shadow Plus** policy that could improve on this behavioral prior. Prediction accuracy on old matches does not establish stronger play. [SHADOW_PLUS.md](SHADOW_PLUS.md) defines the evidence needed for that claim. [Version française](README.fr.md).
 

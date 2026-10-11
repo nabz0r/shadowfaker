@@ -1,5 +1,7 @@
 # Next research gate: observe the game that Faker could act on
 
+**M20 evidence atlas (2026-10-11):** the [visual 90% roadmap](MODEL_90_ROADMAP.md) now puts train/validation Faker-label prevalence beside the age of each sampled position, then defines the next measurable gates. The five-game pilot and all 465 ranked games are accounted for; these descriptive charts do not create a new model score. The rare-event and replay experiments below remain the next sources of progress.
+
 **M16 update (2026-10-11):** The cached-data branch now trains a separate [Faker-attributed 10-second event model](FAKER_ACTIONS.md) after a five-game pilot. It improves historical validation log loss and per-class average precision over train-only phase rates, but kill-outcome AP remains 7.67%. This completes the initial rare-event measurement below, without unlocking sub-minute positions, player vision, a future-game confirmation or a better-playing policy. Replay alignment and a new independent cohort remain the leading gates.
 
 Status: 2026-10-10. This is a source audit, work plan and completed development ablation. The current ranked corpus has 465 usable KR timelines with player positions about once a minute. The separate ten-second target predicts the first event **type**, not Faker's ten-second position, click, vision or contribution to a win. The exact 512×512 spatial candidate scored 0/1,275 on development validation. Increasing its grid or parameter count without new observations does not solve that measurement gap.

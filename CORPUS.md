@@ -25,17 +25,21 @@ flowchart LR
 | Other KR queues in cache | 49 | Match + timeline | Local archive; excluded from ranked model |
 | Historically attributed EUW alias | 31 | Ranked timelines | Auxiliary event research, identity caveat |
 | Professional mirror | 671 | Final summaries, unverified | Find VOD leads, never infer a trajectory |
+| Winning Worlds final games | 25 | Sourced series cards | Historical case studies; no movement labels |
 
 The professional mirror now also feeds a **separate Faker/team warehouse**: 671 Faker/T1/mid games × five roles = 3,355 player rows, 645 games with complete 10/15-minute scoreboard snapshots and 2,684 prior co-play records. See [TEAM_MATRIX.md](TEAM_MATRIX.md) for the time rule, visible aggregate and source limits. The 2026 source ends on 10 April; these records provide no observed player positions and are never joined to ranked training states.
 
 The [M13 chronological scoreboard probe](TEAM_PROBE.md) uses only the 645 complete professional games, with 534 train, 39 validation and 72 held-out test games. Its detailed matrix and match IDs stay local; the repository carries only aggregate metrics and a figure. It finds no confirmed gain from prior co-play for the Faker-mid gold-gap target and creates **zero new ranked movement labels**.
-| Winning Worlds final games | 25 | Sourced series cards | Historical case studies; no movement labels |
 
 The state warehouse holds **12,975 frames**, **129,750 player observations**, **12,510 adjacent-frame transitions** and **353,409 typed events**. Only **33,329 events (9.4%)** have a recorded coordinate. Many purchases, skill points and wards have none; a positioned kill may identify the victim's location. The 320,080 unpositioned events remain useful as time/type context but cannot be drawn as spatial observations. See [the aggregate inventory](docs/data/public_corpus_inventory.json) for category counts and domains.
 
 The [event-by-event validation](EVENT_VALIDATION.md) reconciles **563,198 raw events** with the warehouse: **353,409/353,409** indexed rows match their source fields. It exposes 1,288 purchases/skill points with source actor 0, 62 champion deaths without a player killer and 23,610 tower plates outside the old index. This checks transcription, not Faker's vision or motives.
 
 The new [Faker IoC ledger](IOC_LEDGER.md) keeps **all 563,198 timestamped events** in a separate private SQLite table and joins them to the same ten-player frames and **73,482 sanitized ten-second windows**. Its 58,974 training-window JSONL export contains only evidence available through `t`, with next-ten-second Faker labels separated; the strict export withholds completed-match role tags. It is data infrastructure for later model experiments, not a new prediction score. The [public aggregate](docs/data/public_ioc_ledger.json) contains counts only.
+
+![Train and validation label rates for Faker's next ten seconds](docs/figures/ioc_action_density.svg)
+
+The [visual evidence and 90% roadmap](MODEL_90_ROADMAP.md) adds train/validation event prevalence, snapshot-age distributions and a staged gate. Its figures are computed from the private ledger and release **only aggregate counts**, not source IDs or replay rows.
 
 ### Exact account names and event provenance
 

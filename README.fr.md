@@ -2,7 +2,7 @@
 
 # Shadow Faker
 
-[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Rejouer une partie**](REPLAY.md) · [**Cible à la seconde**](SECOND_SCALE.md) · [**Explorer l'atlas 512×512**](#atlas-512512--résultat-mesuré) · [**English**](README.md)
+[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Roadmap vers 90 %**](MODEL_90_ROADMAP.md) · [**Rejouer une partie**](REPLAY.md) · [**Cible à la seconde**](SECOND_SCALE.md) · [**Explorer l'atlas 512×512**](#atlas-512512--résultat-mesuré) · [**English**](README.md)
 
 La [documentation anglaise](README.md) est la version internationale de référence pour les résultats et la calibration les plus récents.
 
@@ -16,6 +16,31 @@ Pipeline de recherche local visant à modéliser **les décisions macro de Faker
 
 ![Challenger assaini et modèle gelé sur les mêmes fenêtres de validation](docs/figures/faker_actions_sanitized.png)
 
+## Les preuves visuelles → la porte des 90 %
+
+![Horloge des positions observées et des événements Riot indexés](docs/figures/ioc_observation_clock.svg)
+
+**Deux horloges, une décision.** La base centrée sur Faker relie **465 parties ranked KR**, **12 975 frames échantillonnées** (soit **129 750 états des dix joueurs**), **563 198 événements horodatés** et **73 482 fenêtres de dix secondes**. Chaque barre mesure l'âge de la dernière position connue au temps `t` sur train ou validation. Le pilote de cinq parties compte **737 fenêtres** ; le train complet en compte **58 974**. Les événements ne tracent pas le déplacement de Faker entre deux positions espacées d'environ une minute. [Schéma et provenance](IOC_LEDGER.md).
+
+![Fréquence réelle des sept événements attribués à Faker dans les dix secondes suivantes](docs/figures/ioc_action_density.svg)
+
+**Les décisions positives restent rares.** Sur les 46 parties de validation, il y a **616 achats sur 7 480 fenêtres (8,24 %)**, **712 points de compétence (9,52 %)**, **486 wards posées (6,50 %)** et **240 détruites (3,21 %)**. Kills, morts et assists sont des issues, présentées à part. Les labels peuvent coexister. Le challenger assaini classe les quatre actes avec **17,40 % d'AP moyenne**, contre **8,05 %** pour la fréquence par phase du train. L'achat monte à **31,21 % d'AP** ; la destruction de ward reste à **7,50 %**. Une AP n'est pas un pourcentage de décisions parfaitement imitées. [Tableau et limites](MODEL_90_ROADMAP.md#ce-que-le-laboratoire-possède-réellement).
+
+![Précision exacte historique, cible 90 % non atteinte et étapes de recherche](docs/figures/roadmap90_gate.svg)
+
+**Distance réelle au 90 %.** L'archive de la prochaine **case 8×8 unique à la minute** atteint **17,49 %** d'exactitude sur **1 275 transitions de validation déjà réutilisées** ; les 5 % les plus confiantes atteignent **48,44 %**. Aucun pli de calibration n'a passé la porte exacte des 90 %. Couvrir 90 % des destinations en nommant 40 ou 41 cases est une autre mesure, beaucoup plus permissive. La vraie cible de recherche est **l'action de Faker, son délai et éventuellement son lieu continu, à l'échelle de la seconde** ; aucun score spatial à cette échelle n'existe encore. La [feuille de route vérifiable](MODEL_90_ROADMAP.md) prévoit des replays joueur alignés, des variables strictement antérieures à `t`, les baselines, un seuil gelé et **au moins 100 nouvelles parties**. La dernière clé Riot a reçu HTTP 401 : cette cohorte reste à **0/100**, tandis que les analyses depuis le cache continuent.
+
+```mermaid
+flowchart LR
+  A["465 parties ranked<br/>positions ~60 s · événements horodatés"] --> B["Registre IoC Faker<br/>38 variables strictes à t"]
+  B --> C["Action / délai / lieu<br/>entraînement uniquement"]
+  C --> D["Calibration par matchs entiers<br/>cible et couverture figées"]
+  D --> E["≥100 nouvelles parties<br/>incertitude par match"]
+  E --> F{"Contrat 90 % atteint ?"}
+```
+
+[Agrégat public de ces trois graphiques](docs/data/public_roadmap90.json) · [Commande de reproduction](MODEL_90_ROADMAP.md#reproduire-les-figures-sans-publier-le-corpus) · [Journal d'avancement](PROGRESS.md).
+
 ## Le site, en images
 
 La page fonctionne désormais par **onglets dynamiques** : une vue à la fois, avec une chronologie commune. Les six étoiles évoquent le sixième titre mondial de T1 en 2025, [confirmé par son copropriétaire Comcast Spectacor](https://comcastspectacor.com/news/2025/12/t1-entertainment-sports-wins-2025-league-of-legends-world-championship/). Shadow Faker est un laboratoire de fans indépendant ; ces étoiles ne représentent ni la précision du modèle ni une affiliation à T1.
@@ -26,7 +51,6 @@ La page fonctionne désormais par **onglets dynamiques** : une vue à la fois, a
 | **16×16 historique / 3D** | [Carte observée contre prédite et surface](#le-paysage-des-prochains-mouvements) |
 | **Rejouer / Tempo / Pression** | [Horloge d'une partie](REPLAY.md), [fonctionnement](#fonctionnement), [zone adverse réglable](PRESSURE.md) et dix positions échantillonnées |
 | **Scores / Recherche / Preuves** | [Horloge à la seconde et trous d'observation](SECOND_SCALE.md), baselines et [prochains tests](NEXT_RESEARCH.md) |
-| **Stratégies / Challenge** | Hypothèses de composition et [quiz de la mémoire Faker](FAKER_MEMORY.md) |
 | **Stratégies / Challenge** | [Hypothèses et critères d'un jeu meilleur](SHADOW_PLUS.md) ; composition libre de cinq postes dans la simulation illustrative |
 | **Faker × équipe** | [Historique de jeu commun et matrices de ressources à 10→15 minutes](TEAM_MATRIX.md) |
 | **Finales BO5 / Corpus / Archives** | [Six finales sourcées, 25 manches](WORLD_FINALS.md), [matrice IoC](IOC_VISION.md) et fiches ranked privées |

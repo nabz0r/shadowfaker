@@ -2,6 +2,8 @@
 
 **Benchmark historique de développement.** Cette case unique à la minute suivante n'est plus la cible principale du projet. La [nouvelle cible](SECOND_SCALE.md) décrit l'action de Faker, son délai en secondes et son lieu éventuel dans un espace continu ; la grille n'est qu'une représentation. Ce document conserve l'audit exact de l'ancien modèle sans le transformer en preuve de prédiction à la seconde.
 
+La [feuille de route visuelle vers un futur modèle « 90 % »](MODEL_90_ROADMAP.md) sépare cette ancienne porte spatiale des prédictions d'événements à dix secondes, de la densité réelle des labels et du besoin de nouvelles observations joueur. Elle n'ajoute aucun score à l'audit ci-dessous.
+
 ![Précision exacte selon la part des décisions auxquelles Shadow répond](docs/figures/ninety_exact_gate.png)
 
 ## Cible mesurée

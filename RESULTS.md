@@ -1,5 +1,11 @@
 # Measured results (updated 2026-10-11)
 
+## M20: visual evidence, no new model score
+
+![Actual frequency of seven Faker-attributed ten-second labels in train and validation](docs/figures/ioc_action_density.svg)
+
+The new [90% research roadmap](MODEL_90_ROADMAP.md) exposes the denominators behind the next model: a five-game **737-window** pilot followed by **58,974 train / 7,480 validation** IoC windows. On validation, purchase appears in **616 windows (8.24%)**, skill point in **712 (9.52%)**, ward placement in **486 (6.50%)** and ward clearing in **240 (3.21%)**. These descriptive rates are recomputed from the private ledger and published only as [aggregate JSON](docs/data/public_roadmap90.json). No old test label was read, no new checkpoint was trained and the historical exact-cell and AP scores below are unchanged. The [second clock figure](docs/figures/ioc_observation_clock.svg) shows that timestamped events do not give positions at every ten-second decision.
+
 ## M18: audited Faker actions, same historical validation games
 
 ![Frozen M16 model versus the audited challenger](docs/figures/faker_actions_sanitized.png)

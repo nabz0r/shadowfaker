@@ -1,5 +1,14 @@
 # Shadow Faker — plan d'exécution
 
+## M20 — atlas de preuves visuelles et trajectoire vérifiable vers 90 % (2026-10-11)
+
+1. Recalculer sur le registre IoC privé un **pilote de cinq parties** (trois train, deux validation), puis des agrégats train/validation sans exposer de match, de ligne Riot ou de label test : fréquence des sept cibles et âge réel des snapshots dans les fenêtres de dix secondes.
+2. Générer des graphiques reproductibles et un JSON public agrégé : densité des actes, horloges positions/événements, écart entre la précision spatiale historique et la porte exacte de 90 %. Chaque visuel indique cible, dénominateur et statut de validation.
+3. Refaire les README FR/EN et les documents de recherche autour d'un contrat de mesure : prochaine action/temps/lieu à l'échelle des secondes, archive 8×8 à une minute séparée, baselines et cas sans action explicites. Documenter une roadmap avec hypothèses falsifiables, besoins de données, garde-fous de causalité et verrouillage prospectif.
+4. Vérifier figures, liens, chiffres, tests et confidentialité ; publier tous les fichiers sur `main`, puis comparer l'arbre Git distant aux fichiers testés localement.
+
+Risque : des milliers de fenêtres se recouvrent dans seulement 465 matchs, tandis que les positions sont prises environ chaque minute. Une exactitude « 90 % » obtenue en prédisant toujours l'absence d'événement, en agrandissant la zone ou en réutilisant la validation serait trompeuse. La feuille de route ne présente aucun seuil non atteint comme un résultat.
+
 ## M19 — registre IoC causal, prêt pour un futur entraînement textuel (2026-10-11)
 
 1. Auditer les quatre dépôts existants (entrepôt de frames, fenêtres Faker à 10 s, mémoire de décisions, index textuel) et documenter les jointures manquantes. L'or n'est qu'un canal parmi les positions, XP, vie, CS, niveaux, vision par événements de wards, objectifs, itemisation et interactions des dix joueurs.

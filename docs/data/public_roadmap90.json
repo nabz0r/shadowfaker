@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "source": "private faker_ioc.sqlite; aggregate counts only",
+  "selection": "three train and two validation games in original pilot; all train/validation games",
+  "target": "seven Faker-attributed events in (t,t+10s]",
+  "games_by_split": {
+    "test": 46,
+    "train": 373,
+    "val": 46
+  },
+  "pilot": {
+    "train": {
+      "windows": 420,
+      "any_faker_event": 148,
+      "positive_labels": {
+        "purchase": 37,
+        "skill_point": 45,
+        "ward_placed": 29,
+        "ward_cleared": 14,
+        "kill": 24,
+        "death": 6,
+        "assist": 14
+      },
+      "snapshot_age_10s_bins": {
+        "0": 71,
+        "10": 70,
+        "20": 70,
+        "30": 70,
+        "40": 68,
+        "50": 68,
+        "60": 3
+      }
+    },
+    "val": {
+      "windows": 317,
+      "any_faker_event": 104,
+      "positive_labels": {
+        "purchase": 26,
+        "skill_point": 30,
+        "ward_placed": 20,
+        "ward_cleared": 14,
+        "kill": 14,
+        "death": 11,
+        "assist": 6
+      },
+      "snapshot_age_10s_bins": {
+        "0": 54,
+        "10": 53,
+        "20": 52,
+        "30": 52,
+        "40": 52,
+        "50": 52,
+        "60": 2
+      }
+    }
+  },
+  "splits": {
+    "train": {
+      "windows": 58974,
+      "any_faker_event": 20161,
+      "positive_labels": {
+        "purchase": 5104,
+        "skill_point": 5599,
+        "ward_placed": 4696,
+        "ward_cleared": 1679,
+        "kill": 2043,
+        "death": 1770,
+        "assist": 2307
+      },
+      "snapshot_age_10s_bins": {
+        "0": 9927,
+        "10": 9859,
+        "20": 9790,
+        "30": 9736,
+        "40": 9667,
+        "50": 9622,
+        "60": 373
+      }
+    },
+    "val": {
+      "windows": 7480,
+      "any_faker_event": 2498,
+      "positive_labels": {
+        "purchase": 616,
+        "skill_point": 712,
+        "ward_placed": 486,
+        "ward_cleared": 240,
+        "kill": 307,
+        "death": 222,
+        "assist": 289
+      },
+      "snapshot_age_10s_bins": {
+        "0": 1259,
+        "10": 1249,
+        "20": 1241,
+        "30": 1233,
+        "40": 1230,
+        "50": 1222,
+        "60": 46
+      }
+    }
+  },
+  "archived_exact_cell": {
+    "target": "one exact next-minute 8x8 Faker destination cell, all ranked validation transitions",
+    "validation_matches": 46,
+    "validation_transitions": 1275,
+    "accuracy_by_coverage": [
+      {
+        "coverage_target": 0.05,
+        "served": 64,
+        "coverage_actual": 0.0502,
+        "correct": 31,
+        "exact_accuracy": 0.4844,
+        "wilson_lower95": 0.3663
+      },
+      {
+        "coverage_target": 0.1,
+        "served": 128,
+        "coverage_actual": 0.1004,
+        "correct": 48,
+        "exact_accuracy": 0.375,
+        "wilson_lower95": 0.2959
+      },
+      {
+        "coverage_target": 0.2,
+        "served": 255,
+        "coverage_actual": 0.2,
+        "correct": 95,
+        "exact_accuracy": 0.3725,
+        "wilson_lower95": 0.3155
+      },
+      {
+        "coverage_target": 0.5,
+        "served": 638,
+        "coverage_actual": 0.5004,
+        "correct": 178,
+        "exact_accuracy": 0.279,
+        "wilson_lower95": 0.2456
+      },
+      {
+        "coverage_target": 1.0,
+        "served": 1275,
+        "coverage_actual": 1.0,
+        "correct": 223,
+        "exact_accuracy": 0.1749,
+        "wilson_lower95": 0.155
+      }
+    ],
+    "selection": "exploratory_not_independent",
+    "prospective_new_games": 0
+  },
+  "clock_counts": {
+    "events": 563198,
+    "sampled_frames": 12975,
+    "windows": 73482
+  },
+  "limits": "Train/validation windows overlap within matches; positions are sampled about once per minute; no test labels or match rows are published."
+}

@@ -1,5 +1,14 @@
 # Shadow Faker — journal d'avancement
 
+## M20 — atlas de preuves et feuille de route 90 % (2026-10-11)
+
+- [x] `PLAN.md` fixe le contrat de cette phase : graphiques issus d'agrégats, pilote de cinq parties, aucune ligne de match ou étiquette test publiée, et seuil de 90 % réservé à une cible exacte préspécifiée.
+- [x] `scripts/render_roadmap_evidence.py` lit la base IoC en mode lecture seule. Le pilote original de trois matchs train et deux validation a **420 + 317 = 737 fenêtres** ; l'exécution complète a **58 974 train + 7 480 validation**. Comptes et split concordent avec le registre public ; aucune donnée test n'est parcourue par le calcul des nouvelles distributions.
+- [x] Trois figures SVG et `public_roadmap90.json` générés : densité des sept labels, âge des positions dans chaque fenêtre, écart de la case unique 8×8 au seuil hypothétique de 90 %. Figures vérifiées visuellement ; unités, population et limites inscrites dans chaque visuel.
+- [x] README FR/EN, `MODEL_90_ROADMAP.md`, registre IoC, résultats, inventaire et roadmap enrichis de trois graphiques, d'un tableau AP/prévalence par acte, de la séparation actes/issues, des deux horloges et d'une trajectoire M21–M24 avec portes d'arrêt. Le tableau cassé des finales dans `CORPUS.md` est réparé.
+- [x] Génération reprise depuis la base privée, 62 tests Python passés, compilation `src`/`scripts`, `git diff --check`, neuf Markdown contrôlés sans lien local cassé ; comptes, âges et absence d'ID Riot dans l'agrégat vérifiés. Les trois SVG ont été rendus et inspectés ; `.env`, SQLite et JSONL restent ignorés par Git.
+- [ ] Publication sur `main` et égalité de l'arbre distant avec l'arbre local testé.
+
 ## 2026-10-09
 
 - [x] Phase 0 : plan, architecture, invariants et risques consignés.
