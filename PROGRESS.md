@@ -7,7 +7,7 @@
 - [x] Trois figures SVG et `public_roadmap90.json` générés : densité des sept labels, âge des positions dans chaque fenêtre, écart de la case unique 8×8 au seuil hypothétique de 90 %. Figures vérifiées visuellement ; unités, population et limites inscrites dans chaque visuel.
 - [x] README FR/EN, `MODEL_90_ROADMAP.md`, registre IoC, résultats, inventaire et roadmap enrichis de trois graphiques, d'un tableau AP/prévalence par acte, de la séparation actes/issues, des deux horloges et d'une trajectoire M21–M24 avec portes d'arrêt. Le tableau cassé des finales dans `CORPUS.md` est réparé.
 - [x] Génération reprise depuis la base privée, 62 tests Python passés, compilation `src`/`scripts`, `git diff --check`, neuf Markdown contrôlés sans lien local cassé ; comptes, âges et absence d'ID Riot dans l'agrégat vérifiés. Les trois SVG ont été rendus et inspectés ; `.env`, SQLite et JSONL restent ignorés par Git.
-- [ ] Publication sur `main` et égalité de l'arbre distant avec l'arbre local testé.
+- [x] Publication sur `main` via la connexion GitHub après refus d'identifiants du push HTTPS local (`Device not configured`). Chacun des 16 blobs a été vérifié par son SHA Git ; commit distant `87c12d09510f1bb806e56dbc9819b3a49a0993e8`, arbre `9546973bebf8955961b5917ec846531b38217e7a`, identique à l'arbre local testé après fetch. Ce journal de clôture est publié dans un second commit documentaire.
 
 ## 2026-10-09
 
