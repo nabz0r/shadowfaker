@@ -10,7 +10,7 @@
 - [x] Vérification dans le navigateur : à 02:21.023 la mort de Faker n'est pas visible, à 02:21.024 elle l'est ; raccourci d'événement, filtres, couches, roster, frise commune à 10 MIN, disposition mobile 390 px sans débordement. Routes privées inconnues retournent HTTP 404. README FR/EN, REPLAY et laboratoire des scénarios actualisés.
 - [x] Le panneau d'audit apparaît en FR/EN avec les quatre volumes et leurs limites. Dans le Challenge v2, à 10 min « cinq Faker » affiche `TOP 1:0, MID 1:1, JUNGLE 2:1, BOT 1:3` quand l'adversaire réagit après 10 min à la formation bot précédente ; à 20 min la réaction suit la formation jungle de 10 min. La composition libre conserve cinq joueurs par camp. Changer de partie repart désormais à `t=0`, même si la frise était à 12 min ; vérifié dans le navigateur.
 - [x] Validation finale locale : 64 tests Python, syntaxe JS/Python, `git diff --check`, liens locaux dans six documents, routes publiques/privées et sélecteur de partie vérifiés. Le navigateur affiche le rejeu en français sur une partie de démonstration ; le serveur reste sur `127.0.0.1:8008`.
-- [ ] Publication sur `main` et comparaison du commit distant avec l'arbre local testé.
+- [x] Publication du lot vérifié sur `main` via la connexion GitHub après l'échec du push HTTPS local sans identifiant (`Device not configured`). Les 17 blobs envoyés ont chacun été comparés à leur SHA Git ; commit distant `d730d14fc3a129fdd8a85eef33ab48ca15fc516d`, arbre `620a14c7d5faef5e1df4fef2f7125d8a5921eab5`, identique à l'arbre local testé. Fetch et comparaison du diff réussis, puis branche locale alignée sur `origin/main`. Cette ligne de clôture est publiée dans un second commit documentaire.
 
 ## M20 — atlas de preuves et feuille de route 90 % (2026-10-11)
 
