@@ -2,11 +2,11 @@
 
 # Shadow Faker
 
-[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Explorer l'atlas 512×512**](#atlas-512512--résultat-mesuré) · [**Six finales mondiales**](WORLD_FINALS.md) · [**Lire les résultats**](RESULTS.md) · [**English**](README.md)
+[**Ouvrir le tableau de bord**](#tableau-de-bord-visuel) · [**Cible à la seconde**](SECOND_SCALE.md) · [**Explorer l'atlas 512×512**](#atlas-512512--résultat-mesuré) · [**Six finales mondiales**](WORLD_FINALS.md) · [**English**](README.md)
 
 La [documentation anglaise](README.md) est la version internationale de référence pour les résultats et la calibration les plus récents.
 
-Pipeline de recherche local visant à modéliser **les décisions macro de Faker à moins d'une minute** à partir du compte Riot ID « Hide on bush#KR1 ». **Les positions Riot disponibles restent échantillonnées à environ 60 secondes : le modèle spatial prédit la minute suivante.** Une tête distincte prédit les types d'événements dans les dix secondes suivantes, sans connaître la position ou le clic de Faker à cette fréquence. Prédire ses déplacements sous la minute demandera des replays ou vidéos alignés et un nouveau benchmark. Les actions cibles du modèle spatial appartiennent uniquement au joueur de ce PUUID ; les neuf autres joueurs fournissent un contexte de partie. Le code récupère des parties ranked solo KR (queue 420), transforme les timelines en observations causales, entraîne un petit transformer multi-têtes et compare ses prédictions à quatre baselines régionales. Le clone fidèle est le premier étage d'un objectif plus ambitieux : rechercher une politique meilleure en jeu, selon les étapes et critères de [SHADOW_PLUS.md](SHADOW_PLUS.md). **L'identité réelle du joueur ne peut pas être établie par l'API seule.**
+Pipeline de recherche local visant à modéliser **les décisions macro de Faker à l'échelle de la seconde** à partir du compte Riot ID « Hide on bush#KR1 ». La cible est une distribution sur **l'action, son délai et son lieu continu éventuel** ; les matrices 16/64/512 ne sont que des représentations ajustables. Les positions Riot disponibles restent échantillonnées à environ **60 secondes** : le modèle spatial existant prédit encore la frame suivante, tandis qu'une tête distincte prédit le premier type d'événement à dix secondes. **Aucun score de déplacement de Faker à la seconde n'existe encore.** Les actions cibles du modèle spatial appartiennent uniquement au joueur de ce PUUID ; les neuf autres joueurs fournissent un contexte de partie. Le code récupère des ranked solo KR (queue 420), transforme les timelines en observations causales et compare ses prédictions à des baselines. Le clone fidèle est le premier étage d'un objectif plus ambitieux : rechercher une politique meilleure en jeu, selon [SHADOW_PLUS.md](SHADOW_PLUS.md). **L'API seule ne peut établir l'identité réelle du joueur.** [Horloge, observations et nouveau protocole](SECOND_SCALE.md).
 
 ## Le site, en images
 
@@ -17,7 +17,7 @@ La page fonctionne désormais par **onglets dynamiques** : une vue à la fois, a
 | **Atlas 512×512** | Cases et événements observés, puis [échec de la case exacte](#atlas-512512--résultat-mesuré) |
 | **16×16 historique / 3D** | [Carte observée contre prédite et surface](#le-paysage-des-prochains-mouvements) |
 | **Évolution / Tempo / Pression** | Chronologie d'une partie, [fonctionnement](#fonctionnement), [zone adverse réglable](PRESSURE.md) et positions des dix joueurs |
-| **Scores / Recherche / Preuves** | Baselines, échecs par classe et [prochains tests](NEXT_RESEARCH.md) |
+| **Scores / Recherche / Preuves** | [Horloge à la seconde et trous d'observation](SECOND_SCALE.md), baselines et [prochains tests](NEXT_RESEARCH.md) |
 | **Stratégies / Challenge** | Hypothèses de composition et [quiz de la mémoire Faker](FAKER_MEMORY.md) |
 | **Stratégies / Challenge** | [Hypothèses et critères d'un jeu meilleur](SHADOW_PLUS.md) ; composition libre de cinq postes dans la simulation illustrative |
 | **Faker × équipe** | [Historique de jeu commun et matrices de ressources à 10→15 minutes](TEAM_MATRIX.md) |
@@ -53,7 +53,13 @@ La barre d'onglets reste accessible sur mobile : [capture à 390 pixels](DESIGN.
 
 **Le passé commun aide-t-il à prédire un score ultérieur ?** Une épreuve chronologique sur 534/39/72 manches train/validation/test prédit l'écart d'or de Faker mid à 15 minutes depuis le contexte à 10 minutes. Sur les 72 manches test, copier le score de 10 minutes donne **412,64 or** d'erreur absolue moyenne, le modèle de contexte **442,17**, et le contexte plus historique **441,88**. La différence liée à l'historique n'est que **−0,29 or**, intervalle 95 % **[−2,89 ; +2,10]**. Le signal n'est pas confirmé et la baseline de copie gagne. Cette épreuve de score pro **n'améliore pas la prédiction de mouvement de Shadow**. [Protocole et limites](TEAM_PROBE.md).
 
-**Le vrai seuil de 90 %.** Sur les 46 parties de validation de développement, le meilleur modèle M3 prédit **la bonne case 8×8 unique à la minute suivante dans 17,49 %** des 1 275 transitions. En ne répondant qu'à ses **5 % de cas les plus confiants**, il trouve **31/64 = 48,44 %**. Aucun seuil de confiance préétabli n'atteint 90 % avec une couverture utile. Ce diagnostic est exploratoire, car le checkpoint a été choisi sur cette même validation ; le nouveau snapshot Riot est bloqué par une clé expirée. [Mesure exacte, courbe de couverture et plan de données](NINETY_GATE.md).
+**La cible corrigée : des secondes et des actions.** L'audit des **465 parties** trouve **563 198 événements horodatés**, mais seulement **12 975 positions observées de Faker**, espacées d'une médiane de **60,02 s**. Sur les fenêtres de 1, 5, 10 et 30 secondes après une frame, **aucune nouvelle position** n'est enregistrée. Un lieu d'événement n'est pas une position du joueur. Le nouveau panneau Scores permet de changer l'horizon ; ses nombres sont de la **disponibilité de données, pas une précision du modèle**. [Protocole continu et chemin vers des labels à la seconde](SECOND_SCALE.md).
+
+![Événements en secondes et positions manquantes entre deux frames](docs/figures/second_scale_observability.png)
+
+![Curseur des secondes dans le nouvel onglet Scores](docs/figures/dashboard_second_scale.png)
+
+**Archive de développement à la minute.** Sur les 46 parties de validation déjà utilisées pour choisir le modèle, la prochaine case 8×8 unique est juste dans **17,49 %** des 1 275 transitions ; les **5 % les plus confiants** font **31/64 = 48,44 %**. Cette mesure n'est plus la cible principale de Shadow. [Audit historique et limites](NINETY_GATE.md).
 
 ![Précision exacte de la case suivante lorsque Shadow s'abstient sur les transitions incertaines](docs/figures/ninety_exact_gate.png)
 

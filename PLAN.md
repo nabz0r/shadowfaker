@@ -1,5 +1,16 @@
 # Shadow Faker — plan d'exécution
 
+## M15 — horloge à la seconde, espace continu (2026-10-11)
+
+La cible de recherche est une **décision de Faker à l'échelle de la seconde** : à l'instant `t`, avec seulement l'information disponible jusqu'à `t`, prévoir un type d'action, son délai et, si l'action a un lieu, une distribution sur des coordonnées continues normalisées `(x,y)`. Une grille 8/16/64/512 n'est qu'un rendu ou une approximation numérique de cette distribution ; son nombre de cases ne définit plus le succès. Le score spatial futur sera une erreur en unités de jeu et une couverture dans un rayon préenregistré, conditionnée à une action réellement observable. Le seuil de 90 % reste une hypothèse, pas une propriété actuelle.
+
+1. Auditer **cinq parties** puis tout le corpus cached : timestamps des événements, coordonnées de lieux d'événement, horodatage des positions des joueurs et écarts entre observations. Aucun événement ne sera converti en position de Faker. Publier seulement des agrégats sans ID ni trace.
+2. Créer un contrat d'annotations haute fréquence local : match, source, point de vue, temps en millisecondes, acteur, famille d'action, coordonnées normalisées facultatives, qualité de l'alignement. Refuser les trajectoires à 1 s inventées par interpolation et les observations issues du futur. Préparer des métriques continues indépendantes de la taille de la grille, avec baseline de persistance et intervalles par match lorsque des annotations fiables existeront.
+3. Montrer l'horloge et les trous d'observation dans le tableau de bord : un curseur 1/5/10/30 s fait varier les comptes d'événements vérifiables, tandis qu'un relevé clair rappelle que la position de Faker n'est connue qu'aux frames disponibles. Afficher la différence entre lieu d'un événement, état des dix joueurs et cible Faker.
+4. Reclasser l'audit précédent de précision 8×8 à une minute comme **archive de développement**. Mettre README FR/EN, NINETY_GATE, RESULTS, ROADMAP et PROGRESS à jour ; vérifier l'UI FR/EN/mobile, les tests et publier sur `main`.
+
+Risque : les timestamps d'événements sont plus fins que les positions. Un modèle des événements à dix secondes existe, mais ses scores dominés par les wards ne prouvent ni une prédiction de clics ni une connaissance de l'intention de Faker. Une future VOD, même alignée, doit porter provenance, droits, visibilité et accord d'annotation. Aucun 90 % ne sera revendiqué par élargissement artificiel d'un rayon, agrandissement de grille ou majorité « aucun événement ».
+
 ## M11 — mémoire de Faker et challenger apprenant (2026-10-10)
 
 Construire une base SQLite **privée** de décisions `(état à t, contexte IoC, arrivée observée à t+1)` depuis les NPZ déjà générés. Une ligne correspond à une observation, le match entier garde son split ; le test historique n'est pas ouvert. Les vecteurs compacts conservent des dimensions choisies de l'état actuel et le patch/rôle/minute comme métadonnées. Indexer et interroger les cas de train, jamais une étiquette val/test pendant la recherche. Publier seulement la taille, le schéma et des scores agrégés.

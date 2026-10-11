@@ -155,6 +155,10 @@ def main() -> None:
     command(sys.executable, CONFIG.root / "scripts" / "run_ninety_gate.py")
     command(sys.executable, CONFIG.root / "scripts" / "render_ninety_gate.py")
     stage("Exact-cell confidence gate refreshed on development validation; prospective claims remain locked.")
+    command(sys.executable, CONFIG.root / "scripts" / "audit_second_scale.py", "--pilot-only")
+    command(sys.executable, CONFIG.root / "scripts" / "audit_second_scale.py")
+    command(sys.executable, CONFIG.root / "scripts" / "render_second_scale.py")
+    stage("Second-scale source availability refreshed; grids remain display choices, not temporal labels.")
 
     export_trace(max_frames=30)
     command(sys.executable, CONFIG.root / "scripts" / "render_atlas64.py")

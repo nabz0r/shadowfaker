@@ -2,9 +2,9 @@
 
 # Shadow Faker
 
-[**Open the visual dashboard locally**](#visual-dashboard) · [**Explore the 512×512 atlas**](#a-512512-atlas-and-its-accuracy-limit) · [**Six Worlds finals**](WORLD_FINALS.md) · [**Read the evidence**](RESULTS.md) · [**Français**](README.fr.md)
+[**Open the visual dashboard locally**](#visual-dashboard) · [**The second-scale target**](SECOND_SCALE.md) · [**Explore the 512×512 atlas**](#a-512512-atlas-and-its-accuracy-limit) · [**Six Worlds finals**](WORLD_FINALS.md) · [**Français**](README.fr.md)
 
-**A reproducible, local research pipeline for Faker-style macro decisions in League of Legends.** Its spatial model predicts the next 16×16 map region, first item purchase, and skill upgrade from ranked solo-queue timelines sampled roughly **once per minute**. A separate ten-second head predicts event types; predicting Faker's **position or decision** below a minute still requires higher-frequency replay or player-view evidence and a new benchmark. Only actions of the account resolved as `Hide on bush#KR1` are targets in the original spatial model; the other nine players provide context. Riot account-v1 confirms the Riot ID and PUUID, but cannot establish a person's identity by itself.
+**A reproducible, local research pipeline aimed at Faker's decisions on a seconds-scale clock.** The research target is the next **action, its timing and any continuous location**; 16×16, 64×64 and 512×512 grids are adjustable renderings. The current ranked spatial model still predicts from positions sampled roughly **once per minute**. A separate ten-second head predicts event types, but **no second-scale Faker movement score exists yet**. That requires aligned, authorized replay or player-view evidence and a new benchmark. Only actions of the account resolved as `Hide on bush#KR1` are targets in the original spatial model; the other nine players provide context. Riot account-v1 confirms the Riot ID and PUUID, but cannot establish a person's identity by itself. [Measured second-scale evidence and protocol](SECOND_SCALE.md).
 
 The longer-term goal is a **Shadow Plus** policy that could improve on this behavioral prior. Prediction accuracy on old matches does not establish stronger play. [SHADOW_PLUS.md](SHADOW_PLUS.md) defines the evidence needed for that claim. [Version française](README.fr.md).
 
@@ -17,7 +17,7 @@ The dashboard now opens **one dynamic tab at a time**. Its six gold stars refer 
 | **Atlas 512×512** | Observed cells, event layers and the exact-cell failure in [the atlas result](#a-512512-atlas-and-its-accuracy-limit) |
 | **Legacy 16×16 / 3D** | [Observed versus predicted maps](#faker-on-the-map-shadow-on-the-map) and [the frequency surface](#the-landscape-of-next-moves) |
 | **Evolution / Tempo / Pressure** | A local game clock, [team movement](#the-project-at-a-glance), a [selectable opponent zone](PRESSURE.md) and ten observed positions |
-| **Scores / Research / Evidence** | [Measured baselines](#what-we-score), failed rare-event classes and [research gates](NEXT_RESEARCH.md) |
+| **Scores / Research / Evidence** | [Second-scale observability](SECOND_SCALE.md), [measured baselines](#what-we-score), failed rare-event classes and [research gates](NEXT_RESEARCH.md) |
 | **Strategies / Challenge** | [Hypotheses and the standard for stronger play](SHADOW_PLUS.md); compose five lanes or challenge the [Faker episode memory](FAKER_MEMORY.md) |
 | **Faker × team** | [Shared-game history and 10→15-minute resource matrices](TEAM_MATRIX.md) |
 | **Finals BO5 / Corpus / Archives** | [Six sourced Worlds finals and 25 games](WORLD_FINALS.md), [the IoC matrix](IOC_VISION.md), plus private ranked match cards |
@@ -52,7 +52,13 @@ The horizontal tab strip stays available on mobile; [see the 390-pixel capture](
 
 **Does prior co-play help predict a later scoreboard?** A chronological 534/39/72-game train/validation/test experiment predicts Faker's 15-minute mid gold gap from 10-minute context. On the 72 test games, copying the 10-minute gap has **412.64 gold** mean absolute error, a context ridge has **442.17**, and context plus prior shared games has **441.88**. The history difference from context is only **−0.29 gold**, 95% day-bootstrap interval **[−2.89, +2.10]**. The signal is unconfirmed and the persistence baseline wins. This is a separate professional scoreboard task, **not a gain in Shadow's movement accuracy**. [Full protocol and limits](TEAM_PROBE.md).
 
-**The 90% exact-cell gate.** On the existing 46-game development validation cohort, the best M3 policy predicts **one correct next-minute 8×8 cell in 17.49%** of all 1,275 transitions. If it answers only its **5% most confident transitions**, it gets **31/64 = 48.44%** right. No predeclared confidence threshold reaches 90% with meaningful served coverage. This is an exploratory diagnostic because the checkpoint was selected on the same validation games, and the new Riot snapshot is blocked by an expired key; it is **not** a future score. [Exact metric, coverage curve and data plan](NINETY_GATE.md).
+**The corrected target: seconds and actions.** Across **465 games**, the source audit finds **563,198 timestamped events** but only **12,975 sampled Faker positions**, with a **60.02-second median gap**. At 1, 5, 10 and 30 seconds after a frame there is **no new Faker position observation**. An event locus is not a player position. The new Scores slider changes the time horizon; it shows **data availability, not model accuracy**. [Continuous-target protocol and the path to second-scale labels](SECOND_SCALE.md).
+
+![Second-scale events and missing player positions between frames](docs/figures/second_scale_observability.png)
+
+![The seconds slider in the redesigned Scores tab](docs/figures/dashboard_second_scale.png)
+
+**Archived minute-scale development benchmark.** The selected M3 model gets one next-minute 8×8 cell right on **17.49%** of 1,275 reused validation transitions; its most confident **5%** reach **31/64 = 48.44%**. This is no longer Shadow's primary research target. [Historical exact-cell diagnostic](NINETY_GATE.md).
 
 ![Exact next-cell accuracy as Shadow abstains on less confident transitions](docs/figures/ninety_exact_gate.png)
 

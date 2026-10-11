@@ -25,7 +25,7 @@ const copy = {
     game_picker: "Ouvrir une des 465 parties indexées", game_open: "Ouvrir la partie", ecosystem_title: "Écosystème des dix joueurs · projection 3D", ecosystem_intro: "Le sol est la carte. La hauteur est le niveau observé. Les traits relient Faker aux joueurs proches ; les points montrent l'état à t, les contours leur position suivante. Le losange blanc est le choix du modèle. Proximité et réaction visible ne prouvent pas une influence causale.",
     geometry_title: "Champ local 64×64 · autour de Faker", geometry_intro: "Cette géométrie historique 64×64 colore les cases voisines à t selon un tenseur métrique positif, orienté par le mouvement passé de Faker et les alliés proches. L'arrivée réelle et les événements après t servent à lire la transition, jamais à calculer ce champ.",
     geometry_legend: "Turquoise : Faker à t · rose : arrivée à t+1 · bleu : alliés · rouge : adversaires et leurs déplacements. Le champ coloré est une hypothèse géométrique, pas la probabilité prédite par Shadow.", state_actor: "Acteur",
-    accuracy_title: "Ce qu'on sait vraiment prédire", exploratory: "8×8 / 4×4 exploratoires",
+    accuracy_title: "Ce qu'on observe, ce que Shadow prédit", exploratory: "SECONDES · MODÈLES HISTORIQUES",
     exact_explain: "<strong>16×16 :</strong> Shadow 11,28 %, baseline 11,61 %. Le critère initial n'est pas atteint.",
     metric_exact: "64×64 · CASE EXACTE", metric_exact_note: "Shadow sur 1 197 décisions test", metric_baseline: "BASELINE · CASE FRÉQUENTE", metric_baseline_note: "Meilleure règle simple sur les mêmes décisions", metric_radius: "À 4 CASES PRÈS", metric_radius_note: "Shadow · copie de la position précédente : 16,88 %", metric_coverage: "ZONE QUI COUVRE 91,9 %", metric_coverage_note: "Part moyenne de la carte proposée · seuil ajusté en validation", metric_context: "Ces chiffres viennent d'un test historique déjà inspecté. « 91,9 % » n'est pas une prédiction exacte : la zone couvre en moyenne 1 791 cases sur 4 096. Aucune amélioration prospective ni capacité de jeu supérieure n'est démontrée.",
     predictability_kicker: "LABORATOIRE · 46 PARTIES DE VALIDATION", predictability_title: "Une case exacte, ou presque toute la carte ?", predictability_intro: "Sur la même grille 8×8, agrandir la liste des cases candidates augmente la couverture. Le seuil de 90 % n'est franchi qu'avec 41 cases sur 64.", predictability_badge: "PAS UN TEST FUTUR", predictability_exact: "1 case · précision exacte", predictability_coverage: "41 cases · couverture", predictability_area: "surface de carte proposée", predictability_phase: "Prédire une seule case dans la phase choisie par la chronologie", predictability_limit: "Ces chiffres viennent de la validation de développement, pas du test futur. La visibilité ennemie est une approximation. La chronologie change les barres par tranche de temps ; elle n'invente pas une précision à la seconde.", predictability_full: "Proxy + stats globales", predictability_visible: "Vision approximée", predictability_expert: "Expert par phase", predictability_samples: n => `${n} décisions de validation · même grille 8×8 pour les trois candidats. Aucun ne démontre 90 % de précision exacte.`,
@@ -83,7 +83,7 @@ const copy = {
     game_picker: "Open one of 465 indexed games", game_open: "Open game", ecosystem_title: "Ten-player ecosystem · 3D projection", ecosystem_intro: "The floor is the map. Height is observed level. Links connect Faker to nearby players; dots show state at t and rings their next positions. The white diamond is the model's choice. Proximity and visible reactions do not prove causal influence.",
     geometry_title: "Legacy 64×64 local field · centred on Faker", geometry_intro: "This historical 64×64 geometry colours nearby cells at t with a positive metric tensor oriented by Faker's past movement and nearby allies. The observed arrival and later events explain the transition; they never construct the field.",
     geometry_legend: "Teal: Faker at t · pink: arrival at t+1 · blue: allies · red: opponents and their movements. The coloured field is a geometric hypothesis, not Shadow's predicted probability.", state_actor: "Actor",
-    accuracy_title: "What we can really predict", exploratory: "8×8 / 4×4 exploratory",
+    accuracy_title: "What we observe, what Shadow predicts", exploratory: "SECONDS · HISTORICAL MODELS",
     exact_explain: "<strong>16×16:</strong> Shadow 11.28%, baseline 11.61%. The original gate is not met.",
     metric_exact: "64×64 · EXACT CELL", metric_exact_note: "Shadow across 1,197 test decisions", metric_baseline: "BASELINE · MOST FREQUENT CELL", metric_baseline_note: "Best simple rule on the same decisions", metric_radius: "WITHIN 4 CELLS", metric_radius_note: "Shadow · copy previous location: 16.88%", metric_coverage: "SET COVERING 91.9%", metric_coverage_note: "Mean share of the proposed map · threshold fitted on validation", metric_context: "These figures come from a previously inspected historical test. ‘91.9%’ is not an exact prediction: the set spans 1,791 of 4,096 cells on average. No prospective improvement or superior playing ability has been shown.",
     predictability_kicker: "LAB · 46 VALIDATION MATCHES", predictability_title: "One exact cell, or almost the whole map?", predictability_intro: "On the same 8×8 grid, a longer shortlist covers more destinations. Reaching 90% coverage takes 41 of 64 cells.", predictability_badge: "NOT A FUTURE TEST", predictability_exact: "1 cell · exact accuracy", predictability_coverage: "41 cells · coverage", predictability_area: "proposed share of map", predictability_phase: "One-cell prediction in the phase selected on the timeline", predictability_limit: "These are development validation figures, not a future test. Enemy visibility is approximated. The timeline switches phase bins; it does not invent second-by-second accuracy.", predictability_full: "Proxy + global stats", predictability_visible: "Vision proxy", predictability_expert: "Phase expert", predictability_samples: n => `${n} validation decisions · same 8×8 grid for all three candidates. None shows 90% exact accuracy.`,
@@ -193,6 +193,11 @@ Object.assign(copy.en,{ninety_kicker:"90% GATE · ONE EXACT CELL",ninety_title:"
 Object.assign(copy.fr,{memory_title:"Un souvenir, une hypothèse, une réponse",memory_intro:"10 038 décisions de train alimentent une base locale de situations. Le challenger retrouve des cas proches, calibre ses choix sur des parties distinctes et prédit la prochaine région. Essayez vous-même sur des exemples de validation.",memory_doc:"Méthode et limites ↗",memory_retrieval:"mémoire · top-1 8×8",memory_baseline:"règle rôle/phase",memory_shadow:"Shadow IoC",memory_scores_limit:"Même validation réutilisée de 46 parties. La mémoire ne bat ni la règle ni Shadow ; aucune promotion du modèle. 512×512 désigne des cases de destination, pas une mesure à 512 Hz.",memory_you:"votre choix",memory_model:"mémoire",memory_actual:"observé",memory_instruction:"Cliquez une case : où Faker sera-t-il à la prochaine minute observée ?",memory_reveal:"Révéler",memory_next:"Cas suivant",memory_quiz_limit:"Ce quiz n'entraîne rien depuis le navigateur. La mémoire est calibrée sur le train ; les réponses de validation servent seulement à mesurer l'erreur.",memory_case:(n,total,row)=>`Cas ${n}/${total} · ${row.champion} · ${row.role} · minute ${row.minute}`,memory_feedback:(choice,pred,actual)=>`Votre case : ${choice ?? "—"} · Mémoire : ${pred} · Observé : ${actual}${choice===actual?" · juste !":""}`});
 Object.assign(copy.en,{memory_title:"A memory, a guess, an answer",memory_intro:"10,038 training decisions form a local case memory. The challenger retrieves similar situations, tunes its choices on separate training matches, then predicts the next region. Try held-out validation cases yourself.",memory_doc:"Method and limits ↗",memory_retrieval:"memory · top-1 8×8",memory_baseline:"role/phase rule",memory_shadow:"Shadow IoC",memory_scores_limit:"Same reused validation set of 46 matches. Retrieval trails both the rule and Shadow; no model promotion. 512×512 means destination cells, not 512 Hz observations.",memory_you:"your choice",memory_model:"memory",memory_actual:"observed",memory_instruction:"Click a cell: where will Faker be at the next observed minute?",memory_reveal:"Reveal",memory_next:"Next case",memory_quiz_limit:"The browser quiz does not train a model. Retrieval is calibrated within training matches; validation answers measure error only.",memory_case:(n,total,row)=>`Case ${n}/${total} · ${row.champion} · ${row.role} · minute ${row.minute}`,memory_feedback:(choice,pred,actual)=>`Your cell: ${choice ?? "—"} · Memory: ${pred} · Observed: ${actual}${choice===actual?" · correct!":""}`});
 
+Object.assign(copy.fr,{second_kicker:"CIBLE · SECONDES ET ESPACE CONTINU",second_title:"Que voit-on vraiment entre deux images ?",second_intro:"La grille n'est qu'un affichage ajustable. Ce curseur compte les événements réellement horodatés après une position connue de Faker ; il ne reconstitue pas ses déplacements entre les frames.",second_doc:"Source, cible et protocole ↗",second_horizon:"Fenêtre après la dernière position observée",second_windows:"fenêtres auditées",second_events:"avec un événement horodaté",second_faker:"avec Faker impliqué",second_position:"avec une nouvelle position de Faker",second_event_bar:"Événement API",second_faker_bar:"Faker impliqué",second_position_bar:"Position Faker observée",second_limit:"Un lieu d'événement n'est pas la position du joueur. La médiane entre positions observées vaut 60,02 s. Aucun score de déplacement de Faker à la seconde n'est encore établi."});
+Object.assign(copy.en,{second_kicker:"TARGET · SECONDS AND CONTINUOUS SPACE",second_title:"What can we actually see between frames?",second_intro:"The grid is an adjustable display. This slider counts truly timestamped events after a known Faker position; it does not reconstruct his movement between frames.",second_doc:"Source, target and protocol ↗",second_horizon:"Window after the last observed position",second_windows:"audited windows",second_events:"with a timestamped event",second_faker:"with Faker involved",second_position:"with a new Faker position",second_event_bar:"API event",second_faker_bar:"Faker involved",second_position_bar:"Observed Faker position",second_limit:"An event locus is not the player's position. The median gap between observed positions is 60.02 s. There is no second-scale Faker movement score yet."});
+Object.assign(copy.fr,{ninety_kicker:"ARCHIVE · CASE 8×8 À LA MINUTE",ninety_title:"L'ancien score de case, à sa juste place",ninety_intro:"Diagnostic d'un modèle à la minute : la confiance trie ses anciennes réponses. La cible actuelle porte sur des actions à la seconde et un espace continu.",ninety_badge:"ARCHIVE · 90 % NON ATTEINT",ninety_doc:"Audit historique de cette métrique ↗"});
+Object.assign(copy.en,{ninety_kicker:"ARCHIVE · NEXT-MINUTE 8×8 CELL",ninety_title:"The old cell score in context",ninety_intro:"A minute-scale model diagnostic: confidence ranks its earlier answers. The current target is second-scale action and continuous space.",ninety_badge:"ARCHIVE · 90% NOT MET",ninety_doc:"Historical audit of this metric ↗"});
+
 let language = "fr";
 let summary = null;
 let grid64 = null;
@@ -212,6 +217,7 @@ const lanePaths = {
 };
 let predictabilityData = null;
 let ninetyData = null;
+let secondScaleData = null;
 let eventAblation = null;
 let challengeScenario = "five_faker";
 let customAllocation = ["top","mid","jungle","bot","bot"];
@@ -539,6 +545,7 @@ function setSharedMinute(minute) {
   if (challengeData) renderChallenge();
   if (predictabilityData) renderPredictability();
   if (ninetyData) renderNinety();
+  if (secondScaleData) renderSecondScale();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
 }
@@ -557,6 +564,8 @@ function translate() {
     });
   });
   $("#language").textContent = language === "fr" ? "EN" : "FR";
+  $("#second-horizon").setAttribute("aria-label",language === "fr" ?
+    "Horizon en secondes : 1, 5, 10 ou 30" : "Horizon in seconds: 1, 5, 10 or 30");
   renderIocResult();
   renderIocControls();
   if (summary) {
@@ -569,6 +578,7 @@ function translate() {
   if (pressureData) renderPressure();
   if (predictabilityData) renderPredictability();
   if (ninetyData) renderNinety();
+  if (secondScaleData) renderSecondScale();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
   if (worldFinals) renderFinals();
@@ -611,6 +621,23 @@ function renderNinety() {
   $("#ninety-all").textContent = percentage(ninetyData.all_transitions_accuracy);
   $("#ninety-top").textContent = percentage(ninetyData.accuracy_at_fixed_served_coverage[0].exact_accuracy);
   $("#ninety-lockbox").textContent = `${ninetyData.prospective.new_games_scored} / ${ninetyData.prospective.required_new_games}`;
+}
+
+function renderSecondScale() {
+  if (!secondScaleData) return;
+  const horizons = [1, 5, 10, 30];
+  const seconds = horizons[Number($("#second-horizon").value)];
+  const row = secondScaleData.horizons_seconds[String(seconds)];
+  const locale = language === "fr" ? "fr-FR" : "en-US";
+  const percentage = n => `${(100 * n / row.windows).toLocaleString(locale,{maximumFractionDigits:1})} %`;
+  $("#second-horizon-value").textContent = `${seconds} s`;
+  for (const [key,value] of [["windows",row.windows],["events",row.with_event],["faker",row.with_faker_involvement],["position",row.with_new_faker_position]]) {
+    $("#second-"+key).textContent = value.toLocaleString(locale);
+  }
+  for (const [key,value] of [["event",row.with_event],["faker",row.with_faker_involvement],["position",row.with_new_faker_position]]) {
+    $("#second-"+key+"-pct").textContent = percentage(value);
+    $("#second-"+key+"-fill").style.width = `${100 * value / row.windows}%`;
+  }
 }
 
 function renderPredictability() {
@@ -1593,11 +1620,11 @@ async function start() {
     $("#map-readout").textContent = copy[language].load_error;
     console.error(error);
   }
-  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json"), fetch("/team-probe.json"), fetch("/ninety-gate.json")]);
+  const optional = await Promise.allSettled([fetch("/grid64.json"), fetch("/events64.json"), fetch("/challenge.json"), fetch("/pressure.json"), fetch("/predictability.json"), fetch("/atlas512.json"), fetch("/grid512.json"), fetch("/event-ablation.json"), fetch("/world-finals.json"), fetch("/corpus.json"), fetch("/sprites.json"), fetch("/ioc-summary.json"), fetch("/ioc-quality.json"), fetch("/event-validation.json"), fetch("/faker-memory.json"), fetch("/api/memory/cases"), fetch("/team-matrix.json"), fetch("/team-probe.json"), fetch("/ninety-gate.json"), fetch("/second-scale.json")]);
   const payloads = await Promise.all(optional.map(async (item) =>
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
   let memoryPayload;
-  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData, teamProbe, ninetyData] = payloads;
+  [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData, teamProbe, ninetyData, secondScaleData] = payloads;
   memoryCases = memoryPayload?.examples || [];
   renderIocResult();
   if (summary && (atlas512 || grid64)) renderSurface();
@@ -1606,6 +1633,7 @@ async function start() {
   if (pressureData) renderPressure();
   if (predictabilityData) renderPredictability();
   if (ninetyData) renderNinety();
+  if (secondScaleData) renderSecondScale();
   if (grid512Score) renderGrid512Score();
   if (eventAblation) renderResearchEvents();
   if (worldFinals) renderFinals();
@@ -1676,6 +1704,7 @@ $("#pressure-radius").addEventListener("input",event=>{
   if (pressureData) renderPressure();
 });
 $("#time-scrubber").addEventListener("input",event=>setSharedMinute(event.target.value));
+$("#second-horizon").addEventListener("input",renderSecondScale);
 $("#time-scrubber").addEventListener("wheel",event=>{event.preventDefault();setSharedMinute(sharedMinute+(event.deltaY>0?1:-1));},{passive:false});
 $("#minute-slider").addEventListener("input", () => setSharedMinute(Number($("#minute-slider").value)*5));
 $("#atlas-layer").addEventListener("change", () => { if (atlas512 || events64) renderAtlas(); });

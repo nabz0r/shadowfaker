@@ -1,6 +1,14 @@
 # Measured results (updated 2026-10-11)
 
-## M14: one exact 8×8 cell at 90% — gate not reached
+## M15: seconds are timestamped, Faker's positions are not
+
+![Observed event windows versus missing player positions](docs/figures/second_scale_observability.png)
+
+An audit of **465 cached KR ranked games** found **563,198 timestamped raw events**, **60,554 valid event loci**, and **12,975 sampled Faker positions**. The median gap between his position observations is **60.02 seconds**. Of **12,447 windows** spanning 10 seconds after a known position, **12,297** contain some event, **5,169** involve Faker, and **zero** contain a new sampled Faker position. At 1, 5, and 30 seconds the new-position count is also zero. These are source-availability counts, **not predictions**. Event loci can refer to victims, objectives or structures; they must not become Faker's position labels. [Continuous target, full audit table and reproduction](SECOND_SCALE.md).
+
+The research target is now action, time and optional continuous location at horizons measured in seconds. Render-grid size is a display choice. The following M14 score remains an archived next-minute benchmark and cannot validate a second-scale claim.
+
+## M14 archive: one exact next-minute 8×8 cell — gate not reached
 
 ![Exact 8×8 accuracy versus answered-transition coverage](docs/figures/ninety_exact_gate.png)
 

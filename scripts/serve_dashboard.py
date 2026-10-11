@@ -28,7 +28,7 @@ FIGURES = FIGURES | frozenset({"grid64_observed_vs_predicted.png", "event_atlas6
                                "corpus_event_clock.png", "event_context_ablation.png",
                                "ioc_challenge.png", "event_validation.png",
                                "faker_memory_challenge.png", "team_matrix.png", "team_history_probe.png",
-                               "ninety_exact_gate.png"})
+                               "ninety_exact_gate.png", "second_scale_observability.png"})
 ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/app.js": ROOT / "dashboard" / "app.js",
           "/style.css": ROOT / "dashboard" / "style.css",
@@ -48,6 +48,7 @@ ROUTES = {"/": ROOT / "dashboard" / "index.html",
           "/team-matrix.json": ROOT / "docs" / "data" / "public_team_matrix.json",
           "/team-probe.json": ROOT / "docs" / "data" / "public_team_probe.json",
           "/ninety-gate.json": ROOT / "docs" / "data" / "public_ninety_gate.json",
+          "/second-scale.json": ROOT / "docs" / "data" / "public_second_scale.json",
           "/sprites.json": ROOT / "docs" / "data" / "sprites.json",
           "/assets/champions.png": ROOT / "dashboard" / "assets" / "champions.png",
           "/assets/items.png": ROOT / "dashboard" / "assets" / "items.png",
