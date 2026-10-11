@@ -240,6 +240,7 @@ let liveEvents = [];
 let sharedMinute = 0;
 let worldFinals = null;
 let corpusData = null;
+let iocLedger = null;
 let eventValidation = null;
 let memorySummary = null;
 let memoryCases = [];
@@ -582,6 +583,7 @@ function translate() {
   $("#second-horizon").setAttribute("aria-label",language === "fr" ?
     "Horizon en secondes : 1, 5, 10 ou 30" : "Horizon in seconds: 1, 5, 10 or 30");
   renderIocResult();
+  renderIocLedger();
   renderIocControls();
   if (summary) {
     updateTempo();
@@ -607,6 +609,41 @@ function translate() {
   if (gameFacts.length) { renderGameCards(); renderGamePreview(); }
   if (trace) { updateReplay(); renderLive(); renderMoments(); }
   showSharedMinute();
+}
+
+function renderIocLedger() {
+  const root = $("#ioc-ledger");
+  if (!root) return;
+  const fr = language === "fr";
+  root.querySelector(".ioc-ledger-heading h3").textContent = fr ?
+    "Où est la base qui relie le jeu autour de Faker ?" : "Where is the database of Faker's game context?";
+  root.querySelector(".ioc-ledger-heading p").textContent = fr ?
+    "L'or n'est qu'une colonne. Le registre relie le dernier état connu des dix joueurs, les événements passés et la prochaine action observée de Faker. Chaque preuve garde son horloge et sa source." :
+    "Gold is one column. The ledger joins the last observed state of all ten players, past events and Faker's next observed action. Every piece of evidence keeps its time and source.";
+  const labels = fr ? ["parties", "états de joueurs", "événements horodatés", "fenêtres train · 10 s"] :
+    ["games", "player states", "timestamped events", "train windows · 10 s"];
+  root.querySelectorAll(".ioc-ledger-stats span").forEach((span, i) => { span.textContent = labels[i]; });
+  const flow = fr ? [
+    "Jungle · bot · support · ennemis<br><small>positions, vie, XP, CS, niveaux, objets</small>",
+    "Wards · combats · objectifs<br><small>événements passés ≤ t</small>",
+    "Faker à t<br><small>38 champs export · 48 archivés</small>",
+    "Action à t+10 s<br><small>7 labels séparés</small>"] : [
+    "Jungle · bot · support · enemies<br><small>positions, health, XP, CS, levels, items</small>",
+    "Wards · fights · objectives<br><small>past events ≤ t</small>",
+    "Faker at t<br><small>38 export fields · 48 archived</small>",
+    "Action at t+10 s<br><small>7 separate labels</small>"];
+  root.querySelectorAll(".ioc-ledger-flow span").forEach((span, i) => { span.innerHTML = flow[i]; });
+  root.querySelector(".ioc-ledger-foot").textContent = fr ?
+    "Positions ≈ 60 s ; événements horodatés. La timeline voit toute la carte. Le JSONL d'entraînement est privé et limité aux parties train ; aucun LLM n'est encore entraîné sur cette base." :
+    "Positions ≈ 60 s; events have timestamps. The timeline sees the whole map. Training JSONL stays private and train-only; no LLM has been trained on this database.";
+  root.querySelector(".text-link").textContent = fr ? "Schéma, export et limites ↗" : "Schema, export and limits ↗";
+  if (iocLedger) {
+    const fmt = n => Number(n).toLocaleString(fr ? "fr-FR" : "en-US");
+    $("#ioc-ledger-games").textContent = fmt(iocLedger.tables.games);
+    $("#ioc-ledger-actors").textContent = fmt(iocLedger.tables.actors);
+    $("#ioc-ledger-events").textContent = fmt(iocLedger.tables.events);
+    $("#ioc-ledger-train").textContent = fmt(iocLedger.windows_by_split.train);
+  }
 }
 
 function renderIocResult() {
@@ -1800,8 +1837,11 @@ async function start() {
     item.status === "fulfilled" && item.value.ok ? item.value.json() : null));
   let memoryPayload;
   [grid64, events64, challengeData, pressureData, predictabilityData, atlas512, grid512Score, eventAblation, worldFinals, corpusData, spriteManifest, iocSummary, iocQuality, eventValidation, memorySummary, memoryPayload, teamData, teamProbe, ninetyData, secondScaleData, fakerActionsData, sanitationData] = payloads;
+  try { const response = await fetch("/ioc-ledger.json"); if (response.ok) iocLedger = await response.json(); }
+  catch (error) { console.warn("IoC ledger aggregate unavailable", error); }
   memoryCases = memoryPayload?.examples || [];
   renderIocResult();
+  renderIocLedger();
   if (summary && (atlas512 || grid64)) renderSurface();
   if (atlas512 || events64) renderAtlas();
   if (challengeData) renderChallenge();

@@ -1,5 +1,14 @@
 # Shadow Faker — plan d'exécution
 
+## M19 — registre IoC causal, prêt pour un futur entraînement textuel (2026-10-11)
+
+1. Auditer les quatre dépôts existants (entrepôt de frames, fenêtres Faker à 10 s, mémoire de décisions, index textuel) et documenter les jointures manquantes. L'or n'est qu'un canal parmi les positions, XP, vie, CS, niveaux, vision par événements de wards, objectifs, itemisation et interactions des dix joueurs.
+2. Construire `data/processed/faker_ioc.sqlite`, privé et versionné. Pour chaque match : identité et split, snapshots des dix joueurs à l'horloge réellement observée, événements Riot horodatés avec rôle de Faker et pointeur source, et fenêtres `(t,t+10 s]` avec 48 variables causales, labels futurs séparés. Vérifier les cinq premiers matchs (trois train/deux validation), puis les 465, avec empreinte des sources et reprise sans refetch. Chaque erreur de match est isolée.
+3. Fournir un export JSONL **train seulement** pour un futur modèle de langage : état structuré et événements `<= t`, étiquettes futures séparées, provenance et âge du dernier snapshot. Ne pas prétendre disposer des clics, des communications ou de la vision réelle. La génération de texte rétrospectif et les sources externes non alignées restent hors des entrées prédictives.
+4. Tester causalité, attribution, séparation par match, reprise et correspondance exacte des labels avec le corpus assaini. Publier seulement schéma, agrégats, mode d'emploi et bilan dans les Markdown/README, jamais les lignes de Riot ou l'export privé. Aucun entraînement ni score nouveau ne sera revendiqué sans protocole prospectif.
+
+Risque principal : les événements ont une horloge fine mais les positions des dix joueurs n'existent qu'aux frames d'environ 60 s. La timeline donne une vision omnisciente ; le registre doit marquer ces limites au lieu d'inventer une décision ou une influence causale de Faker.
+
 ## M18 — assainir le corpus causal et rechallenger la prédiction Faker (2026-10-11)
 
 1. Geler les scores du modèle à 10 s et les splits par match. Auditer d'abord cinq parties puis les 465 JSON cachés : identité de Faker, queue ranked solo, durée, correspondance match/timeline, cadence des frames et intégrité des événements attribués. Chaque exclusion est expliquée et comptée ; les détails par match restent locaux.

@@ -2,6 +2,8 @@
 
 Shadow Faker's **IoC** is an *index of context*: a time-stamped, Faker-centred account of the other nine players, their movements, objectives, recent events and items. It is not a claim to have recovered Faker's clicks, attention, voice communication or exact fog of war. The prediction target remains **the next observed action of the account**, never an action of another player.
 
+The new [private causal IoC ledger](IOC_LEDGER.md) materializes these observations and the audited 10-second Faker windows together in SQLite. Its train-only JSONL export is a future model input contract, not an LLM result. The 617-channel item experiment below remains a separate, one-minute spatial model.
+
 The separate [event validation](EVENT_VALIDATION.md) confirms the **raw-to-index transcription** of all 353,409 older warehouse rows and lists exclusions and source attribution gaps. It does not validate the inferred held-item inventory or the meaning of a move.
 
 ```mermaid

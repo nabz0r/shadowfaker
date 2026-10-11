@@ -1,6 +1,6 @@
 # Shadow Faker — événements attribués à Faker dans les 10 secondes
 
-**Mise à jour M18 :** le [challenger assaini](DATA_SANITATION.md) contrôle les sources et ajoute onze variables causales ; sur les mêmes 46 matchs de validation, l'AP moyenne des quatre actes observables passe de 14,93 % à 17,40 %. Le modèle M16 décrit ci-dessous reste gelé comme référence. Aucune nouvelle cohorte indépendante n'a encore confirmé le gain.
+**Mise à jour M18/M19 :** le [challenger assaini](DATA_SANITATION.md) contrôle les sources et ajoute onze variables connues à la dernière frame ; sur les mêmes 46 matchs de validation, l'AP moyenne des quatre actes observables passe de 14,93 % à 17,40 %. Les dix anciennes distances par rôle utilisent toutefois `teamPosition` du match achevé, une métadonnée potentiellement rétrospective. Le [nouvel export IoC strict](IOC_LEDGER.md) les retire pour les expériences futures. Le modèle M16 décrit ci-dessous reste gelé comme référence ; aucune nouvelle cohorte indépendante n'a encore confirmé le gain.
 
 ![Précision moyenne par famille sur 46 parties de validation](docs/figures/faker_actions_10s.png)
 
@@ -24,7 +24,7 @@ Les événements automatiques `LEVEL_UP` et `ITEM_DESTROYED` sont exclus. Le lab
 
 Pilote : **5 matchs**, 737 fenêtres (420 train, 317 validation), avec tests sur attribution et frontière temporelle. Corpus complet : **465 matchs** et **73 482 fenêtres**, 0 erreur ; split préexistant par match **373 train / 46 validation / 46 test**, soit 58 974 / 7 480 / 7 028 fenêtres. Le test historique et la future cohorte ne servent ni au choix d'époque ni aux chiffres ci-dessous. Les fenêtres se chevauchent dans un match ; l'intervalle de confiance rééchantillonne les **matchs**, pas les fenêtres.
 
-Un MLP de **13 575 paramètres** lit les 37 features causales déjà extraites, avec sept sorties sigmoid. Entraînement BCE, seed 42, AdamW et arrêt après quatre époques sans baisse de perte de validation ; meilleur checkpoint à l'époque **25**, fin à l'époque **29**. Petit modèle exécuté sur CPU. Deux références sont ajustées uniquement sur train : fréquence globale par classe et fréquence par phase (<10, 10–20, ≥20 min), toutes deux lissées. Le modèle n'utilise pas de score final de partie en entrée.
+Un MLP de **13 575 paramètres** lit les 37 variables historiques déjà extraites, avec sept sorties sigmoid. Entraînement BCE, seed 42, AdamW et arrêt après quatre époques sans baisse de perte de validation ; meilleur checkpoint à l'époque **25**, fin à l'époque **29**. Petit modèle exécuté sur CPU. Deux références sont ajustées uniquement sur train : fréquence globale par classe et fréquence par phase (<10, 10–20, ≥20 min), toutes deux lissées. Le modèle n'utilise pas de score final de partie en entrée ; la provenance rétrospective possible des tags de rôle est signalée ci-dessus.
 
 ## Résultat exploratoire sur 46 matchs de validation
 

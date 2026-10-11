@@ -35,6 +35,8 @@ The state warehouse holds **12,975 frames**, **129,750 player observations**, **
 
 The [event-by-event validation](EVENT_VALIDATION.md) reconciles **563,198 raw events** with the warehouse: **353,409/353,409** indexed rows match their source fields. It exposes 1,288 purchases/skill points with source actor 0, 62 champion deaths without a player killer and 23,610 tower plates outside the old index. This checks transcription, not Faker's vision or motives.
 
+The new [Faker IoC ledger](IOC_LEDGER.md) keeps **all 563,198 timestamped events** in a separate private SQLite table and joins them to the same ten-player frames and **73,482 sanitized ten-second windows**. Its 58,974 training-window JSONL export contains only evidence available through `t`, with next-ten-second Faker labels separated; the strict export withholds completed-match role tags. It is data infrastructure for later model experiments, not a new prediction score. The [public aggregate](docs/data/public_ioc_ledger.json) contains counts only.
+
 ### Exact account names and event provenance
 
 The [public aggregate source inventory](docs/data/public_corpus_inventory.json) now lists the exact Riot IDs and regions without publishing PUUIDs: `Hide on bush#KR1` (470 ranked IDs, 465 usable), `Hide on bush#61151` on EUW (31/31, [historical external attribution](https://www.sheepesports.com/de/all/articles/lol-2024-worlds-players-accounts-on-euw-server/en)), and three community-attributed historical IDs with **zero** currently available ranked matches: `silent silence#08022`, `wincg#84926` (EUW), `Neo Hide on bush#NA1` (NA). Resolving a Riot ID confirms an account lookup, not the human behind it. Only the first account supplies spatial Faker labels.

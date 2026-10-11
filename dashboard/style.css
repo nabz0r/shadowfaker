@@ -163,6 +163,19 @@ html{scroll-behavior:auto}
 .ioc-vision-copy .ioc-vision-limit{border-left:3px solid #ff637d;padding-left:12px;color:#ffdbe1;font-size:11px}
 .ioc-vision-image img{display:block;width:100%;border:1px solid #bd6a7f;border-radius:12px;box-shadow:0 18px 44px #09050a9c}
 .ioc-vision-image p{margin:11px 0 0;color:#ffd895;font-weight:750;font-size:11px;line-height:1.5}
+.ioc-ledger{margin:26px 0;padding:clamp(18px,3vw,34px);border:1px solid #ad657b;border-radius:22px;background:radial-gradient(circle at 88% 5%,#8c284744,transparent 42%),linear-gradient(140deg,#291725,#120f1b);box-shadow:0 20px 55px #07040b85}
+.ioc-ledger-heading h3{color:#fff2ef;font-size:clamp(24px,3.2vw,40px);line-height:1.06;letter-spacing:-.04em;max-width:780px;margin:10px 0}
+.ioc-ledger-heading p,.ioc-ledger-foot{color:#e3cbd3;line-height:1.6;max-width:890px;font-size:13px}
+.ioc-ledger-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:24px 0}
+.ioc-ledger-stats>div{padding:17px;border:1px solid #79485f;border-top:3px solid #ff637d;background:#261823}
+.ioc-ledger-stats strong{display:block;color:#ffd895;font-size:clamp(23px,2.8vw,36px);font-weight:900;line-height:1}
+.ioc-ledger-stats span{display:block;color:#e5c3cf;font-size:11px;margin-top:9px}
+.ioc-ledger-flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin:25px 0}
+.ioc-ledger-flow span{flex:1 1 160px;padding:16px;border-radius:12px;border:1px solid #885169;background:#38202e;color:#fff1eb;font-size:13px;font-weight:800;line-height:1.5}
+.ioc-ledger-flow small{color:#e2b9c9;font-size:10px;font-weight:500}
+.ioc-ledger-flow b{align-self:center;color:#ff9ab0;font-size:20px}
+.ioc-ledger-foot{border-left:3px solid #ffd895;padding-left:13px;margin:18px 0}
+@media(max-width:620px){.ioc-ledger-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ioc-ledger-flow b{display:none}}
 .ioc-source-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-bottom:27px}
 .ioc-source-rail a{display:flex;flex-direction:column;gap:8px;min-height:98px;padding:16px;border:1px solid #8b4b60;border-radius:12px;background:linear-gradient(140deg,#311b28,#1d141e);text-decoration:none;transition:transform .16s,border-color .16s,box-shadow .16s}
 .ioc-source-rail a:hover,.ioc-source-rail a:focus-visible{transform:translateY(-3px);border-color:#ffd895;box-shadow:0 10px 25px #08050ab5}

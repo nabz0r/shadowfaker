@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 430" role="img" aria-labelledby="title desc">
+ <title id="title">Faker IoC ledger: from ten-player observations to next-ten-second labels</title>
+ <desc id="desc">465 ranked games yield 129,750 sampled player states, 563,198 timestamped events and 58,974 training windows. Inputs end at t; Faker labels belong to the next ten seconds.</desc>
+ <defs>
+  <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#160f1b"/><stop offset=".55" stop-color="#3b1929"/><stop offset="1" stop-color="#160f1b"/></linearGradient>
+  <linearGradient id="edge"><stop stop-color="#f24c70"/><stop offset="1" stop-color="#ffd895"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="12"/></filter>
+ </defs>
+ <rect width="1200" height="430" rx="26" fill="url(#bg)"/>
+ <ellipse cx="1030" cy="26" rx="240" ry="130" fill="#f24c70" opacity=".12" filter="url(#glow)"/>
+ <rect x="20" y="20" width="1160" height="390" rx="18" fill="none" stroke="#955367"/>
+ <text x="48" y="66" fill="#ff708b" font-family="Arial,sans-serif" font-size="15" font-weight="800" letter-spacing="4">SHADOW FAKER / INDEX OF CONTEXT</text>
+ <text x="48" y="113" fill="#fff7f2" font-family="Arial,sans-serif" font-size="35" font-weight="800">A game is more than its gold graph.</text>
+ <text x="48" y="146" fill="#e9bfcd" font-family="Arial,sans-serif" font-size="17">The ledger keeps time, actors and evidence around Faker.</text>
+ <g font-family="Arial,sans-serif">
+  <rect x="48" y="184" width="250" height="126" rx="14" fill="#39202d" stroke="#a45c72"/>
+  <text x="69" y="218" fill="#ffd895" font-size="28" font-weight="800">129,750</text>
+  <text x="69" y="245" fill="#fff0e9" font-size="16" font-weight="700">player states</text>
+  <text x="69" y="272" fill="#d9b6c4" font-size="13">10 actors · position, XP, health,</text>
+  <text x="69" y="290" fill="#d9b6c4" font-size="13">CS, levels, item proxy</text>
+  <text x="312" y="254" fill="#ff778f" font-size="28" font-weight="800">+</text>
+  <rect x="350" y="184" width="250" height="126" rx="14" fill="#39202d" stroke="#a45c72"/>
+  <text x="371" y="218" fill="#ffd895" font-size="28" font-weight="800">563,198</text>
+  <text x="371" y="245" fill="#fff0e9" font-size="16" font-weight="700">timestamped events</text>
+  <text x="371" y="272" fill="#d9b6c4" font-size="13">wards, combat, objectives,</text>
+  <text x="371" y="290" fill="#d9b6c4" font-size="13">purchases · only through t</text>
+  <path d="M613 247h42m-12-11 12 11-12 11" stroke="url(#edge)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="671" y="184" width="215" height="126" rx="14" fill="#512536" stroke="#e37086"/>
+  <text x="692" y="218" fill="#ffd895" font-size="28" font-weight="800">58,974</text>
+  <text x="692" y="245" fill="#fff0e9" font-size="16" font-weight="700">train windows</text>
+  <text x="692" y="272" fill="#e3c0ce" font-size="13">Faker context at t</text>
+  <text x="692" y="290" fill="#e3c0ce" font-size="13">38 strict export fields</text>
+  <path d="M898 247h42m-12-11 12 11-12 11" stroke="url(#edge)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="956" y="184" width="196" height="126" rx="14" fill="#704054" stroke="#ffd895"/>
+  <text x="977" y="218" fill="#ffd895" font-size="28" font-weight="800">t + 10 s</text>
+  <text x="977" y="245" fill="#fff0e9" font-size="16" font-weight="700">Faker's next event</text>
+  <text x="977" y="272" fill="#f2d7df" font-size="13">7 observed labels</text>
+  <text x="977" y="290" fill="#f2d7df" font-size="13">stored separately</text>
+  <path d="M48 341h1104" stroke="#865166"/>
+  <text x="48" y="370" fill="#ffd895" font-size="14" font-weight="700">PRIVATE SQLITE · 465 KR MATCHES · 5-GAME PILOT</text>
+  <text x="48" y="392" fill="#d9bdc8" font-size="13">Positions are sampled about every 60 s. Riot's timeline is omniscient; no player-view or clicks are claimed.</text>
+ </g>
+</svg>

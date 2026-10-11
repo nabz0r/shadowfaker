@@ -167,6 +167,8 @@ def main() -> None:
     command(sys.executable, CONFIG.root / "scripts" / "challenge_faker_actions.py")
     command(sys.executable, CONFIG.root / "scripts" / "render_action_sanitation.py")
     stage("Audited causal Faker-action windows and paired validation challenger refreshed; old test untouched.")
+    command(sys.executable, CONFIG.root / "scripts" / "build_ioc_corpus.py")
+    stage("Private Faker IoC ledger joined 10-player snapshots, past events and causal 10-second windows; public counts refreshed.")
 
     export_trace(max_frames=30)
     command(sys.executable, CONFIG.root / "scripts" / "render_atlas64.py")

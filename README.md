@@ -98,6 +98,12 @@ On the same **46 reused validation games**, the 617-channel candidate scores **1
 
 The Corpus tab shows an [external-source register](IOC_VISION.md): official [Riot Data Dragon](https://developer.riotgames.com/docs/lol#data-dragon) is used for patch-matched static descriptors; [U.GG](https://u.gg/lol/champions/azir/build) is a build-context reference (its direct automated access was denied and current builds cannot label a historical minute); [Google Custom Search](https://developers.google.com/custom-search/v1/overview) is a discovery route requiring credentials and closed to new customers. No search snippet, current-patch win rate or final-game item enters an old state. The game dashboard remains an independent fan project.
 
+### The Faker IoC database, ready for future model experiments
+
+![Faker-centred evidence ledger: ten-player states and events lead to causal ten-second windows](docs/figures/ioc_ledger.svg)
+
+Gold is only one field. The new **private** `data/processed/faker_ioc.sqlite` joins **465 ranked games**, **129,750 sampled ten-player states** and **563,198 timestamped events** to **73,482 Faker-centred ten-second windows**. Each window stores 48 historical fields; the strict training export withholds ten role-distance fields that rely on completed-match role tags, leaving **38 numeric inputs** and a separate seven-label next-event target. **58,974 windows belong to training matches**. Player position, health, XP, CS and event-derived items sit beside ward, combat, objective and purchase events. The site’s Corpus tab now shows this ledger and its clocks. The [schema, build commands and train-only JSONL contract](IOC_LEDGER.md) are public; row-level data and the export stay local. No text LLM has been trained on this database, and this indexing step does not change the prediction score.
+
 ![Which timeline events are indexed, and which remain outside the old index](docs/figures/event_validation.png)
 
 An independent [event validation](EVENT_VALIDATION.md) reconciles **563,198 raw Riot events** with the local warehouse: **353,409/353,409 indexed rows** reproduce their source fields. It flags **1,288 purchases/skill points without a player ID**, **62 deaths without a player killer** and **23,610 tower plates outside the old index**. Exact transcription does not prove that Faker saw an event or explain his decision.

@@ -99,6 +99,12 @@ Sur les **46 mêmes parties de validation déjà utilisées**, le candidat à 61
 
 Le Corpus affiche les sources externes : [Data Dragon Riot](https://developer.riotgames.com/docs/lol#data-dragon) alimente les caractéristiques statiques du patch ; [U.GG](https://u.gg/lol/champions/azir/build) sert de référence de builds, mais l'accès automatisé direct a été refusé et un build actuel ne peut décrire une minute historique ; [Google Custom Search](https://developers.google.com/custom-search/v1/overview) servirait à découvrir des sources, avec identifiants requis et inscription fermée aux nouveaux clients. Aucun extrait de recherche, taux de victoire actuel ou objet final n'est injecté dans l'état passé. [Vision et provenance détaillées](IOC_VISION.md).
 
+### La base IoC de Faker, prête pour les prochaines expériences
+
+![Registre de preuves centré sur Faker : états des dix joueurs et événements vers des fenêtres causales de dix secondes](docs/figures/ioc_ledger.svg)
+
+L'or n'est qu'un champ. La **base privée** `data/processed/faker_ioc.sqlite` relie **465 parties ranked**, **129 750 états échantillonnés des dix joueurs** et **563 198 événements horodatés** à **73 482 fenêtres de dix secondes centrées sur Faker**. Chacune archive 48 champs historiques ; l'export strict retire dix distances par rôle issues de métadonnées de fin de match, soit **38 entrées numériques**, avec une cible de sept événements futurs séparée. **58 974 fenêtres appartiennent aux parties d'entraînement**. Positions, vie, XP, CS et objets déduits des événements côtoient wards, combats, objectifs et achats. L'onglet Corpus montre maintenant ce registre et ses deux horloges. Le [schéma, les commandes et le contrat JSONL limité au train](IOC_LEDGER.md) sont publics ; les lignes et l'export restent locaux. Aucun LLM textuel n'a encore été entraîné sur cette base et cette indexation ne change pas les scores de prédiction.
+
 ![Quels événements sont indexés et lesquels restent hors de l'ancien index](docs/figures/event_validation.png)
 
 Une [validation indépendante des événements](EVENT_VALIDATION.md) rapproche **563 198 événements Riot bruts** de la base locale : **353 409/353 409 lignes indexées** reproduisent les champs de leur source. Elle signale **1 288 achats/points de compétence sans ID joueur**, **62 morts sans tueur joueur** et **23 610 plaques de tourelle hors de l'ancien index**. Une transcription exacte ne prouve ni que Faker a vu l'événement ni pourquoi il a agi.
