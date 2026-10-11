@@ -1,5 +1,7 @@
 # Shadow Faker — secondes, actions et espace continu
 
+Le [modèle M16 d'événements attribués à Faker](FAKER_ACTIONS.md) est désormais un premier test prédictif à **10 secondes**, sur sept familles d'actions ou d'issues observées. Son amélioration sur validation concerne l'occurrence d'événements, sans coordonnées du joueur entre les frames ni score de déplacement à la seconde.
+
 ![Ce que les timelines observent vraiment à la seconde](docs/figures/second_scale_observability.png)
 
 ## Cible de recherche

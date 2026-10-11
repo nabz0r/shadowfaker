@@ -245,3 +245,39 @@ html{scroll-behavior:auto}
 .second-scale-bars{display:grid;gap:10px;margin:20px 0}.second-scale-bars>div{display:grid;grid-template-columns:175px 1fr 56px;gap:12px;align-items:center;font-size:12px;color:#f5dce4}.second-scale-bars i{height:13px;display:block;background:#27344a;border:1px solid #5c4b5c}.second-scale-bars b{display:block;height:100%;width:0;background:#ff789d;transition:width .22s ease}.second-scale-bars>div:nth-child(2) b{background:#71dae2}.second-scale-bars>div:nth-child(3) b{background:#ffd393}.second-scale-bars strong{color:#fff;text-align:right}
 .second-scale-panel>.fine{color:#d2b9c5;line-height:1.6}.second-scale-panel>img{display:block;width:100%;max-width:100%;margin-top:19px;border:1px solid #795669;border-radius:9px}
 @media(max-width:750px){.second-scale-head{display:block}.second-scale-head .text-link{display:inline-block;margin-bottom:15px}.second-scale-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.second-scale-bars>div{grid-template-columns:112px 1fr 45px;gap:6px;font-size:10px}.second-scale-control{padding:12px}}
+
+/* Faker-attributed ten-second outcomes; validation precision by game phase. */
+.faker-actions-panel{margin:28px 0;padding:28px;background:radial-gradient(circle at 100% 0%,#7a263d55,transparent 42%),linear-gradient(145deg,#251522,#141924);border:1px solid #ac5a72;border-top:3px solid #f65e76;border-radius:12px;box-shadow:0 22px 55px #05081388}
+.faker-actions-head{display:flex;justify-content:space-between;align-items:flex-start;gap:25px}
+.faker-actions-head h3{font-size:clamp(27px,3.5vw,48px);font-style:italic;text-transform:uppercase;letter-spacing:-.045em;margin:8px 0;color:#fff}
+.faker-actions-head p{max-width:750px;color:#e0c8d1;font-size:13px;line-height:1.6}
+.faker-actions-head>div:last-child{min-width:185px}
+.faker-actions-head label{display:block;color:#ffd393;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;margin:4px 0 8px}
+.faker-actions-head select{width:100%;background:#1d1420;color:#fff3f1;border:1px solid #ab6477;padding:10px;border-radius:4px}
+.faker-actions-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:23px 0}
+.faker-actions-metrics>div{padding:17px;background:#1b1825;border:1px solid #714a5d}
+.faker-actions-metrics strong,.faker-actions-metrics span{display:block}
+.faker-actions-metrics strong{font-size:clamp(26px,3.4vw,43px);font-style:italic;color:#ff789d;line-height:1}
+.faker-actions-metrics>div:nth-child(2) strong{color:#71dae2}
+.faker-actions-metrics>div:nth-child(3) strong{color:#ffd393}
+.faker-actions-metrics span{font-size:10px;line-height:1.4;color:#d9bcc9;text-transform:uppercase;letter-spacing:.07em;margin-top:9px}
+.faker-actions-legend{display:flex;align-items:center;gap:19px;flex-wrap:wrap;color:#edd4dc;font-size:11px;margin-bottom:16px}
+.faker-actions-legend span{display:inline-flex;align-items:center;gap:6px}
+.faker-actions-legend i{display:inline-block;width:11px;height:11px;background:#f05274}
+.faker-actions-legend span:nth-child(2) i{background:#69cbd5}
+.faker-actions-legend small{color:#ceb5c2}
+.faker-actions-rows{display:grid;gap:8px}
+.faker-actions-row{display:grid;grid-template-columns:160px minmax(0,1fr) 65px;gap:12px;align-items:center;padding:8px 10px;background:#191923;border:1px solid #5b465a}
+.faker-actions-row .label{font-size:12px;font-weight:800;color:#fff}
+.faker-actions-row .label small{display:block;font-weight:500;color:#c6acba;font-size:10px;margin-top:3px}
+.faker-actions-row .tracks{display:grid;gap:5px}
+.faker-actions-row .track{height:10px;background:#352433;border-radius:10px;overflow:hidden}
+.faker-actions-row .track i{display:block;height:100%;background:#f05274;border-radius:10px;transition:width .25s ease}
+.faker-actions-row .track:nth-child(2) i{background:#69cbd5}
+.faker-actions-row strong{font-size:14px;color:#ff91a8;text-align:right}
+.faker-actions-panel>.fine{max-width:950px;font-size:11px;line-height:1.6;color:#d6bcc7;margin:17px 0 10px}
+.faker-actions-panel>.text-link{font-size:12px}
+@media(max-width:700px){.faker-actions-panel{padding:16px}.faker-actions-head{display:block}.faker-actions-head>div:last-child{margin-top:17px}.faker-actions-metrics{grid-template-columns:1fr}.faker-actions-row{grid-template-columns:105px minmax(0,1fr) 48px;gap:7px}.faker-actions-row .label{font-size:10px}.faker-actions-row strong{font-size:11px}}
+.faker-actions-row strong small{display:block;color:#69cbd5;font-size:10px;font-weight:700;margin-top:3px}
+
+.faker-actions-metrics>div:nth-child(4) strong{color:#d6bec9}

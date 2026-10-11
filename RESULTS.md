@@ -1,5 +1,11 @@
 # Measured results (updated 2026-10-11)
 
+## M16: Faker-attributed events in the next ten seconds
+
+![Average precision by Faker action or outcome against a train-only phase rule](docs/figures/faker_actions_10s.png)
+
+On **373 KR training games**, a 13,575-parameter multilabel head learned seven explicitly Faker-attributed event families. A five-game pilot preceded the full cache build. On **46 development validation games / 7,480 ten-second windows**, model log loss is **0.19427**, versus **0.20481** for a train-only phase-frequency rule; paired match-bootstrap gain **0.01054 [0.00906, 0.01211]**. Macro average precision is **0.12110** versus **0.06600**. Purchase AP is **24.09%** versus **8.68%**; kill-outcome AP is **7.67%** versus **5.01%**, still weak for individual events. An AP is a threshold-free ranking measure, not exact accuracy. Kills/deaths/assists are observed outcomes, not intentions. The old test and new-game lockbox remain untouched; no position at ten seconds has been inferred. [Labels, every class, reproduction and limits](FAKER_ACTIONS.md).
+
 ## M15: seconds are timestamped, Faker's positions are not
 
 ![Observed event windows versus missing player positions](docs/figures/second_scale_observability.png)

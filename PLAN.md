@@ -1,5 +1,14 @@
 # Shadow Faker — plan d'exécution
 
+## M16 — prochaines actions de Faker à 10 secondes (2026-10-11)
+
+**Contrat figé avant entraînement.** Depuis les mêmes états causaux du modèle d'événements, prédire pour chaque fenêtre `(t,t+10 s]` plusieurs événements explicitement attribués à Faker : achat, point de compétence, ward posée/détruite, kill, mort et assistance. Achat/skill/ward sont des actes observables ; kill/mort/assistance sont des issues, sans prétention sur l'intention. Ne pas utiliser `LEVEL_UP`, `ITEM_DESTROYED` ou un événement de toute l'équipe comme une action de Faker. Un lieu d'événement n'est jamais sa position.
+
+1. Vérifier la construction et la causalité sur cinq matchs (trois train, deux validation), puis sur les 465. Sauvegarder un NPZ par match, versionné, sans corpus entier en RAM et avec reprise. Les fenêtres se recouvrent dans un match : toute incertitude est groupée par match.
+2. Entraîner une petite tête multilabel depuis les features à `t`, avec arrêt sur la perte de validation. Comparer à la fréquence globale et à la fréquence par phase ajustées **sur train seulement**. Rapporter log loss, Brier et AUPRC par classe avec prévalence, et une métrique globale qui n'est pas dominée par « aucun événement ». Ne pas ouvrir l'ancien test déjà consulté pour sélectionner le modèle.
+3. Publier uniquement des agrégats et un visuel. Une amélioration de log loss ne sera pas présentée comme une capacité à anticiper les kills si l'AUPRC de cette classe ne gagne pas. Le futur lockbox requiert de nouveaux matchs ; la clé Riot actuellement refusée par HTTP 401 bloque seulement ce rafraîchissement, pas le travail depuis cache.
+
+
 ## M15 — horloge à la seconde, espace continu (2026-10-11)
 
 La cible de recherche est une **décision de Faker à l'échelle de la seconde** : à l'instant `t`, avec seulement l'information disponible jusqu'à `t`, prévoir un type d'action, son délai et, si l'action a un lieu, une distribution sur des coordonnées continues normalisées `(x,y)`. Une grille 8/16/64/512 n'est qu'un rendu ou une approximation numérique de cette distribution ; son nombre de cases ne définit plus le succès. Le score spatial futur sera une erreur en unités de jeu et une couverture dans un rayon préenregistré, conditionnée à une action réellement observable. Le seuil de 90 % reste une hypothèse, pas une propriété actuelle.

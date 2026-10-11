@@ -159,6 +159,10 @@ def main() -> None:
     command(sys.executable, CONFIG.root / "scripts" / "audit_second_scale.py")
     command(sys.executable, CONFIG.root / "scripts" / "render_second_scale.py")
     stage("Second-scale source availability refreshed; grids remain display choices, not temporal labels.")
+    command(sys.executable, CONFIG.root / "scripts" / "run_faker_actions.py")
+    command(sys.executable, CONFIG.root / "scripts" / "train_faker_actions.py")
+    command(sys.executable, CONFIG.root / "scripts" / "render_faker_actions.py")
+    stage("Faker-attributed 10-second action probabilities and validation baselines refreshed.")
 
     export_trace(max_frames=30)
     command(sys.executable, CONFIG.root / "scripts" / "render_atlas64.py")
