@@ -1,4 +1,6 @@
-from shadowfaker.demo import _observed_context, _source_fingerprint
+import json
+
+from shadowfaker.demo import _cached_patch_items, _observed_context, _source_fingerprint
 
 
 def test_replay_keeps_event_time_separate_from_sampled_positions():
@@ -62,3 +64,45 @@ def test_trace_fingerprint_changes_when_a_source_changes(tmp_path):
     first=_source_fingerprint(source)
     source.write_text('{"frames":2}')
     assert _source_fingerprint(source)!=first
+
+
+def test_replay_attribution_and_event_details_remain_on_event_clock():
+    players=[{"puuid":"faker" if pid==1 else str(pid),"participantId":pid,
+              "teamId":100 if pid<=5 else 200,"teamPosition":"MIDDLE",
+              "championName":f"C{pid}"} for pid in range(1,11)]
+    events=[
+        {"type":"CHAMPION_KILL","timestamp":1000,"killerId":7,"victimId":1,
+         "assistingParticipantIds":[8,9],"position":{"x":9000,"y":8000}},
+        {"type":"ELITE_MONSTER_KILL","timestamp":2000,"killerId":2,"killerTeamId":100,
+         "monsterType":"DRAGON","monsterSubType":"WATER_DRAGON"},
+        {"type":"BUILDING_KILL","timestamp":3000,"killerId":2,"teamId":200,
+         "buildingType":"TOWER_BUILDING","towerType":"OUTER_TURRET","laneType":"BOT_LANE"},
+        {"type":"WARD_PLACED","timestamp":4000,"creatorId":8,"wardType":"UNDEFINED"},
+    ]
+    frames=[{"timestamp":stamp,"participantFrames":{},"events":items}
+            for stamp,items in [(0,[]),(60_000,events)]]
+    inventory=[{pid:{} for pid in range(1,11)} for _ in frames]
+    result=_observed_context({"info":{"participants":players}},{"info":{"frames":frames}},
+                             "faker",0,inventory)
+    death,dragon,building,ward=result["events_next"]
+    assert death["victim_id"]==1 and death["acting_team_id"]==200
+    assert death["assisting_ids"]==[8,9] and death["time_seconds"]==1
+    assert dragon["monster_subtype"]=="WATER_DRAGON" and dragon["acting_team_id"]==100
+    assert dragon["team_attribution"]=="riot_team" and dragon["xy"] is None
+    assert building["destroyed_team_id"]==200 and building["acting_team_id"]==100
+    assert building["team_attribution"]=="opposite_of_destroyed_team"
+    assert building["tower_type"]=="OUTER_TURRET" and building["lane_type"]=="BOT_LANE"
+    assert ward["ward_type"]=="UNDEFINED" and ward["acting_team_id"]==200
+    assert all(e["time_seconds"]<=60 for e in result["events_next"])
+
+
+def test_patch_catalog_comes_from_cached_played_release(tmp_path):
+    root=tmp_path/"ddragon"/"16.19.1"
+    root.mkdir(parents=True)
+    (tmp_path/"ddragon"/"versions.json").write_text(json.dumps(["16.20.1","16.19.1"]))
+    (root/"en_US_item.json").write_text(json.dumps({"data":{"1056":{"name":"Doran's Ring","gold":{"total":400},"tags":["SpellDamage"]}}}))
+    release,items,paths=_cached_patch_items({"info":{"gameVersion":"16.19.723.999"}},tmp_path)
+    assert release=="16.19.1" and items["1056"]["gold"]["total"]==400
+    assert len(paths)==2
+    missing,items,_=_cached_patch_items({"info":{"gameVersion":"16.18.2"}},tmp_path)
+    assert missing=="" and items=={}

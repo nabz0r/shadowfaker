@@ -20,7 +20,21 @@ from .events64 import event_category, position_cell
 from .geometry64 import local_metric
 from .ioc import inventory_snapshots
 
-TRACE_SCHEMA_VERSION = 9
+TRACE_SCHEMA_VERSION = 10
+
+
+def _cached_patch_items(match: dict, raw: Path) -> tuple[str, dict, tuple[Path, ...]]:
+    """Read the played patch's official static catalog without needing a live API key."""
+    version = str((match.get("info") or {}).get("gameVersion") or "")
+    patch = ".".join(version.split(".")[:2])
+    versions_path = raw / "ddragon" / "versions.json"
+    versions = read_json(versions_path) or []
+    release = next((v for v in versions if isinstance(v, str) and v.startswith(patch + ".")), "")
+    path = raw / "ddragon" / release / "en_US_item.json" if release else None
+    if not path or not path.is_file():
+        return "", {}, (versions_path,) if versions_path.is_file() else ()
+    source = read_json(path) or {}
+    return release, source.get("data") or {}, (versions_path, path)
 
 
 def _source_fingerprint(*paths: Path) -> str:
@@ -59,7 +73,7 @@ def _observed_context(match: dict, timeline: dict, puuid: str, minute: float,
             stats=data.get("championStats") or {}
             max_health=number(stats.get("healthMax"))
             health=number(stats.get("health"))
-            result.append({"participant":p,"side":"faker" if p==pid else "ally" if teams[p]==team_id else "enemy",
+            result.append({"participant":p,"team_id":teams[p],"side":"faker" if p==pid else "ally" if teams[p]==team_id else "enemy",
                            "role":roles[p],"champion":champions[p],
                            "xy":None if xy is None else [round(float(v),5) for v in xy],
                            "gold":int(number(data.get("totalGold"))),"xp":int(number(data.get("xp"))),
@@ -90,11 +104,33 @@ def _observed_context(match: dict, timeline: dict, puuid: str, minute: float,
             category=event_category(event,pid,team_id,teams)
             if category is None and event.get("type") not in ("ITEM_PURCHASED","SKILL_LEVEL_UP"): continue
             event_xy=position(event)
+            actor_id=int(event.get("participantId") or event.get("killerId") or event.get("creatorId") or 0)
+            event_type=event.get("type")
+            owner_team=int(event.get("teamId") or 0) if event_type=="BUILDING_KILL" else 0
+            if event_type=="ELITE_MONSTER_KILL":
+                acting_team=int(event.get("killerTeamId") or teams.get(actor_id) or 0)
+                attribution="riot_team" if int(event.get("killerTeamId") or 0) in (100,200) else "actor"
+            elif event_type=="BUILDING_KILL" and owner_team in (100,200):
+                acting_team=300-owner_team
+                attribution="opposite_of_destroyed_team"
+            else:
+                acting_team=teams.get(actor_id,0)
+                attribution="actor" if acting_team else "unknown"
+            if acting_team not in (100,200): acting_team=0
             shown.append({"time_seconds":round(number(event.get("timestamp"),high)/1000,3),
                           "seconds_after_t":round((number(event.get("timestamp"),high)-low)/1000,1),
                           "category":category or event.get("type"),"cell64":position_cell(event),
                           "xy":None if event_xy is None else [round(float(v),5) for v in event_xy],
-                          "actor_id":int(event.get("participantId") or event.get("killerId") or event.get("creatorId") or 0),
+                          "actor_id":actor_id,"victim_id":int(event.get("victimId") or 0),
+                          "assisting_ids":[int(v) for v in event.get("assistingParticipantIds") or []
+                                           if str(v).isdigit() and int(v) in teams],
+                          "acting_team_id":acting_team,"team_attribution":attribution,
+                          "destroyed_team_id":owner_team if owner_team in (100,200) else 0,
+                          "monster_subtype":str(event.get("monsterSubType") or ""),
+                          "building_type":str(event.get("buildingType") or ""),
+                          "lane_type":str(event.get("laneType") or ""),
+                          "tower_type":str(event.get("towerType") or ""),
+                          "ward_type":str(event.get("wardType") or ""),
                           "item_id":int(event.get("itemId") or 0),"skill_slot":int(event.get("skillSlot") or 0)})
         return shown
     shown=display_events(raw_events)
@@ -128,9 +164,11 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
     checkpoint = models / "best.pt"
     checkpoint_hash = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
     raw = processed.parent / "raw"
+    match = json.loads((raw / "matches" / f"{mid}.json").read_text())
+    catalog_release, catalog, catalog_paths = _cached_patch_items(match, raw)
     source_paths = (processed / "matches" / f"{mid}.npz",
                     raw / "matches" / f"{mid}.json", raw / "timelines" / f"{mid}.json",
-                    raw / "manifest.json", processed / "meta.json")
+                    raw / "manifest.json", processed / "meta.json", *catalog_paths)
     source_hash = _source_fingerprint(*source_paths)
     output = artifacts / "replays" / mid / "trace.json" if allow_any else artifacts / "replay_trace.json"
     existing = read_json(output)
@@ -147,7 +185,6 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
         actual = arrays["region"].copy()
         minute = arrays["minute"].copy()
     count = min(max_frames, len(actual))
-    match = json.loads((raw / "matches" / f"{mid}.json").read_text())
     timeline = json.loads((raw / "timelines" / f"{mid}.json").read_text())
     inventories = inventory_snapshots(timeline)[0]
     timed_events = [event for frame in (timeline.get("info") or {}).get("frames") or []
@@ -203,9 +240,20 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
                      "level": round(float(current[2] * 18)), "cs": round(float(current[4] * 400)),
                      "estimated_final_win_probability": float(values[i]), "image": filename})
     artifacts.mkdir(parents=True, exist_ok=True)
+    referenced_items={item for row in rows for actor in (*row["actors_t"],*row["actors_next"])
+                      for item in actor["items"]}
+    referenced_items.update(event["item_id"] for row in rows
+                            for event in (*row["events_initial"],*row["events_next"])
+                            if event["item_id"])
+    item_descriptors={str(item):{"name":str(catalog[str(item)].get("name") or ""),
+                                 "cost":int((catalog[str(item)].get("gold") or {}).get("total") or 0),
+                                 "tags":list(catalog[str(item)].get("tags") or [])}
+                      for item in referenced_items if str(item) in catalog}
     atomic_json(output, {"schema_version": TRACE_SCHEMA_VERSION, "match_id": mid, "max_frames": max_frames,
                          "checkpoint_sha256": checkpoint_hash, "source_sha256": source_hash,
                          "source_step_seconds": 60,
+                         "played_patch":".".join(str((match.get("info") or {}).get("gameVersion") or "").split(".")[:2]),
+                         "item_catalog_release":catalog_release,"item_catalog":item_descriptors,
                          "view": model.view,
                          "split": next(k for k,v in meta["splits"].items() if mid in v),
                          "rows": rows})
