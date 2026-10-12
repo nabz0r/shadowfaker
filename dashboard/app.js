@@ -19,7 +19,7 @@ const copy = {
     surface_actual: "Observé", surface_shadow: "Shadow", surface_rotate: "Angle de vue",
     replay_title: "Rejouer une partie, suivre chaque événement", replay_step: "Horloge en secondes · positions ~60 s",
     replay_intro: "Choisis une partie classée indexée. Suis Faker et les neuf autres joueurs, les objectifs pris par chaque camp, la vision, les achats et les événements datés. Les objets portent les noms et coûts du patch joué ; les positions ne changent qu'aux relevés Riot (~60 s). Ce n'est ni une vidéo ni la vision de Faker.",
-    live_kicker: "PARTIE LOCALE · CHRONOLOGIE OBSERVÉE", live_title: "La Faille, autour de Faker", live_allies: "Alliés", live_enemies: "Adversaires", live_event: "Événements", live_paths: "Traces observées", live_path_scope: "Suivre", live_path_faker: "Faker", live_path_all: "10 joueurs", live_path_depth: "Frames", live_event_window: "Sur la carte", live_event_15: "15 s", live_event_60: "60 s", live_event_180: "3 min", live_feed: "Événements déjà observés", live_speed: "Vitesse", live_limit: "Fond Riot Data Dragon 16.20.1, pas une carte du patch historique. Portraits et vie : dernière frame Riot (~60 s). Les traits relient seulement des relevés passés ; le trajet réel entre eux est inconnu. Événements à leur temps et lieu propre si fourni ; vision et communications de Faker inconnues.", replay_analysis: "Ouvrir l'analyse rétrospective : prévision Shadow et arrivée réelle à la minute suivante", game_spoiler: "Voir la fiche de fin de partie · résultat et objets finaux",
+    live_kicker: "PARTIE LOCALE · CHRONOLOGIE OBSERVÉE", live_title: "La Faille, autour de Faker", live_allies: "Alliés", live_enemies: "Adversaires", live_event: "Événements", live_paths: "Traces observées", live_path_scope: "Suivre", live_path_faker: "Faker", live_path_all: "10 joueurs", live_path_depth: "Frames", live_event_window: "Sur la carte", live_event_15: "15 s", live_event_60: "60 s", live_event_180: "3 min", live_feed: "Événements déjà observés", live_speed: "Vitesse", live_resources: "Objets, vision et potions · Faker", live_limit: "Fond Riot Data Dragon 16.20.1, pas une carte du patch historique. Portraits et vie : dernière frame Riot (~60 s). Inventaires reconstitués par événements horodatés ; charges de potions inconnues. Les traits relient seulement des relevés passés ; le trajet réel entre eux est inconnu. Événements à leur temps et lieu propre si fourni ; vision et communications de Faker inconnues.", replay_analysis: "Ouvrir l'analyse rétrospective : prévision Shadow et arrivée réelle à la minute suivante", game_spoiler: "Voir la fiche de fin de partie · résultat et objets finaux",
     replay_now: "Départ : compte à la minute affichée", replay_team: "Contexte : autres alliés au départ", replay_real: "Arrivée réelle une minute après", replay_guess: "Case prévue par Shadow", replay_minute: "Minute de départ",
     replay_gold: "Écart d'or équipe", replay_xp: "Écart d'XP", replay_level: "Niveau", replay_uncertainty: "Dispersion de prédiction",
     replay_play: "▶ Rejouer", replay_pause: "Ⅱ Pause", replay_trend_note: "Courbe rétrospective de l'écart d'or ; elle n'entre jamais dans l'état passé du modèle.",
@@ -78,7 +78,7 @@ const copy = {
     surface_actual: "Observed", surface_shadow: "Shadow", surface_rotate: "View angle",
     replay_title: "Replay a game, follow every event", replay_step: "Second clock · positions ~60 s",
     replay_intro: "Choose an indexed ranked game. Follow Faker and the other nine players, each side's secured objectives, vision, purchases and timed events. Items use played-patch names and costs; positions change only at Riot samples (~60 s). This is neither a video nor Faker's point of view.",
-    live_kicker: "LOCAL GAME · OBSERVED CHRONOLOGY", live_title: "The Rift, around Faker", live_allies: "Allies", live_enemies: "Opponents", live_event: "Events", live_paths: "Observed links", live_path_scope: "Follow", live_path_faker: "Faker", live_path_all: "10 players", live_path_depth: "Frames", live_event_window: "On map", live_event_15: "15 s", live_event_60: "60 s", live_event_180: "3 min", live_feed: "Events observed so far", live_speed: "Speed", live_limit: "Riot Data Dragon 16.20.1 artwork, not each game's historical patch. Portraits and health: latest Riot frame (~60 s). Lines link past samples only; the real route between them is unknown. Events use their own time and place where supplied. Faker's vision and communication remain unknown.", replay_analysis: "Open retrospective analysis: Shadow forecast and actual arrival one minute later", game_spoiler: "Show end-of-game card · result and final items",
+    live_kicker: "LOCAL GAME · OBSERVED CHRONOLOGY", live_title: "The Rift, around Faker", live_allies: "Allies", live_enemies: "Opponents", live_event: "Events", live_paths: "Observed links", live_path_scope: "Follow", live_path_faker: "Faker", live_path_all: "10 players", live_path_depth: "Frames", live_event_window: "On map", live_event_15: "15 s", live_event_60: "60 s", live_event_180: "3 min", live_feed: "Events observed so far", live_speed: "Speed", live_resources: "Items, vision and potions · Faker", live_limit: "Riot Data Dragon 16.20.1 artwork, not each game's historical patch. Portraits and health: latest Riot frame (~60 s). Inventories reconstructed from timestamped events; potion charges unknown. Lines link past samples only; the real route between them is unknown. Events use their own time and place where supplied. Faker's vision and communication remain unknown.", replay_analysis: "Open retrospective analysis: Shadow forecast and actual arrival one minute later", game_spoiler: "Show end-of-game card · result and final items",
     replay_now: "Start: account at displayed minute", replay_team: "Context: other allies at the start", replay_real: "Observed arrival one minute later", replay_guess: "Cell predicted by Shadow", replay_minute: "Starting minute",
     replay_gold: "Team gold difference", replay_xp: "XP difference", replay_level: "Level", replay_uncertainty: "Forecast spread",
     replay_play: "▶ Play", replay_pause: "Ⅱ Pause", replay_trend_note: "Retrospective gold difference; future values never enter the model's past state.",
@@ -121,7 +121,7 @@ const copy = {
 };
 
 Object.assign(copy.fr, {
-  live_roster:"Dix joueurs · dernier état observé",live_filter:"Filtrer le flux",live_filter_all:"Tout",live_filter_faker:"Faker",live_filter_combat:"Combats",live_filter_objective:"Objectifs",live_filter_vision:"Vision",live_filter_economy:"Achats & compétences",live_prev:"← Événement",live_next:"Événement →",live_event:"Lieux d'événements",
+  live_roster:"Dix joueurs · dernier état observé",live_filter:"Filtrer le flux",live_filter_all:"Tout",live_filter_faker:"Faker",live_filter_combat:"Combats",live_filter_objective:"Objectifs",live_filter_vision:"Vision",live_filter_economy:"Objets & compétences",live_prev:"← Événement",live_next:"Événement →",live_event:"Lieux d'événements",
   replay_audit_labels:["parties vérifiées","frames de positions","événements datés","frontières corrigées"],replay_audit_note:"Audit des 465 timelines : 1 794 événements existent dès la première frame ; 30 sont rangés dans le conteneur suivant. Le lecteur les place à leur timestamp propre. Aucune trajectoire entre frames n'est déduite.",
   nav_corpus:"Corpus", guide_choose:"Choisir une seule couche", guide_choose_copy:"La carte affiche le type sélectionné, pas dix joueurs superposés.", guide_point:"Un carré = une case", guide_point_copy:"Plus il est lumineux, plus cette case contient d'observations. Le halo aide seulement à voir une case isolée.", guide_hover:"Survoler pour compter", guide_hover_copy:"Le panneau donne le type, la phase, la coordonnée et le nombre exact.",
   map_key_real:"Gauche : arrivées observées", map_key_shadow:"Droite : choix du modèle", map_key_cell:"Une tuile = une région 16×16 ; même coordonnée sur les deux cartes.", surface_key_xy:"Plan X/Y : position sur la minimap", surface_key_z:"Hauteur Z : nombre de destinations dans la case", surface_key_one:"La vue montre une distribution agrégée, jamais dix joueurs à cet instant.",
@@ -134,7 +134,7 @@ Object.assign(copy.fr, {
   map_cell:(col,row,actual,shadow)=>`Case ${col},${row} sur 16×16 · Faker observé : ${actual} % des 1 197 arrivées · Shadow : ${shadow} % des 1 197 choix.`
 });
 Object.assign(copy.en, {
-  live_roster:"Ten players · latest observed state",live_filter:"Filter feed",live_filter_all:"All",live_filter_faker:"Faker",live_filter_combat:"Fights",live_filter_objective:"Objectives",live_filter_vision:"Vision",live_filter_economy:"Purchases & skills",live_prev:"← Event",live_next:"Event →",live_event:"Event locations",
+  live_roster:"Ten players · latest observed state",live_filter:"Filter feed",live_filter_all:"All",live_filter_faker:"Faker",live_filter_combat:"Fights",live_filter_objective:"Objectives",live_filter_vision:"Vision",live_filter_economy:"Items & skills",live_prev:"← Event",live_next:"Event →",live_event:"Event locations",
   replay_audit_labels:["audited games","position frames","timed events","fixed boundaries"],replay_audit_note:"Audit of 465 timelines: 1,794 events exist at the first frame; 30 are stored in the next container. The reader places them at their own timestamp. No path between frames is inferred.",
   nav_corpus:"Corpus", guide_choose:"Select one layer", guide_choose_copy:"The map shows the selected type, not ten players overlaid.", guide_point:"One square = one cell", guide_point_copy:"Brighter cells contain more observations. The halo only makes isolated cells visible.", guide_hover:"Hover to count", guide_hover_copy:"The panel identifies type, phase, coordinates and exact count.",
   map_key_real:"Left: observed arrivals", map_key_shadow:"Right: model choices", map_key_cell:"One tile = one 16×16 region; matching coordinates across the two maps.", surface_key_xy:"X/Y plane: minimap position", surface_key_z:"Z height: number of destinations in the cell", surface_key_one:"An aggregate distribution, never ten players in one instant.",
@@ -652,8 +652,8 @@ function renderReplayAudit() {
       card.append(strong,caption);root.append(card);
     }
     const contextNote=document.createElement("p");contextNote.textContent=language==="fr"?
-      `Événements du lecteur : achats, compétences, combats, objectifs et wards, sur ${replayContext.games_read} parties. Seuls ${replayContext.details.with_event_position.toLocaleString(language)} ont un lieu fourni ; aucun point n'est inventé. ${replayContext.item_coverage.catalog_matched.toLocaleString(language)} / ${replayContext.item_coverage.purchase_events.toLocaleString(language)} achats valides sont nommés dans les 12 catalogues historiques.`:
-      `Reader events: purchases, skill points, combat, objectives and wards across ${replayContext.games_read} games. Only ${replayContext.details.with_event_position.toLocaleString(language)} have a Riot location; no point is invented. ${replayContext.item_coverage.catalog_matched.toLocaleString(language)} / ${replayContext.item_coverage.purchase_events.toLocaleString(language)} valid purchases have names in the 12 historical catalogs.`;
+      `Événements du lecteur : achats, retraits, ventes et annulations d'objets, compétences, combats, objectifs et wards, sur ${replayContext.games_read} parties. Seuls ${replayContext.details.with_event_position.toLocaleString(language)} ont un lieu fourni ; aucun point n'est inventé. ${replayContext.item_coverage.catalog_matched.toLocaleString(language)} / ${replayContext.item_coverage.purchase_events.toLocaleString(language)} achats valides sont nommés dans les 12 catalogues historiques.`:
+      `Reader events: item purchases, removals, sales and undos, skill points, combat, objectives and wards across ${replayContext.games_read} games. Only ${replayContext.details.with_event_position.toLocaleString(language)} have a Riot location; no point is invented. ${replayContext.item_coverage.catalog_matched.toLocaleString(language)} / ${replayContext.item_coverage.purchase_events.toLocaleString(language)} valid purchases have names in the 12 historical catalogs.`;
     root.append(contextNote);
   }
 }
@@ -1711,10 +1711,14 @@ function liveEventLabel(event, actor) {
     ward_placed:fr?"Balise posée":"Ward placed",
     ward_cleared:fr?"Balise détruite":"Ward cleared",
     ITEM_PURCHASED:fr?"Achat":"Purchase",
+    ITEM_SOLD:fr?"Vente":"Sale",
+    ITEM_DESTROYED:fr?"Sort de l'inventaire":"Leaves inventory",
+    ITEM_UNDO:fr?"Achat annulé":"Purchase undone",
     SKILL_LEVEL_UP:fr?"Point de compétence":"Skill point",
   }[event.category]||event.category.replaceAll("_"," ");
   const descriptor=trace?.item_catalog?.[String(event.item_id)];
-  const item=event.item_id?` · ${descriptor?.name||spriteManifest?.items?.[String(event.item_id)]?.[language]||`#${event.item_id}`}${descriptor?.cost?` (${descriptor.cost}g)`:""}`:"";
+  const item=event.item_id?` · ${descriptor?.name||spriteManifest?.items?.[String(event.item_id)]?.[language]||`#${event.item_id}`}${descriptor?.cost&&event.category==="ITEM_PURCHASED"?` (${descriptor.cost}g)`:""}`:"";
+  const undo=event.category==="ITEM_UNDO"?` · ${event.before_item_id?(trace?.item_catalog?.[String(event.before_item_id)]?.name||`#${event.before_item_id}`):"?"} → ${event.after_item_id?(trace?.item_catalog?.[String(event.after_item_id)]?.name||`#${event.after_item_id}`):(fr?"rien":"nothing")}`:"";
   const skill=event.skill_slot?` · ${["","Q","W","E","R"][event.skill_slot]||event.skill_slot}`:"";
   const victim=event.victim_id&&event.category!=="faker_death"?` → ${nameFor(event.victim_id)}`:"";
   const assistants=event.assisting_ids?.length?` · ${fr?"aides":"assists"}: ${event.assisting_ids.map(nameFor).join(", ")}`:"";
@@ -1727,7 +1731,96 @@ function liveEventLabel(event, actor) {
   const teamName=event.acting_team_id===100?(fr?"BLEU":"BLUE"):
     event.acting_team_id===200?(fr?"ROUGE":"RED"):"";
   const team=teamName?event.category==="building"?` · ${fr?"prise par":"taken by"} ${teamName}`:` · ${teamName}`:"";
-  return `${category}${details}${actorLabel}${combat?victim+assistants:""}${item}${skill}${team}${event.xy?" · ⊙":""}`;
+  return `${category}${details}${actorLabel}${combat?victim+assistants:""}${item}${undo}${skill}${team}${event.xy?" · ⊙":""}`;
+}
+
+const LIVE_ITEM_EVENTS=new Set(["ITEM_PURCHASED","ITEM_DESTROYED","ITEM_SOLD","ITEM_UNDO"]);
+
+function liveActorsAt(row, sampleTime, seconds, finalSample) {
+  // The frame is a snapshot; only replay lifecycle events after that frame.
+  const actors=(finalSample?row.actors_next:row.actors_t).map(actor=>({...actor,items:[...(actor.items||[])]}));
+  if(finalSample)return actors;
+  const byId=new Map(actors.map(actor=>[actor.participant,actor]));
+  for(const event of liveEvents){
+    if(event.time_seconds<=sampleTime)continue;
+    if(event.time_seconds>seconds)break;
+    if(!LIVE_ITEM_EVENTS.has(event.category))continue;
+    const items=byId.get(event.actor_id)?.items;
+    if(!items)continue;
+    const remove=id=>{const index=items.indexOf(id);if(index>=0)items.splice(index,1);};
+    if(event.category==="ITEM_PURCHASED"&&event.item_id>0)items.push(event.item_id);
+    else if(event.category==="ITEM_SOLD"||event.category==="ITEM_DESTROYED")remove(event.item_id);
+    else if(event.category==="ITEM_UNDO"){
+      remove(event.before_item_id);
+      if(event.after_item_id>0)items.push(event.after_item_id);
+    }
+  }
+  return actors;
+}
+
+function renderLiveResources(actors) {
+  const fr=language==="fr",own=actors.find(actor=>actor.side==="faker");
+  const root=$("#live-resource-detail");root.replaceChildren();
+  const counts=new Map();
+  for(const id of own?.items||[])counts.set(id,(counts.get(id)||0)+1);
+  const groups=[
+    {key:"equipment",name:fr?"Équipement":"Equipment",icon:"✦"},
+    {key:"vision",name:fr?"Vision · wards / trinkets":"Vision · wards / trinkets",icon:"◉"},
+    {key:"potion",name:fr?"Potions / consommables":"Potions / consumables",icon:"◈"},
+  ];
+  const kind=id=>{
+    const item=trace.item_catalog?.[String(id)]||{};
+    return item.kind||((item.tags||[]).some(tag=>["Vision","Trinket"].includes(tag))?"vision":
+      item.name?.toLowerCase().includes("potion")?"potion":(item.tags||[]).includes("Consumable")?"consumable":"equipment");
+  };
+  for(const group of groups){
+    const section=document.createElement("section");section.className=`resource-group ${group.key}`;
+    const title=document.createElement("h5");title.textContent=`${group.icon} ${group.name}`;section.append(title);
+    const list=document.createElement("div");list.className="resource-list";
+    const entries=[...counts].filter(([id])=>{
+      const value=kind(id);return group.key==="potion"?["potion","consumable"].includes(value):value===group.key;
+    });
+    if(!entries.length){const empty=document.createElement("span");empty.className="resource-empty";empty.textContent=fr?"Aucun objet reconstitué":"No reconstructed item";list.append(empty);}
+    for(const [id,count] of entries){
+      const descriptor=trace.item_catalog?.[String(id)]||{};
+      const label=descriptor.name||spriteManifest?.items?.[String(id)]?.[language]||`#${id}`;
+      const chip=document.createElement("div");chip.className="resource-item";
+      chip.title=`${label}${descriptor.cost?` · ${descriptor.cost}g ${fr?"(prix catalogue)":"(catalog price)"}`:""}`;
+      const art=document.createElement("span");art.className="resource-art";art.append(spriteIcon("items",id,label));chip.append(art);
+      const text=document.createElement("span");text.textContent=label;chip.append(text);
+      if(count>1){const qty=document.createElement("b");qty.textContent=`×${count}`;chip.append(qty);}
+      list.append(chip);
+    }
+    section.append(list);root.append(section);
+  }
+  const wardRoot=$("#live-ward-activity");wardRoot.replaceChildren();
+  const wardEvents=liveEvents.filter(event=>event.time_seconds<=liveSeconds&&event.time_seconds>=liveSeconds-180&&
+    ["ward_placed","ward_cleared"].includes(event.category));
+  const title=document.createElement("h5");title.textContent=fr?"◉ Vision observée · 3 dernières minutes":"◉ Observed vision · last 3 minutes";wardRoot.append(title);
+  const fakerTeam=own?.team_id;
+  const countsBySide={ally:{ward_placed:0,ward_cleared:0},enemy:{ward_placed:0,ward_cleared:0},unknown:{ward_placed:0,ward_cleared:0}};
+  for(const event of wardEvents){
+    const side=!event.acting_team_id?"unknown":event.acting_team_id===fakerTeam?"ally":"enemy";
+    countsBySide[side][event.category]++;
+  }
+  const summary=document.createElement("p");summary.className="ward-summary";
+  summary.textContent=fr?`Alliés : ${countsBySide.ally.ward_placed} posées / ${countsBySide.ally.ward_cleared} détruites · Adversaires : ${countsBySide.enemy.ward_placed} / ${countsBySide.enemy.ward_cleared}${countsBySide.unknown.ward_placed+countsBySide.unknown.ward_cleared?` · camp inconnu : ${countsBySide.unknown.ward_placed+countsBySide.unknown.ward_cleared}`:""}`:
+    `Allies: ${countsBySide.ally.ward_placed} placed / ${countsBySide.ally.ward_cleared} cleared · Opponents: ${countsBySide.enemy.ward_placed} / ${countsBySide.enemy.ward_cleared}${countsBySide.unknown.ward_placed+countsBySide.unknown.ward_cleared?` · unknown side: ${countsBySide.unknown.ward_placed+countsBySide.unknown.ward_cleared}`:""}`;
+  wardRoot.append(summary);
+  const recent=document.createElement("div");recent.className="ward-recent";
+  for(const event of wardEvents.slice(-4).reverse()){
+    const jump=document.createElement("button");jump.type="button";jump.className=`ward-jump ${!event.acting_team_id?"unknown":event.acting_team_id===fakerTeam?"ally":"enemy"}`;
+    const actor=actors.find(person=>person.participant===event.actor_id);
+    jump.textContent=`${formatPreciseTime(event.time_seconds)} · ${liveEventLabel(event,actor)}${event.xy?"":fr?" · lieu inconnu":" · location unknown"}`;
+    jump.addEventListener("click",()=>{stopLive();liveSeconds=event.time_seconds;syncSharedFromLive();renderLive();});
+    recent.append(jump);
+  }
+  if(!wardEvents.length)recent.textContent=fr?"Aucune pose ou destruction observée.":"No placement or clearance observed.";
+  wardRoot.append(recent);
+  const caveat=document.createElement("small");caveat.textContent=fr?
+    "Quantités = objets reconstitués, pas charges de potion ni vision effective. Un retrait peut aussi être une recette d'objet.":
+    "Counts = reconstructed items, not potion charges or actual vision. A removal can also be an item recipe.";
+  wardRoot.append(caveat);
 }
 
 function renderLiveLedger() {
@@ -1763,7 +1856,7 @@ function filteredLiveEvents() {
     if(filter==="combat")return event.category.endsWith("_kill") || event.category==="faker_death";
     if(filter==="objective")return ["dragon","baron","herald","grubs","building"].includes(event.category);
     if(filter==="vision")return ["ward_placed","ward_cleared"].includes(event.category);
-    return ["ITEM_PURCHASED","SKILL_LEVEL_UP"].includes(event.category);
+    return LIVE_ITEM_EVENTS.has(event.category)||event.category==="SKILL_LEVEL_UP";
   });
 }
 
@@ -1782,7 +1875,7 @@ function liveMapPoint(xy) {
 function liveEventKind(category) {
   if(["dragon","baron","herald","grubs","building"].includes(category))return "objective";
   if(category.startsWith("ward_"))return "vision";
-  if(["ITEM_PURCHASED","SKILL_LEVEL_UP"].includes(category))return "economy";
+  if(LIVE_ITEM_EVENTS.has(category)||category==="SKILL_LEVEL_UP")return "economy";
   return "combat";
 }
 
@@ -1848,12 +1941,12 @@ function renderLive() {
   const row=rows[index];
   const finalSample=index===rows.length-1 && liveSeconds>=row.next_frame_seconds;
   const sampleTime=finalSample?row.next_frame_seconds:row.frame_seconds;
-  const actors=finalSample?row.actors_next:row.actors_t;
+  const actors=liveActorsAt(row,sampleTime,liveSeconds,finalSample);
   const missing=actors.filter(actor=>!actor.xy).length;
   const age=Math.max(0,liveSeconds-sampleTime).toFixed(1);
   $("#live-sample").textContent=language==="fr"?
-    `Positions Riot à ${formatPreciseTime(sampleTime)} · âge ${age} s · ${10-missing}/10 disponibles (vue omnisciente)`:
-    `Riot positions at ${formatPreciseTime(sampleTime)} · ${age} s old · ${10-missing}/10 available (omniscient view)`;
+    `Positions Riot à ${formatPreciseTime(sampleTime)} · âge ${age} s · ${10-missing}/10 disponibles (vue omnisciente) · objets reconstitués à ${formatPreciseTime(liveSeconds)}`:
+    `Riot positions at ${formatPreciseTime(sampleTime)} · ${age} s old · ${10-missing}/10 available (omniscient view) · items reconstructed at ${formatPreciseTime(liveSeconds)}`;
   const context=$("#live-context");context.replaceChildren();
   const patchNote=document.createElement("span");patchNote.textContent=language==="fr"?
     `PARTIE · PATCH ${trace.played_patch||"?"}  /  OBJETS DATA DRAGON ${trace.item_catalog_release||"indisponible"}`:
@@ -1863,6 +1956,7 @@ function renderLive() {
   sourceLink.textContent=language==="fr"?"Source Riot ↗":"Riot source ↗";
   context.append(patchNote,sourceLink);
   renderLiveLedger();
+  renderLiveResources(actors);
   const target=formatGameTime(row.next_frame_seconds);
   $("#live-forecast").textContent=finalSample?(language==="fr"?"Fin des positions observées ; aucune prévision suivante disponible.":"End of sampled positions; no next forecast available."):(language==="fr"?
     `Shadow historique : case 16×16 ${row.predicted_region%16},${Math.floor(row.predicted_region/16)} pour la prochaine frame vers ${target}. Prévision, pas position réelle.`:
@@ -1944,7 +2038,7 @@ function renderLive() {
     const label=svgNode("text",{x:labelX,y:labelY,fill:colour,"font-size":actor.side==="faker"?13:10,"font-weight":700,stroke:"#100d18","stroke-width":3,"paint-order":"stroke"});
     label.textContent=name;svg.append(label);
   }
-  $("#live-map-count").textContent=language==="fr"?`${10-missing} JOUEURS · ${mappedEvents} LIEUX`:`${10-missing} PLAYERS · ${mappedEvents} PLACES`;
+  $("#live-map-count").textContent=language==="fr"?`${10-missing} JOUEURS · ${mappedEvents} ${mappedEvents===1?"LIEU":"LIEUX"}`:`${10-missing} PLAYERS · ${mappedEvents} ${mappedEvents===1?"PLACE":"PLACES"}`;
   $("#live-map-readout").textContent=language==="fr"?
     `${formatPreciseTime(liveSeconds)} · ${10-missing}/10 positions au dernier relevé (${formatPreciseTime(sampleTime)}, âge ${age} s). ${mappedEvents} lieu${mappedEvents>1?"x":""} d'événement affiché${mappedEvents>1?"s":""} sur ${windowSeconds} s. Traits pointillés = liens entre frames connues, chemin exact inconnu.`:
     `${formatPreciseTime(liveSeconds)} · ${10-missing}/10 positions at latest sample (${formatPreciseTime(sampleTime)}, ${age} s old). ${mappedEvents} event location${mappedEvents===1?"":"s"} shown over ${windowSeconds} s. Dashed lines link known frames; exact route unknown.`;
@@ -2015,7 +2109,7 @@ async function loadReplay() {
     if (!response.ok) return;
     const data = await response.json();
     setTrace(data);
-    if (data.schema_version < 10) await openGame(data.match_id);
+    if (data.schema_version < 11) await openGame(data.match_id);
   } catch (_) { /* Per-match trace is local and optional. */ }
 }
 

@@ -1,6 +1,7 @@
 import json
 
-from shadowfaker.demo import _cached_patch_items, _observed_context, _source_fingerprint
+from shadowfaker.demo import _cached_patch_items, _item_kind, _observed_context, _source_fingerprint
+from shadowfaker.ioc import inventory_snapshots
 
 
 def test_replay_keeps_event_time_separate_from_sampled_positions():
@@ -106,3 +107,34 @@ def test_patch_catalog_comes_from_cached_played_release(tmp_path):
     assert len(paths)==2
     missing,items,_=_cached_patch_items({"info":{"gameVersion":"16.18.2"}},tmp_path)
     assert missing=="" and items=={}
+
+
+def test_potion_lifecycle_and_undo_keep_exact_event_clock():
+    players=[{"puuid":"faker" if pid==1 else str(pid),"participantId":pid,
+              "teamId":100 if pid<=5 else 200,"teamPosition":"MIDDLE",
+              "championName":f"C{pid}"} for pid in range(1,11)]
+    events=[
+        {"type":"ITEM_PURCHASED","timestamp":1250,"participantId":1,"itemId":2003},
+        {"type":"ITEM_DESTROYED","timestamp":2450,"participantId":1,"itemId":2003},
+        {"type":"ITEM_PURCHASED","timestamp":3200,"participantId":1,"itemId":2003},
+        {"type":"ITEM_SOLD","timestamp":4100,"participantId":1,"itemId":2003},
+        {"type":"ITEM_UNDO","timestamp":4300,"participantId":1,"beforeId":0,"afterId":2003},
+        {"type":"WARD_PLACED","timestamp":5500,"creatorId":7,"wardType":"CONTROL_WARD"},
+    ]
+    timeline={"info":{"frames":[
+        {"timestamp":0,"participantFrames":{},"events":[]},
+        {"timestamp":60000,"participantFrames":{},"events":events},
+    ]}}
+    snapshots,_=inventory_snapshots(timeline)
+    assert not snapshots[0][1]
+    assert snapshots[1][1][2003]==1
+    row=_observed_context({"info":{"participants":players}},timeline,"faker",0,snapshots)
+    assert [event["time_seconds"] for event in row["events_next"]]==[1.25,2.45,3.2,4.1,4.3,5.5]
+    assert [event["category"] for event in row["events_next"][:5]]==[
+        "ITEM_PURCHASED","ITEM_DESTROYED","ITEM_PURCHASED","ITEM_SOLD","ITEM_UNDO"]
+    assert row["events_next"][4]["before_item_id"]==0
+    assert row["events_next"][4]["after_item_id"]==2003
+    assert row["events_next"][5]["xy"] is None
+    assert _item_kind({"name":"Health Potion","tags":["Consumable"]})=="potion"
+    assert _item_kind({"name":"Control Ward","tags":["Consumable","Vision"]})=="vision"
+    assert _item_kind({"name":"Oracle Lens","tags":["Trinket","Vision"]})=="vision"

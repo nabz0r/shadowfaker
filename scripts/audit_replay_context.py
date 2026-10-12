@@ -10,6 +10,7 @@ from tqdm import tqdm
 from shadowfaker.config import CONFIG
 from shadowfaker.demo import _cached_patch_items
 from shadowfaker.events64 import event_category
+from shadowfaker.ioc import ITEM_TYPES
 from shadowfaker.util import atomic_json, read_json
 
 
@@ -32,9 +33,9 @@ def audit(limit: int | None = None) -> dict:
                 for event in frame.get("events") or []:
                     category = event_category(event, pid, team, teams)
                     kind = event.get("type")
-                    if category is None and kind not in ("ITEM_PURCHASED", "SKILL_LEVEL_UP"):
+                    if category is None and kind not in (*ITEM_TYPES, "SKILL_LEVEL_UP"):
                         continue
-                    if kind in ("ITEM_PURCHASED", "SKILL_LEVEL_UP") and int(event.get("participantId") or 0) not in teams:
+                    if kind in (*ITEM_TYPES, "SKILL_LEVEL_UP") and int(event.get("participantId") or 0) not in teams:
                         continue
                     categories[category or kind] += 1
                     if (event.get("position") or {}).get("x") is not None and (event.get("position") or {}).get("y") is not None:
@@ -52,12 +53,20 @@ def audit(limit: int | None = None) -> dict:
                     elif kind in ("WARD_PLACED", "WARD_KILL"):
                         if event.get("wardType") and event["wardType"] != "UNDEFINED": details["ward_with_specific_type"] += 1
                         else: details["ward_type_unspecified"] += 1
-                    elif kind == "ITEM_PURCHASED":
-                        item_coverage["purchase_events"] += 1
-                        if str(event.get("itemId") or "") in catalog: item_coverage["catalog_matched"] += 1
+                    elif kind in ITEM_TYPES:
+                        item_coverage[kind.lower()] += 1
+                        if kind == "ITEM_PURCHASED":
+                            item_coverage["purchase_events"] += 1
+                            if str(event.get("itemId") or "") in catalog: item_coverage["catalog_matched"] += 1
+                        item = catalog.get(str(event.get("itemId") or "")) or {}
+                        tags = set(item.get("tags") or [])
+                        name = str(item.get("name") or "").lower()
+                        if "Vision" in tags or "Trinket" in tags: item_coverage["vision_item_events"] += 1
+                        elif "potion" in name: item_coverage["potion_item_events"] += 1
+                        elif "Consumable" in tags: item_coverage["other_consumable_events"] += 1
         except Exception:
             errors += 1
-    return {"schema_version":1,"domain":"same-PUUID ranked 420 timelines; aggregate only",
+    return {"schema_version":2,"domain":"same-PUUID ranked 420 timelines; aggregate only",
             "games_read":len(ids)-errors,"errors":errors,"categories":dict(sorted(categories.items())),
             "details":dict(sorted(details.items())),"item_coverage":dict(item_coverage),
             "catalog_release_counts":dict(sorted(patches.items())),

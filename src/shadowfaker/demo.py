@@ -18,9 +18,19 @@ from .util import atomic_json
 from .features import position, number
 from .events64 import event_category, position_cell
 from .geometry64 import local_metric
-from .ioc import inventory_snapshots
+from .ioc import ITEM_TYPES, inventory_snapshots
 
-TRACE_SCHEMA_VERSION = 10
+TRACE_SCHEMA_VERSION = 11
+
+
+def _item_kind(descriptor: dict) -> str:
+    """A display grouping from played-patch Data Dragon, never an inferred action."""
+    tags = set(descriptor.get("tags") or [])
+    name = str(descriptor.get("name") or "").lower()
+    if "Vision" in tags or "Trinket" in tags: return "vision"
+    if "potion" in name: return "potion"
+    if "Consumable" in tags: return "consumable"
+    return "equipment"
 
 
 def _cached_patch_items(match: dict, raw: Path) -> tuple[str, dict, tuple[Path, ...]]:
@@ -99,10 +109,10 @@ def _observed_context(match: dict, timeline: dict, puuid: str, minute: float,
     def display_events(events):
         shown=[]
         for event in events:
-            if event.get("type") in ("ITEM_PURCHASED","SKILL_LEVEL_UP") and int(event.get("participantId") or 0) not in teams:
+            if event.get("type") in (*ITEM_TYPES,"SKILL_LEVEL_UP") and int(event.get("participantId") or 0) not in teams:
                 continue
             category=event_category(event,pid,team_id,teams)
-            if category is None and event.get("type") not in ("ITEM_PURCHASED","SKILL_LEVEL_UP"): continue
+            if category is None and event.get("type") not in (*ITEM_TYPES,"SKILL_LEVEL_UP"): continue
             event_xy=position(event)
             actor_id=int(event.get("participantId") or event.get("killerId") or event.get("creatorId") or 0)
             event_type=event.get("type")
@@ -131,7 +141,10 @@ def _observed_context(match: dict, timeline: dict, puuid: str, minute: float,
                           "lane_type":str(event.get("laneType") or ""),
                           "tower_type":str(event.get("towerType") or ""),
                           "ward_type":str(event.get("wardType") or ""),
-                          "item_id":int(event.get("itemId") or 0),"skill_slot":int(event.get("skillSlot") or 0)})
+                          "item_id":int(event.get("itemId") or 0),
+                          "before_item_id":int(event.get("beforeId") or 0),
+                          "after_item_id":int(event.get("afterId") or 0),
+                          "skill_slot":int(event.get("skillSlot") or 0)})
         return shown
     shown=display_events(raw_events)
     initial=display_events([e for e in timed_events if number(e.get("timestamp"),0)<=low]) if index==0 else []
@@ -245,9 +258,13 @@ def export_trace(processed: Path = CONFIG.processed, models: Path = CONFIG.model
     referenced_items.update(event["item_id"] for row in rows
                             for event in (*row["events_initial"],*row["events_next"])
                             if event["item_id"])
+    referenced_items.update(event[key] for row in rows
+                            for event in (*row["events_initial"],*row["events_next"])
+                            for key in ("before_item_id","after_item_id") if event[key])
     item_descriptors={str(item):{"name":str(catalog[str(item)].get("name") or ""),
                                  "cost":int((catalog[str(item)].get("gold") or {}).get("total") or 0),
-                                 "tags":list(catalog[str(item)].get("tags") or [])}
+                                 "tags":list(catalog[str(item)].get("tags") or []),
+                                 "kind":_item_kind(catalog[str(item)])}
                       for item in referenced_items if str(item) in catalog}
     atomic_json(output, {"schema_version": TRACE_SCHEMA_VERSION, "match_id": mid, "max_frames": max_frames,
                          "checkpoint_sha256": checkpoint_hash, "source_sha256": source_hash,

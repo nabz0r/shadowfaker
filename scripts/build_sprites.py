@@ -54,6 +54,9 @@ def build(version: str = VERSION, database: Path = DB) -> dict:
     for champion, allies, enemies, item_ids in rows:
         champions.update([champion, *json.loads(allies), *json.loads(enemies)])
         items.update(json.loads(item_ids))
+    # Consumables and trinkets rarely survive into end-of-game inventories,
+    # but their timestamped events are prominent in the replay.
+    items.update({2003, 2031, 2033, 2055, 3340, 3363, 3364, 2138, 2139, 2140})
     if not rows:
         raise ValueError("Build the local post-game index before the sprite atlas")
 
@@ -65,6 +68,10 @@ def build(version: str = VERSION, database: Path = DB) -> dict:
     champ_data = data("en_US", "champion")
     item_en = data("en_US", "item")
     item_fr = data("fr_FR", "item")
+    # Cover items that disappear before the final scoreboard (components,
+    # potions, wards and trinkets), without publishing any match inventory.
+    items.update(int(key) for key, entry in item_en.items()
+                 if key.isdigit() and (entry.get("maps") or {}).get("11"))
     by_name = {key.casefold(): value for key, value in champ_data.items()}
     by_name.update({value["name"].casefold(): value for value in champ_data.values()})
     metadata = {"schema_version": 1, "data_dragon_version": version,

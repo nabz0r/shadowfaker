@@ -283,3 +283,11 @@ Tenter un nouveau snapshot Riot horodaté pour mesurer l'arrivée de parties str
 4. Valider d'abord cinq parties, puis le catalogue disponible ; tester les champs manquants, les camps, l'horloge et l'absence de fuite du futur. Vérifier le rendu FR/EN et mobile, documenter les sources et limites, publier le lot sur `main`.
 
 Risques : `teamId` d'un `BUILDING_KILL` désigne le propriétaire détruit, alors que `killerTeamId` d'un monstre désigne le bénéficiaire ; les wards `UNDEFINED` et les événements sans coordonnées ne doivent recevoir ni faux type ni faux lieu. Les propriétés Data Dragon reflètent le patch joué, les icônes sont épinglées à une autre version et une timeline ne prouve ni la vision ni les communications de Faker.
+# M24 — objets, wards et potions à la seconde (2026-10-12)
+
+1. Auditer cinq parties et les catalogues officiels du patch : IDs de potions/wards/trinkets, événements `ITEM_PURCHASED`, `ITEM_DESTROYED`, `ITEM_SOLD`, `ITEM_UNDO`, type de ward et coordonnées réellement disponibles.
+2. Étendre la trace privée : mutations d'inventaire horodatées, IDs avant/après une annulation et classification statique de l'objet. Reconstruire l'inventaire affiché à la seconde à partir du dernier snapshot et des seuls événements déjà survenus.
+3. Créer un panneau visible centré sur Faker : équipements, vision (wards et trinkets), potions/consommables, avec leurs icônes, quantités reconstituées et changements récents. Maintenir les dix inventaires et montrer l'activité de vision alliée/adverse même sans emplacement de ward.
+4. Tester cinq parties puis auditer les 465 sans charger les JSON bruts dans Git ; vérifier à la milliseconde l'achat/retrait d'une potion, les annulations et les coordonnées absentes. Contrôler FR/EN, mobile, README/REPLAY, publier `main`.
+
+Risque : `ITEM_DESTROYED` indique la sortie de l'inventaire, pas forcément l'usage d'une potion ; `stacks` du catalogue est une capacité statique, pas le nombre de charges dans la partie. Une pose de ward sans coordonnées Riot reste un événement temporel sans point de carte. Les inventaires ennemis du lecteur sont une vue omnisciente, jamais une preuve de vision de Faker.
